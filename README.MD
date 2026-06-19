@@ -1,8 +1,8 @@
-# SynapseOS
+# Sync Os
 
 > The AI Operating System for Modern Teams
 
-SynapseOS is an AI-native company operating system designed to combine traditional workspace management with intelligent AI-powered automation.
+Sync Os is an AI-native company operating system designed to combine traditional workspace management with intelligent AI-powered automation.
 
 It enables organizations to manage people, projects, tasks, meetings, documents, goals, and knowledge in a single secure workspace.
 
@@ -10,7 +10,7 @@ It enables organizations to manage people, projects, tasks, meetings, documents,
 
 ## Vision
 
-SynapseOS aims to become a next-generation operating system for companies by combining:
+Sync Os aims to become a next-generation operating system for companies by combining:
 
 - Project Management
 - Team Collaboration
@@ -198,4 +198,3 @@ src
 - AI Agents
 - Billing
 - Integrations
-

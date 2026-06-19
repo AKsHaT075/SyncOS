@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "SynapseOS",
+  title: "Sync Os",
   description: "AI-native company operating system",
 };
 

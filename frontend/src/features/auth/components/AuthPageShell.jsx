@@ -11,7 +11,7 @@ export default function AuthPageShell({ children, description, footer, title }) 
         <section className="order-2 lg:order-1">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm text-slate-200 backdrop-blur">
             <ShieldCheck className="h-4 w-4 text-cyan-300" />
-            SynapseOS secure access
+            Sync Os secure access
           </div>
           <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
             AI-native workspace authentication built for production.

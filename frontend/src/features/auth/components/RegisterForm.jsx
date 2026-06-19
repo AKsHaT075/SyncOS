@@ -39,7 +39,7 @@ export default function RegisterForm() {
   return (
     <AuthPageShell
       title="Create your account"
-      description="Start a secure SynapseOS workspace and verify your email to continue."
+      description="Start a secure Sync Os workspace and verify your email to continue."
       footer={
         <span>
           Already have an account? <a className="text-cyan-300 underline-offset-4 hover:underline" href="/login">Sign in</a>

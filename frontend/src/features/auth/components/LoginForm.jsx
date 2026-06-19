@@ -37,7 +37,7 @@ export default function LoginForm() {
   return (
     <AuthPageShell
       title="Sign in"
-      description="Use your SynapseOS credentials to access your workspace."
+      description="Use your Sync Os credentials to access your workspace."
       footer={
         <span>
           New here? <a className="text-cyan-300 underline-offset-4 hover:underline" href="/register">Create an account</a>

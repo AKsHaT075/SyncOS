@@ -5,11 +5,11 @@ const env = require('./env');
 function createSessionMiddleware(redisClient) {
   const store = new RedisStore({
     client: redisClient,
-    prefix: 'synapseos:session:',
+    prefix: 'syncos:session:',
   });
 
   return session({
-    name: 'synapse.sid',
+    name: 'sync.sid',
     secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

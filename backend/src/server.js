@@ -9,7 +9,7 @@ async function start() {
   const app = createApp({ redisClient });
 
   const server = app.listen(env.PORT, () => {
-    console.log(`SynapseOS backend listening on port ${env.PORT}`);
+    console.log(`Sync Os backend listening on port ${env.PORT}`);
   });
 
   const shutdown = async () => {

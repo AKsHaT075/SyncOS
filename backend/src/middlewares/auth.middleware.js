@@ -10,7 +10,7 @@ function getBearerToken(req) {
 }
 
 function getAccessToken(req) {
-  return getCookieToken(req, 'synapse_access_token') || getBearerToken(req);
+  return getCookieToken(req, 'sync_access_token') || getBearerToken(req);
 }
 
 async function authenticate(req, res, next) {

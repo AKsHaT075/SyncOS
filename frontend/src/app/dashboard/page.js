@@ -27,7 +27,7 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-cyan-300">SynapseOS</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-cyan-300">Sync Os</p>
               <h1 className="mt-2 text-3xl font-semibold">Welcome back{user?.fullName ? `, ${user.fullName}` : ""}.</h1>
               <p className="mt-2 text-slate-300">Your session is restored and your access token is ready for secure API calls.</p>
             </div>

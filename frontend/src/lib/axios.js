@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1";
-const csrfCookieName = process.env.NEXT_PUBLIC_CSRF_COOKIE_NAME || "synapse_csrf_token";
+const csrfCookieName = process.env.NEXT_PUBLIC_CSRF_COOKIE_NAME || "sync_csrf_token";
 
 function readCookie(name) {
   if (typeof document === "undefined") {
