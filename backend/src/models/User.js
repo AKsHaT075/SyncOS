@@ -89,6 +89,10 @@ const userSchema = new mongoose.Schema(
 			default: true,
 			index: true,
 		},
+		hasCreatedOrganization: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{
 		timestamps: true,
@@ -118,6 +122,7 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 		skills: this.skills,
 		emailVerified: this.emailVerified,
 		isActive: this.isActive,
+		hasCreatedOrganization: this.hasCreatedOrganization,
 		createdAt: this.createdAt,
 		updatedAt: this.updatedAt,
 	};

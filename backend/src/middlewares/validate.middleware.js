@@ -12,4 +12,16 @@ function validateBody(schema) {
   };
 }
 
-module.exports = validateBody;
+function validateQuery(schema) {
+  return function validationMiddleware(req, res, next) {
+    const result = schema.safeParse(req.query);
+    if (!result.success) {
+      throw new AppError('Validation failed', 400, 'VALIDATION_ERROR', result.error.flatten());
+    }
+
+    req.query = result.data;
+    return next();
+  };
+}
+
+module.exports = { validateBody, validateQuery };

@@ -5,8 +5,8 @@ const { createApp } = require('./app');
 
 async function start() {
   await connectMongo();
-  const redisClient = await connectRedis();
-  const app = createApp({ redisClient });
+  await connectRedis();
+  const app = createApp();
 
   const server = app.listen(env.PORT, () => {
     console.log(`Sync Os backend listening on port ${env.PORT}`);

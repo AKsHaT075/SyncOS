@@ -12,11 +12,12 @@ const EXEMPT_PATHS = [
   '/api/v1/auth/forgot-password',
   '/api/v1/auth/reset-password',
   '/api/v1/auth/csrf-token',
+  '/api/v1/invitations/accept',
   '/health',
 ];
 
 function isExemptPath(pathname) {
-  return EXEMPT_PATHS.some((path) => pathname.startsWith(path));
+  return EXEMPT_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 }
 
 function csrfProtection(req, res, next) {

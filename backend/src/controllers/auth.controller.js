@@ -61,20 +61,12 @@ const logout = asyncHandler(async (req, res) => {
   const result = await revokeCurrentDevice({ accessToken, refreshToken, req });
   clearAuthCookies(res);
 
-  if (req.session) {
-    await new Promise((resolve) => req.session.destroy(resolve));
-  }
-
   return res.status(200).json({ success: true, ...result });
 });
 
 const logoutAll = asyncHandler(async (req, res) => {
   const result = await revokeAllDevices({ req, userId: req.user._id });
   clearAuthCookies(res);
-
-  if (req.session) {
-    await new Promise((resolve) => req.session.destroy(resolve));
-  }
 
   return res.status(200).json({ success: true, ...result });
 });

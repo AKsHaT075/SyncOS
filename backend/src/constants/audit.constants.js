@@ -18,6 +18,13 @@ const AUDIT_EVENTS = Object.freeze({
   TEAM_DELETED: 'rbac.team_deleted',
   PROJECT_DELETED: 'rbac.project_deleted',
   TASK_REASSIGNED: 'rbac.task_reassigned',
+  INVITE_RESENT: 'rbac.invite_resent',
+  INVITE_REVOKED: 'rbac.invite_revoked',
+
+  ORG_CREATED: 'org.created',
+  ORG_SUSPENDED: 'org.suspended',
+  ORG_REACTIVATED: 'org.reactivated',
+  ORG_PLAN_CHANGED: 'org.plan_changed',
 });
 
 module.exports = { AUDIT_EVENTS };

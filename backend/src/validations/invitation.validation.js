@@ -16,7 +16,14 @@ const acceptInvitationSchema = z.object({
   password,
 });
 
+const listInvitationsQuerySchema = z.object({
+  status: z.enum(['pending', 'accepted', 'revoked', 'expired']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
 module.exports = {
   acceptInvitationSchema,
   inviteUserSchema,
+  listInvitationsQuerySchema,
 };

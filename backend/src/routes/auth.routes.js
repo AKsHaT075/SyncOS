@@ -1,7 +1,6 @@
 const express = require('express');
-const validateBody = require('../middlewares/validate.middleware');
-const { authenticate } = require('../middlewares/auth.middleware');
-const csrfProtection = require('../middlewares/csrf.middleware');
+const { validateBody } = require('../middlewares/validate.middleware');
+const { authenticate } = require('../middlewares/authenticate');
 const {
   authLimiter,
   otpLimiter,
@@ -38,12 +37,12 @@ router.post('/register', authLimiter, validateBody(registerSchema), register);
 router.post('/verify-email', otpLimiter, validateBody(verifyOtpSchema), verifyEmail);
 router.post('/resend-otp', otpLimiter, validateBody(resendOtpSchema), resendOtp);
 router.post('/login', authLimiter, validateBody(loginSchema), login);
-router.post('/refresh', csrfProtection, refresh);
-router.post('/logout', csrfProtection, logout);
-router.post('/logout-all', csrfProtection, authenticate, logoutAll);
+router.post('/refresh', refresh);
+router.post('/logout', logout);
+router.post('/logout-all', authenticate, logoutAll);
 router.get('/me', authenticate, me);
 router.get('/sessions', authenticate, sessions);
-router.delete('/sessions/:sessionId', csrfProtection, authenticate, revokeSession);
+router.delete('/sessions/:sessionId', authenticate, revokeSession);
 router.post('/forgot-password', passwordResetLimiter, validateBody(forgotPasswordSchema), forgotPassword);
 router.post('/reset-password', passwordResetLimiter, validateBody(resetPasswordSchema), resetPassword);
 
