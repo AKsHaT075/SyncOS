@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { AUTH_CONSTANTS } = require('../constants/auth.constants');
 const { ROLES } = require('../constants/roles');
+const { ROLE_PERMISSIONS } = require('../constants/rolePermissions');
 
 const userSchema = new mongoose.Schema(
 	{
@@ -38,6 +39,21 @@ const userSchema = new mongoose.Schema(
 			enum: Object.values(ROLES),
 			default: ROLES.EMPLOYEE,
 			index: true,
+		},
+		team: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Team',
+			default: null,
+			index: true,
+		},
+		position: {
+			type: String,
+			default: '',
+			trim: true,
+		},
+		skills: {
+			type: [String],
+			default: [],
 		},
 		emailVerified: {
 			type: Boolean,
@@ -95,6 +111,11 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 		fullName: `${this.firstName} ${this.lastName}`.trim(),
 		email: this.email,
 		role: this.role,
+		permissions: ROLE_PERMISSIONS[this.role] || [],
+		organization: this.organization ? this.organization.toString() : null,
+		team: this.team ? this.team.toString() : null,
+		position: this.position,
+		skills: this.skills,
 		emailVerified: this.emailVerified,
 		isActive: this.isActive,
 		createdAt: this.createdAt,

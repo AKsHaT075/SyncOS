@@ -10,6 +10,14 @@ const AUDIT_EVENTS = Object.freeze({
   SESSION_REVOKED: 'auth.session_revoked',
   TOKEN_REFRESHED: 'auth.token_refreshed',
   USER_REGISTERED: 'user.registered',
+
+  ROLE_CHANGED: 'rbac.role_changed',
+  PERMISSION_CHANGED: 'rbac.permission_changed',
+  USER_INVITED: 'rbac.user_invited',
+  INVITE_ACCEPTED: 'rbac.invite_accepted',
+  TEAM_DELETED: 'rbac.team_deleted',
+  PROJECT_DELETED: 'rbac.project_deleted',
+  TASK_REASSIGNED: 'rbac.task_reassigned',
 });
 
 module.exports = { AUDIT_EVENTS };

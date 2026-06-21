@@ -35,8 +35,16 @@ async function sendPasswordResetEmail({ to, firstName, resetUrl }) {
   return sendEmail({ to, subject, text, html });
 }
 
+async function sendInvitationEmail({ to, organizationName, role, inviteUrl }) {
+  const subject = `You've been invited to join ${organizationName} on Sync Os`;
+  const text = `You've been invited to join ${organizationName} as ${role}. Accept your invitation here: ${inviteUrl}`;
+  const html = `<p>You've been invited to join <strong>${organizationName}</strong> as <strong>${role}</strong>.</p><p><a href="${inviteUrl}">${inviteUrl}</a></p><p>This invitation expires in 7 days.</p>`;
+  return sendEmail({ to, subject, text, html });
+}
+
 module.exports = {
   sendEmail,
+  sendInvitationEmail,
   sendOtpEmail,
   sendPasswordResetEmail,
 };

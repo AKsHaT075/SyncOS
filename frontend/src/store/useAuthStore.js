@@ -5,7 +5,18 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   user: null,
+  role: null,
+  permissions: [],
+  organization: null,
 };
+
+function deriveFromUser(user) {
+  return {
+    role: user?.role ?? null,
+    permissions: user?.permissions ?? [],
+    organization: user?.organization ?? null,
+  };
+}
 
 export const useAuthStore = create((set) => ({
   ...initialState,
@@ -20,6 +31,7 @@ export const useAuthStore = create((set) => ({
       isAuthenticated: true,
       isLoading: false,
       user,
+      ...deriveFromUser(user),
     }),
   logout: () =>
     set({
@@ -35,5 +47,6 @@ export const useAuthStore = create((set) => ({
     set((state) => ({
       isAuthenticated: Boolean(state.accessToken && user),
       user,
+      ...deriveFromUser(user),
     })),
 }));

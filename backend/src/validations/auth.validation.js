@@ -49,6 +49,7 @@ const updateRoleSchema = z.object({
 module.exports = {
   forgotPasswordSchema,
   loginSchema,
+  password,
   registerSchema,
   resendOtpSchema,
   resetPasswordSchema,
