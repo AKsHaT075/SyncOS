@@ -16,6 +16,7 @@ const {
   revokeDeviceSession,
   verifyEmailWithOtp,
 } = require('../services/auth.service');
+const { setPresenceStatus } = require('../services/presence.service');
 
 function setCsrfCookie(res, csrfToken) {
   res.cookie(AUTH_CONSTANTS.CSRF_TOKEN_COOKIE, csrfToken, {
@@ -76,6 +77,11 @@ const me = asyncHandler(async (req, res) => {
   return res.status(200).json({ success: true, user });
 });
 
+const updateStatus = asyncHandler(async (req, res) => {
+  const user = await setPresenceStatus(req.user._id, req.body.status);
+  return res.status(200).json({ success: true, user });
+});
+
 const sessions = asyncHandler(async (req, res) => {
   const sessionsList = await getSessions(req.user._id);
   return res.status(200).json({ success: true, sessions: sessionsList });
@@ -119,5 +125,6 @@ module.exports = {
   resetPassword: resetPasswordHandler,
   revokeSession,
   sessions,
+  updateStatus,
   verifyEmail,
 };

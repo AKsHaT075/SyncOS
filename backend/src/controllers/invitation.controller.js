@@ -1,6 +1,7 @@
 const asyncHandler = require('../utils/async-handler');
 const {
   acceptInvitation,
+  acceptInvitationForExistingUser,
   inviteUser,
   listInvitations,
   resendInvitation,
@@ -15,6 +16,11 @@ const invite = asyncHandler(async (req, res) => {
 const accept = asyncHandler(async (req, res) => {
   const result = await acceptInvitation({ ...req.body, req });
   return res.status(201).json({ success: true, ...result });
+});
+
+const acceptExisting = asyncHandler(async (req, res) => {
+  const result = await acceptInvitationForExistingUser({ ...req.body, user: req.user, req });
+  return res.status(200).json({ success: true, ...result });
 });
 
 const list = asyncHandler(async (req, res) => {
@@ -44,6 +50,7 @@ const revoke = asyncHandler(async (req, res) => {
 
 module.exports = {
   accept,
+  acceptExisting,
   invite,
   list,
   resend,

@@ -19,6 +19,7 @@ const {
   resetPassword,
   revokeSession,
   sessions,
+  updateStatus,
   verifyEmail,
 } = require('../controllers/auth.controller');
 const {
@@ -27,6 +28,7 @@ const {
   registerSchema,
   resendOtpSchema,
   resetPasswordSchema,
+  updatePresenceStatusSchema,
   verifyOtpSchema,
 } = require('../validations/auth.validation');
 
@@ -41,6 +43,7 @@ router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.post('/logout-all', authenticate, logoutAll);
 router.get('/me', authenticate, me);
+router.patch('/me/status', authenticate, validateBody(updatePresenceStatusSchema), updateStatus);
 router.get('/sessions', authenticate, sessions);
 router.delete('/sessions/:sessionId', authenticate, revokeSession);
 router.post('/forgot-password', passwordResetLimiter, validateBody(forgotPasswordSchema), forgotPassword);

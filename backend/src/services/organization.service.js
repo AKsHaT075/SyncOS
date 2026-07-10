@@ -36,16 +36,24 @@ async function generateUniqueSlug(name) {
   return slug;
 }
 
-async function createOrganization({ name, owner, req }) {
+async function createOrganization({ name, slug: requestedSlug, logo, owner, req }) {
   if (owner.hasCreatedOrganization) {
     throw new AppError('You have already created an organization', 409, 'ORGANIZATION_ALREADY_CREATED');
   }
 
-  const slug = await generateUniqueSlug(name);
+  let slug = requestedSlug;
+  if (slug) {
+    if (await Organization.exists({ slug })) {
+      throw new AppError('This slug is already taken', 409, 'SLUG_TAKEN');
+    }
+  } else {
+    slug = await generateUniqueSlug(name);
+  }
 
   const organization = await Organization.create({
     name: name.trim(),
     slug,
+    logo: logo || null,
     createdBy: owner._id,
   });
 

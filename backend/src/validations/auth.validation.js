@@ -1,5 +1,6 @@
 const { z } = require('zod');
 const { ROLES } = require('../constants/roles');
+const { PRESENCE } = require('../constants/presence.constants');
 
 const email = z.string().trim().email().transform((value) => value.toLowerCase());
 
@@ -46,6 +47,11 @@ const updateRoleSchema = z.object({
   role: z.enum(Object.values(ROLES)),
 });
 
+// "offline" is derived, not settable — only ONLINE/DND are user choices.
+const updatePresenceStatusSchema = z.object({
+  status: z.enum(PRESENCE.SETTABLE_STATUSES),
+});
+
 module.exports = {
   forgotPasswordSchema,
   loginSchema,
@@ -53,6 +59,7 @@ module.exports = {
   registerSchema,
   resendOtpSchema,
   resetPasswordSchema,
+  updatePresenceStatusSchema,
   updateRoleSchema,
   verifyOtpSchema,
 };

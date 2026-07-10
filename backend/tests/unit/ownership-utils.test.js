@@ -34,12 +34,19 @@ describe('canEditTask', () => {
     const task = { organization: orgA, assignedTo: otherUserId };
     expect(canEditTask(user, task)).toBe(true);
   });
+
+  it('lets ADMIN edit any task in their own org, same as ORG_ADMIN', () => {
+    const user = { _id: userId, organization: orgA, role: ROLES.ADMIN };
+    const task = { organization: orgA, assignedTo: otherUserId };
+    expect(canEditTask(user, task)).toBe(true);
+  });
 });
 
 describe('canDeleteProject', () => {
-  it('allows ORG_ADMIN and MANAGER within the org', () => {
+  it('allows ORG_ADMIN, ADMIN, and MANAGER within the org', () => {
     const project = { organization: orgA };
     expect(canDeleteProject({ organization: orgA, role: ROLES.ORG_ADMIN }, project)).toBe(true);
+    expect(canDeleteProject({ organization: orgA, role: ROLES.ADMIN }, project)).toBe(true);
     expect(canDeleteProject({ organization: orgA, role: ROLES.MANAGER }, project)).toBe(true);
   });
 
@@ -61,6 +68,13 @@ describe('canManageUsers', () => {
     expect(canManageUsers({ organization: orgA, role: ROLES.ORG_ADMIN }, target)).toBe(true);
   });
 
+  it('lets ADMIN manage any user in the org, including other admins', () => {
+    const manager = { organization: orgA, role: ROLES.MANAGER };
+    const otherAdmin = { organization: orgA, role: ROLES.ADMIN };
+    expect(canManageUsers({ organization: orgA, role: ROLES.ADMIN }, manager)).toBe(true);
+    expect(canManageUsers({ organization: orgA, role: ROLES.ADMIN }, otherAdmin)).toBe(true);
+  });
+
   it('lets HR manage only EMPLOYEE role users', () => {
     const employee = { organization: orgA, role: ROLES.EMPLOYEE };
     const manager = { organization: orgA, role: ROLES.MANAGER };
@@ -75,9 +89,10 @@ describe('canManageUsers', () => {
 });
 
 describe('canAssignAssets', () => {
-  it('allows ORG_ADMIN and MANAGER within the org', () => {
+  it('allows ORG_ADMIN, ADMIN, and MANAGER within the org', () => {
     const asset = { organization: orgA };
     expect(canAssignAssets({ organization: orgA, role: ROLES.ORG_ADMIN }, asset)).toBe(true);
+    expect(canAssignAssets({ organization: orgA, role: ROLES.ADMIN }, asset)).toBe(true);
     expect(canAssignAssets({ organization: orgA, role: ROLES.MANAGER }, asset)).toBe(true);
   });
 

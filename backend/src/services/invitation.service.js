@@ -11,7 +11,19 @@ const { sendInvitationEmail } = require('./email.service');
 const { logAudit } = require('./audit.service');
 
 const PASSWORD_SALT_ROUNDS = 12;
-const INVITABLE_ROLES = [ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE];
+
+/**
+ * ORG_ADMIN (the org owner) may invite into any of these roles, including
+ * ADMIN. ADMIN carries the same day-to-day permissions as ORG_ADMIN but may
+ * NOT invite or promote another ADMIN — only the owner grants that tier.
+ */
+function getInvitableRoles(inviterRole) {
+  if (inviterRole === ROLES.ORG_ADMIN) {
+    return [ROLES.ADMIN, ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE];
+  }
+
+  return [ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE];
+}
 
 function newExpiry() {
   return new Date(Date.now() + AUTH_CONSTANTS.INVITE_TTL_SECONDS * 1000);
@@ -27,7 +39,7 @@ async function inviteUser({ email, role, inviter, req }) {
     throw new AppError('You must belong to an organization to invite users', 400, 'NO_ORGANIZATION');
   }
 
-  if (!INVITABLE_ROLES.includes(role)) {
+  if (!getInvitableRoles(inviter.role).includes(role)) {
     throw new AppError('You cannot invite a user with this role', 403, 'INVALID_INVITE_ROLE');
   }
 
@@ -99,6 +111,42 @@ async function acceptInvitation({ token, firstName, lastName, password, req }) {
     emailVerified: true,
     emailVerifiedAt: new Date(),
   });
+
+  invitation.status = 'accepted';
+  invitation.acceptedAt = new Date();
+  invitation.acceptedBy = user._id;
+  await invitation.save();
+
+  await logAudit({
+    action: AUDIT_EVENTS.INVITE_ACCEPTED,
+    entityId: user._id.toString(),
+    entityType: 'user',
+    metadata: { email: user.email, role: user.role, invitedBy: invitation.invitedBy.toString() },
+    organizationId: invitation.organization,
+    req,
+    userId: user._id,
+  });
+
+  return { user: user.toSafeObject() };
+}
+
+async function acceptInvitationForExistingUser({ token, user, req }) {
+  if (user.organization) {
+    throw new AppError('You already belong to an organization', 409, 'ALREADY_IN_ORGANIZATION');
+  }
+
+  const invitation = await Invitation.findOne({ tokenHash: sha256(token) });
+  if (!invitation || invitation.effectiveStatus() !== 'pending') {
+    throw new AppError('Invitation is invalid or has expired', 400, 'INVALID_INVITE');
+  }
+
+  if (invitation.email !== user.email) {
+    throw new AppError('This invitation was sent to a different email address', 400, 'EMAIL_MISMATCH');
+  }
+
+  user.organization = invitation.organization;
+  user.role = invitation.role;
+  await user.save();
 
   invitation.status = 'accepted';
   invitation.acceptedAt = new Date();
@@ -208,6 +256,8 @@ async function revokeInvitation({ invitationId, organization, inviter, req }) {
 
 module.exports = {
   acceptInvitation,
+  acceptInvitationForExistingUser,
+  getInvitableRoles,
   inviteUser,
   listInvitations,
   resendInvitation,

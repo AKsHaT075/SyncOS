@@ -23,6 +23,9 @@ coverage/
 .next/
 out/
 
+# Uploaded files (local disk storage)
+backend/uploads/
+
 # Package manager files
 .pnp
 .pnp.*

@@ -18,6 +18,7 @@ const {
   updateSessionLastSeen,
 } = require('./session.service');
 const { issueTokenPair, persistRefreshToken, refreshTokenHash: hashRefreshJti, parseJwtTtl } = require('./token.service');
+const { withResolvedStatus } = require('./presence.service');
 const { getRequestContext } = require('../utils/device');
 const { logAudit } = require('./audit.service');
 const { sendOtpEmail, sendPasswordResetEmail } = require('./email.service');
@@ -246,7 +247,7 @@ async function loginUser({ email, password, req }) {
     csrfToken: issued.csrfToken,
     refreshToken: issued.refreshToken,
     session,
-    user: user.toSafeObject(),
+    user: await withResolvedStatus(user),
     accessToken: issued.accessToken,
   };
 }
@@ -313,7 +314,7 @@ async function refreshAuthTokens({ refreshToken, req }) {
     csrfToken: issued.csrfToken,
     refreshToken: issued.refreshToken,
     session,
-    user: user.toSafeObject(),
+    user: await withResolvedStatus(user),
     accessToken: issued.accessToken,
   };
 }
@@ -458,7 +459,7 @@ async function getProfile(userId) {
     throw new AppError('User not found', 404, 'USER_NOT_FOUND');
   }
 
-  return user.toSafeObject();
+  return withResolvedStatus(user);
 }
 
 async function getSessions(userId) {

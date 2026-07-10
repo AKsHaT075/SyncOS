@@ -8,6 +8,6 @@ const { listAuditLogsQuerySchema } = require('../validations/audit.validation');
 
 const router = express.Router();
 
-router.get('/', authenticate, authorize(ROLES.ORG_ADMIN), validateQuery(listAuditLogsQuerySchema), list);
+router.get('/', authenticate, authorize(ROLES.ORG_ADMIN, ROLES.ADMIN), validateQuery(listAuditLogsQuerySchema), list);
 
 module.exports = router;

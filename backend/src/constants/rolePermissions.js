@@ -1,16 +1,18 @@
 const { ROLES } = require('./roles');
 const { PERMISSIONS } = require('./permissions');
 
-/**
- * SUPER_ADMIN intentionally has no entries here: they administer the
- * platform (organizations themselves), not the data inside an organization.
- * Per-organization access for a super admin must go through an explicit,
- * audited elevation path rather than this map.
- */
 const ROLE_PERMISSIONS = Object.freeze({
   [ROLES.SUPER_ADMIN]: [],
 
   [ROLES.ORG_ADMIN]: Object.values(PERMISSIONS),
+
+  /**
+   * ADMIN exists for organizations with more than one owner-level person
+   * (e.g. co-founders). It carries the exact same permission set as
+   * ORG_ADMIN — the one distinction (an admin may invite/promote other
+   * admins) lives in the invite allow-list, not here.
+   */
+  [ROLES.ADMIN]: Object.values(PERMISSIONS),
 
   [ROLES.HR]: [
     PERMISSIONS.MANAGE_USERS,

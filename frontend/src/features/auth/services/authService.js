@@ -33,6 +33,10 @@ export const authService = {
     const response = await api.post("/auth/reset-password", payload);
     return response.data;
   },
+  updateStatus: async (status) => {
+    const response = await api.patch("/auth/me/status", { status });
+    return response.data;
+  },
   verifyEmail: async (payload) => {
     const response = await api.post("/auth/verify-email", payload);
     return response.data;

@@ -2,10 +2,11 @@ const AppError = require('../utils/app-error');
 const asyncHandler = require('../utils/async-handler');
 
 /**
- * Loads the resource scoped to the caller's organization and verifies the
- * caller either owns it (via `ownerField`) or holds a role in `bypassRoles`.
- * Attaches the loaded document to req.resource for the controller to reuse.
+ * Loads the resource, makes sure the user has access to it, and saves it to
+ * req.resource for later use.
  */
+
+
 function checkOwnership(Model, { ownerField = 'owner', resourceName = 'Resource', bypassRoles = [] } = {}) {
   return asyncHandler(async function checkOwnershipMiddleware(req, res, next) {
     const resourceId = req.params.id;

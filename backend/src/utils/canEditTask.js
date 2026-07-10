@@ -1,15 +1,15 @@
 const { ROLES } = require('../constants/roles');
 
 /**
- * Employees may only edit tasks assigned to them. Managers and org admins
- * may edit any task within their own organization.
+ * Employees may only edit tasks assigned to them. Managers, org admins, and
+ * admins may edit any task within their own organization.
  */
 function canEditTask(user, task) {
   if (!user.organization || task.organization.toString() !== user.organization.toString()) {
     return false;
   }
 
-  if (user.role === ROLES.ORG_ADMIN || user.role === ROLES.MANAGER) {
+  if (user.role === ROLES.ORG_ADMIN || user.role === ROLES.ADMIN || user.role === ROLES.MANAGER) {
     return true;
   }
 

@@ -93,6 +93,16 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		/**
+		 * The user's manual preference. "offline" is never stored here — it's
+		 * derived at read time from whether any session has refreshed
+		 * recently (see PRESENCE.INACTIVITY_THRESHOLD_MS / getProfile).
+		 */
+		presenceStatus: {
+			type: String,
+			enum: ['online', 'dnd'],
+			default: 'online',
+		},
 	},
 	{
 		timestamps: true,
@@ -121,6 +131,7 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 		position: this.position,
 		skills: this.skills,
 		emailVerified: this.emailVerified,
+		presenceStatus: this.presenceStatus,
 		isActive: this.isActive,
 		hasCreatedOrganization: this.hasCreatedOrganization,
 		createdAt: this.createdAt,

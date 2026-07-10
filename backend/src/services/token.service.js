@@ -1,25 +1,8 @@
 const { AUTH_CONSTANTS } = require('../constants/auth.constants');
 const { generateRandomToken, sha256 } = require('../utils/crypto');
 const { signAccessToken, signRefreshToken } = require('../utils/jwt');
+const parseJwtTtl = require('../utils/parseTtl');
 const { createRefreshTokenRecord, createRefreshTokenFamilyId, refreshTokenHash } = require('./session.service');
-
-function parseJwtTtl(ttl) {
-  const match = String(ttl).match(/^(\d+)([smhd])$/i);
-  if (!match) {
-    throw new Error(`Unsupported token ttl: ${ttl}`);
-  }
-
-  const value = Number(match[1]);
-  const unit = match[2].toLowerCase();
-  const multipliers = {
-    s: 1000,
-    m: 60 * 1000,
-    h: 60 * 60 * 1000,
-    d: 24 * 60 * 60 * 1000,
-  };
-
-  return value * multipliers[unit];
-}
 
 function buildAccessPayload(user, session) {
   return {
