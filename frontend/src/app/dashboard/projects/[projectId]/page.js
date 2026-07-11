@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Activity, Calendar, Eye, FileText, File, Image as ImageIcon, AlignLeft } from "lucide-react";
+import { Activity, Calendar, CheckSquare, Eye, FileText, File, Image as ImageIcon, AlignLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardCard, DashboardCardHeader } from "@/components/dashboard/DashboardCard";
 import EmptyStateCard from "@/components/dashboard/EmptyStateCard";
@@ -11,6 +12,8 @@ import { useProject } from "@/features/projects/hooks/useProject";
 import { useProjectActivity } from "@/features/projects/hooks/useProjectActivity";
 import { useProjectResources } from "@/features/projects/hooks/useProjectResources";
 import { projectResourceService } from "@/features/projects/services/projectResourceService";
+import { useTasks } from "@/features/tasks/hooks/useTasks";
+import { STATUS_STYLES, PRIORITY_STYLES } from "@/features/tasks/constants/taskOptions";
 
 function formatDate(value) {
   return value ? new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
@@ -32,10 +35,12 @@ export default function ProjectOverviewPage() {
   const { data: projectData, isLoading: isProjectLoading } = useProject(projectId);
   const { data: activityData, isLoading: isActivityLoading } = useProjectActivity(projectId, { limit: 5 });
   const { data: resourcesData, isLoading: isResourcesLoading } = useProjectResources(projectId);
+  const { data: tasksData, isLoading: isTasksLoading } = useTasks(projectId, { limit: 5 });
 
   const project = projectData?.project;
   const activity = activityData?.activity ?? [];
   const recentDocuments = (resourcesData?.resources ?? []).slice(0, 5);
+  const recentTasks = tasksData?.tasks ?? [];
 
   if (isProjectLoading || !project) {
     return (
@@ -75,44 +80,52 @@ export default function ProjectOverviewPage() {
             </div>
           </DashboardCard>
 
-          {/* Recent Activity - Improved styling */}
+          {/* Recent Tasks */}
           <DashboardCard>
             <DashboardCardHeader
-              icon={Activity}
-              iconClassName="bg-emerald-50 text-emerald-600"
-              title="Recent activity"
-              description="Latest changes on this project"
+              icon={CheckSquare}
+              iconClassName="bg-violet-50 text-violet-600"
+              title="Recent tasks"
+              description="Latest tasks created in this project"
+              action={
+                <Link href={`/dashboard/projects/${projectId}/tasks`} className="text-xs font-semibold text-violet-600 hover:underline">
+                  View all
+                </Link>
+              }
             />
 
             <div className="mt-5">
-              {isActivityLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <Skeleton key={index} className="h-12 w-full rounded-lg" />
-                  ))}
+              {isTasksLoading ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-12 w-full rounded-xl" />
+                  <Skeleton className="h-12 w-full rounded-xl" />
                 </div>
-              ) : activity.length === 0 ? (
-                <EmptyStateCard
-                  icon={Activity}
-                  title="No activity yet"
-                  description="Actions on this project will show up here."
-                />
+              ) : recentTasks.length === 0 ? (
+                <EmptyStateCard icon={CheckSquare} title="No tasks yet" description="Tasks created in this project will show up here." />
               ) : (
-                <div>
-                  {activity.map((entry, index) => (
-                    <div key={entry._id} className="flex items-stretch gap-3 rounded-xl px-3.5 hover:bg-zinc-50/80 transition-colors">
-                      <div className="flex flex-col items-center">
-                        <div className="mt-2.5 size-2.5 shrink-0 rounded-full bg-gradient-to-r from-violet-500 to-purple-500" />
-                        {index < activity.length - 1 ? <div className="my-1 w-px flex-1 bg-zinc-200" /> : null}
+                <div className="space-y-1">
+                  {recentTasks.map((task) => (
+                    <Link
+                      key={task.id}
+                      href={`/dashboard/projects/${projectId}/tasks/${task.id}`}
+                      className="flex items-center gap-3 rounded-xl p-2.5 transition-colors hover:bg-zinc-50"
+                    >
+                      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-50 to-violet-100 text-violet-600">
+                        <CheckSquare className="size-4" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-zinc-900 hover:underline">{task.title}</p>
+                        <p className="text-xs text-zinc-500">{new Date(task.createdAt).toLocaleDateString()}</p>
                       </div>
-                      <div className="min-w-0 flex-1 pb-4">
-                        <p className="text-sm leading-relaxed text-zinc-900">
-                          <span className="font-semibold text-zinc-900">{entry.user ? `${entry.user.firstName} ${entry.user.lastName}` : "Someone"}</span>{" "}
-                          <span className="text-zinc-600">{formatAction(entry.action).toLowerCase()}</span>
-                        </p>
-                        <p className="mt-1 text-xs text-zinc-500">{new Date(entry.createdAt).toLocaleString()}</p>
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        <Badge className={`${STATUS_STYLES[task.status]} font-medium`} variant="outline">
+                          {task.status}
+                        </Badge>
+                        <Badge className={`${PRIORITY_STYLES[task.priority]} font-medium`} variant="outline">
+                          {task.priority}
+                        </Badge>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -121,7 +134,7 @@ export default function ProjectOverviewPage() {
         </div>
 
         {/* Right sidebar */}
-        <div>
+        <div className="space-y-6">
           {/* Recent documents */}
           <DashboardCard>
             <DashboardCardHeader
@@ -165,6 +178,50 @@ export default function ProjectOverviewPage() {
                       </a>
                     );
                   })}
+                </div>
+              )}
+            </div>
+          </DashboardCard>
+
+          {/* Recent Activity - Improved styling */}
+          <DashboardCard>
+            <DashboardCardHeader
+              icon={Activity}
+              iconClassName="bg-emerald-50 text-emerald-600"
+              title="Recent activity"
+              description="Latest changes on this project"
+            />
+
+            <div className="mt-5">
+              {isActivityLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <Skeleton key={index} className="h-12 w-full rounded-lg" />
+                  ))}
+                </div>
+              ) : activity.length === 0 ? (
+                <EmptyStateCard
+                  icon={Activity}
+                  title="No activity yet"
+                  description="Actions on this project will show up here."
+                />
+              ) : (
+                <div>
+                  {activity.map((entry, index) => (
+                    <div key={entry._id} className="flex items-stretch gap-3 rounded-xl px-3.5 hover:bg-zinc-50/80 transition-colors">
+                      <div className="flex flex-col items-center">
+                        <div className="mt-2.5 size-2.5 shrink-0 rounded-full bg-gradient-to-r from-violet-500 to-purple-500" />
+                        {index < activity.length - 1 ? <div className="my-1 w-px flex-1 bg-zinc-200" /> : null}
+                      </div>
+                      <div className="min-w-0 flex-1 pb-4">
+                        <p className="text-sm leading-relaxed text-zinc-900">
+                          <span className="font-semibold text-zinc-900">{entry.user ? `${entry.user.firstName} ${entry.user.lastName}` : "Someone"}</span>{" "}
+                          <span className="text-zinc-600">{formatAction(entry.action).toLowerCase()}</span>
+                        </p>
+                        <p className="mt-1 text-xs text-zinc-500">{new Date(entry.createdAt).toLocaleString()}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

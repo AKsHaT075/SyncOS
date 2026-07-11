@@ -38,7 +38,7 @@ export const NAV_GROUPS = [
     label: "Work",
     items: [
       { label: "Projects", href: "/dashboard/projects", icon: FolderKanban, permission: null },
-      { label: "Tasks", href: "/dashboard/tasks", icon: CheckSquare, permission: PERMISSIONS.VIEW_TASK },
+      { label: "My Tasks", href: "/dashboard/tasks", icon: CheckSquare, permission: PERMISSIONS.VIEW_TASK },
       { label: "Goals", href: "/dashboard/goals", icon: Target, permission: null },
     ],
   },

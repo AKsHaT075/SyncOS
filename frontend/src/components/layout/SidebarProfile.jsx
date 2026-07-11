@@ -1,5 +1,6 @@
 "use client";
 
+import { User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,16 +26,6 @@ const ROLE_LABELS = {
   "super-admin": "Super Admin",
 };
 
-function initialsFor(fullName) {
-  if (!fullName) return "U";
-  return fullName
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
 function getRoleLabel(role) {
   return ROLE_LABELS[role] ?? role;
 }
@@ -57,8 +48,8 @@ export default function SidebarProfile({ collapsed = false }) {
         collapsed && "justify-center px-2"
       )}
     >
-      <span className="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 via-violet-600 to-indigo-600 text-[0.8rem] font-semibold text-white ring-2 ring-white/15">
-        {initialsFor(user?.fullName)}
+      <span className="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-black ring-2 ring-white/15">
+        <User className="size-4.5 text-black" strokeWidth={2} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button

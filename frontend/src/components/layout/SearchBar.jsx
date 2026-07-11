@@ -2,20 +2,29 @@
 
 import { Search } from "lucide-react";
 import { useUIStore } from "@/store/useUIStore";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function SearchBar({ compact = false }) {
   const setCommandPaletteOpen = useUIStore((state) => state.setCommandPaletteOpen);
 
   if (compact) {
     return (
-      <button
-        type="button"
-        aria-label="Open search"
-        onClick={() => setCommandPaletteOpen(true)}
-        className="flex size-8 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
-      >
-        <Search className="size-4" />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label="Open search"
+            onClick={() => setCommandPaletteOpen(true)}
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+          >
+            <Search className="size-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="flex items-center gap-1.5">
+          Search
+          <kbd className="rounded-md bg-white/10 px-1.5 py-0.5 font-sans text-[11px] font-medium">⌘K</kbd>
+        </TooltipContent>
+      </Tooltip>
     );
   }
 
