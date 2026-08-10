@@ -1,0 +1,220 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { AlertCircle, CalendarClock, ChevronDown, History, Video } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import EmptyStateCard from "@/components/dashboard/EmptyStateCard";
+import { useMyMeetings } from "@/features/meetings/hooks/useMyMeetings";
+import { MEETING_STATUS_STYLES, MEETING_STATUSES } from "@/features/meetings/constants/meetingOptions";
+
+const ALL = "all";
+const PAST_STATUSES = new Set(["Ended", "Cancelled"]);
+
+function formatDateTime(value) {
+  if (!value) return "—";
+  return new Date(value).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function formatRelative(value) {
+  const diffMs = new Date(value).getTime() - Date.now();
+  const abs = Math.abs(diffMs);
+  const mins = Math.round(abs / 60000);
+  const label = mins < 60 ? `${mins}m` : Math.round(mins / 60) < 24 ? `${Math.round(mins / 60)}h` : `${Math.round(mins / 60 / 24)}d`;
+  if (mins <= 1 && diffMs > -60000) return "starting now";
+  return diffMs > 0 ? `in ${label}` : `${label} ago`;
+}
+
+function byStartTimeAsc(a, b) {
+  return new Date(a.startTime) - new Date(b.startTime);
+}
+function byStartTimeDesc(a, b) {
+  return new Date(b.startTime) - new Date(a.startTime);
+}
+
+export default function MyMeetingsPage() {
+  const [status, setStatus] = useState(ALL);
+  const [pastOpen, setPastOpen] = useState(false);
+
+  const { data, isLoading, isError } = useMyMeetings({
+    ...(status !== ALL && { status, sortOrder: PAST_STATUSES.has(status) ? "desc" : "asc" }),
+  });
+
+  const allMeetings = data?.meetings ?? [];
+
+  const { liveMeetings, upcomingMeetings, pastMeetings } = useMemo(() => {
+    if (status !== ALL) {
+      return { liveMeetings: [], upcomingMeetings: [], pastMeetings: [] };
+    }
+    return {
+      liveMeetings: allMeetings.filter((m) => m.status === "Active"),
+      upcomingMeetings: allMeetings.filter((m) => m.status === "Scheduled").sort(byStartTimeAsc),
+      pastMeetings: allMeetings.filter((m) => PAST_STATUSES.has(m.status)).sort(byStartTimeDesc),
+    };
+  }, [allMeetings, status]);
+
+  return (
+    <div className="space-y-5 p-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold text-zinc-900">My Meetings</h1>
+        <p className="text-sm text-muted-foreground">Meetings you're hosting or invited to, across every project</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-card p-3">
+        <Button variant={status === ALL ? "secondary" : "ghost"} size="sm" className="rounded-full" onClick={() => setStatus(ALL)}>
+          All
+        </Button>
+        {MEETING_STATUSES.map((value) => (
+          <Button
+            key={value}
+            variant={status === value ? "secondary" : "ghost"}
+            size="sm"
+            className="rounded-full"
+            onClick={() => setStatus(value)}
+          >
+            {value}
+          </Button>
+        ))}
+      </div>
+
+      {isLoading ? (
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={index} className="h-20 w-full rounded-xl" />
+          ))}
+        </div>
+      ) : isError ? (
+        <Card className="flex items-center justify-center py-12">
+          <EmptyStateCard icon={AlertCircle} title="Couldn't load meetings" description="Please try again in a moment." />
+        </Card>
+      ) : allMeetings.length === 0 ? (
+        <Card className="flex items-center justify-center py-12">
+          <EmptyStateCard icon={Video} title="No meetings" description="Meetings you host or are invited to will show up here." />
+        </Card>
+      ) : status !== ALL ? (
+        <div className="flex flex-col gap-4">
+          {allMeetings.map((meeting) => (
+            <MeetingCard key={meeting.id} meeting={meeting} />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {liveMeetings.length > 0 ? (
+            <Section
+              label="Live Now"
+              labelClassName="text-emerald-700"
+              icon={
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+                </span>
+              }
+            >
+              {liveMeetings.map((meeting) => (
+                <MeetingCard key={meeting.id} meeting={meeting} />
+              ))}
+            </Section>
+          ) : null}
+
+          {upcomingMeetings.length > 0 ? (
+            <Section label="Upcoming" labelClassName="text-brand" icon={<CalendarClock className="size-3.5 text-brand" />}>
+              {upcomingMeetings.map((meeting) => (
+                <MeetingCard key={meeting.id} meeting={meeting} />
+              ))}
+            </Section>
+          ) : null}
+
+          {pastMeetings.length > 0 ? (
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => setPastOpen((v) => !v)}
+                className="flex w-full items-center gap-1.5 rounded-lg px-0.5 py-1 text-left"
+              >
+                <span className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <History className="size-3.5" /> Past Meetings ({pastMeetings.length})
+                </span>
+                <ChevronDown className={`size-3.5 text-muted-foreground transition-transform ${pastOpen ? "rotate-180" : ""}`} />
+              </button>
+              {pastOpen ? (
+                <div className="flex flex-col gap-3">
+                  {pastMeetings.map((meeting) => (
+                    <MeetingCard key={meeting.id} meeting={meeting} muted />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Section({ label, labelClassName, icon, children }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-1.5 px-0.5">
+        {icon}
+        <h3 className={`text-xs font-semibold tracking-wide uppercase ${labelClassName}`}>{label}</h3>
+      </div>
+      {/* flex+gap, not space-y — cards are wrapped in <Link> (inline by
+          default), and CSS ignores top/bottom margin on inline elements, so
+          space-y's margin-based spacing silently collapses to zero here. */}
+      <div className="flex flex-col gap-4">{children}</div>
+    </div>
+  );
+}
+
+function MeetingCard({ meeting, muted = false }) {
+  const isActive = meeting.status === "Active";
+  const isUpcoming = meeting.status === "Scheduled";
+
+  return (
+    <Card
+      className={`flex flex-col gap-3 p-4 shadow-sm transition-all duration-200 sm:flex-row sm:items-center sm:justify-between ${
+        isActive
+          ? "border-emerald-200"
+          : isUpcoming
+            ? "border-brand/20 hover:border-brand/40 hover:shadow-md hover:-translate-y-0.5"
+            : muted
+              ? "border-border/60 opacity-80 hover:opacity-100"
+              : "hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
+      }`}
+    >
+      <Link href={`/dashboard/projects/${meeting.project?.id}/meetings/${meeting.id}`} className="min-w-0 flex-1 space-y-1">
+        <div className="flex items-center gap-2">
+          <h4 className="truncate font-semibold text-foreground">{meeting.topic}</h4>
+          <Badge
+            className={`${
+              isActive ? "bg-emerald-100 text-emerald-700" : MEETING_STATUS_STYLES[meeting.status]
+            } rounded-full px-2.5 py-0.5 font-medium`}
+            variant="outline"
+          >
+            {meeting.status}
+          </Badge>
+        </div>
+        <p className="truncate text-xs text-muted-foreground">
+          {meeting.project?.name || "Project"} · Hosted by {meeting.host?.fullName}
+        </p>
+      </Link>
+
+      <div className="flex shrink-0 items-center gap-3">
+        <div className="text-right">
+          <p className="text-sm text-muted-foreground">{formatDateTime(meeting.startTime)}</p>
+          {isUpcoming ? <p className="text-xs font-medium text-brand">{formatRelative(meeting.startTime)}</p> : null}
+        </div>
+        {isActive ? (
+          <Button asChild size="sm" className="gap-1.5 bg-emerald-600 hover:bg-emerald-700">
+            <a href={`/meeting-room/${meeting.project?.id}/${meeting.id}`} target="_blank" rel="noopener noreferrer">
+              <Video className="size-4" /> Join Now
+            </a>
+          </Button>
+        ) : null}
+      </div>
+    </Card>
+  );
+}

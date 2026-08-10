@@ -53,6 +53,21 @@ const AUDIT_EVENTS = Object.freeze({
   ORG_SUSPENDED: 'org.suspended',
   ORG_REACTIVATED: 'org.reactivated',
   ORG_PLAN_CHANGED: 'org.plan_changed',
+
+  MEETING_CREATED: 'meeting.created',
+  MEETING_UPDATED: 'meeting.updated',
+  MEETING_CANCELLED: 'meeting.cancelled',
+  MEETING_PARTICIPANT_ADDED: 'meeting.participant_added',
+  MEETING_PARTICIPANT_REMOVED: 'meeting.participant_removed',
+  MEETING_PARTICIPANT_KICKED: 'meeting.participant_kicked',
+  MEETING_STARTED: 'meeting.started',
+  MEETING_ENDED: 'meeting.ended',
+  MEETING_JOINED: 'meeting.joined',
+
+  MEETING_REQUEST_CREATED: 'meeting_request.created',
+  MEETING_REQUEST_APPROVED: 'meeting_request.approved',
+  MEETING_REQUEST_REJECTED: 'meeting_request.rejected',
+  MEETING_REQUEST_SCHEDULED: 'meeting_request.scheduled',
 });
 
 module.exports = { AUDIT_EVENTS };

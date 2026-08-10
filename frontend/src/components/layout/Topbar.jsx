@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChevronRight, ChevronsUpDown, CheckSquare, Menu, PanelLeft, Sparkles } from "lucide-react";
+import { ChevronRight, ChevronsUpDown, CheckSquare, Menu, PanelLeft, Sparkles, Video } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,14 @@ import ProjectSwitcher from "@/components/layout/ProjectSwitcher";
 import { NAV_ITEMS, QUICK_LINKS, SETTINGS_ITEM } from "@/components/layout/navConfig";
 import { useTask } from "@/features/tasks/hooks/useTask";
 import { useTasks } from "@/features/tasks/hooks/useTasks";
+import { useMeeting } from "@/features/meetings/hooks/useMeeting";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 const ALL_NAV_ITEMS = [...NAV_ITEMS, ...QUICK_LINKS, SETTINGS_ITEM];
 const TASK_DETAIL_PATTERN = /^\/dashboard\/projects\/([^/]+)\/tasks\/([^/]+)$/;
 const TASK_LIST_PATTERN = /^\/dashboard\/projects\/([^/]+)\/tasks\/?$/;
+// Excludes /meetings/requests(/new) — those are separate routes, not a meeting id.
+const MEETING_DETAIL_PATTERN = /^\/dashboard\/projects\/([^/]+)\/meetings\/(?!requests)([^/]+)$/;
 const TASK_TAB_LABELS = {
   overview: "Overview",
   attachments: "Attachments",
@@ -135,6 +138,28 @@ function TaskSwitcher({ projectId, taskId }) {
   );
 }
 
+// Plain "Meetings" link back to the project's meeting list — shown on the
+// meeting detail page, ahead of the meeting name.
+function MeetingsLink({ projectId }) {
+  return (
+    <Link
+      href={`/dashboard/projects/${projectId}/meetings`}
+      className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+    >
+      <Video className="size-4 shrink-0 text-zinc-400" />
+      <span className="truncate">Meetings</span>
+    </Link>
+  );
+}
+
+function MeetingName({ projectId, meetingId }) {
+  const { data } = useMeeting(projectId, meetingId);
+  const meeting = data?.meeting;
+  return (
+    <span className="truncate text-[13px] font-semibold text-zinc-900">{meeting?.topic || "Loading..."}</span>
+  );
+}
+
 function Breadcrumbs() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -219,6 +244,33 @@ function Breadcrumbs() {
           <TaskSwitcher projectId={projectId} taskId={taskId} />
           <ChevronRight className="size-3.5 shrink-0 text-zinc-300" />
           <span className="text-[13px] font-semibold text-zinc-900">{tabLabel}</span>
+        </nav>
+      );
+    }
+  }
+
+  // On a meeting detail page, show "Projects > [Project] > Meetings > [Meeting name]"
+  const meetingDetailMatch = pathname.match(MEETING_DETAIL_PATTERN);
+  if (meetingDetailMatch) {
+    const [, projectId, meetingId] = meetingDetailMatch;
+    const projectsNavItem = ALL_NAV_ITEMS.find((item) => item.href === "/dashboard/projects");
+    if (projectsNavItem) {
+      const ProjectsIcon = projectsNavItem.icon;
+      return (
+        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5">
+          <Link
+            href="/dashboard/projects"
+            className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+          >
+            <ProjectsIcon className="size-4 shrink-0 text-zinc-400" />
+            <span className="truncate">{projectsNavItem.label}</span>
+          </Link>
+          <ChevronRight className="size-3.5 shrink-0 text-zinc-300" />
+          <ProjectSwitcher />
+          <ChevronRight className="size-3.5 shrink-0 text-zinc-300" />
+          <MeetingsLink projectId={projectId} />
+          <ChevronRight className="size-3.5 shrink-0 text-zinc-300" />
+          <MeetingName projectId={projectId} meetingId={meetingId} />
         </nav>
       );
     }
@@ -322,7 +374,7 @@ export default function Topbar() {
   const sidebarCollapsed = useUIStore((state) => state.sidebarCollapsed);
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b border-zinc-200/60 bg-white/70 px-4 backdrop-blur-xl sm:px-6">
+    <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b border-zinc-200/60 bg-white/70 px-4 shadow-sm backdrop-blur-xl sm:px-6">
       <button
         type="button"
         className="flex size-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 md:hidden"

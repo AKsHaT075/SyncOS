@@ -3,6 +3,9 @@ const { connectMongo } = require('./config/db');
 const { connectRedis } = require('./config/redis');
 const { createApp } = require('./app');
 const { processEmailQueue } = require('./services/email-queue');
+const { runMeetingAutoCleanup } = require('./services/meeting.service');
+
+const MEETING_CLEANUP_INTERVAL_MS = 2 * 60 * 1000;
 
 async function start() {
   await connectMongo();
@@ -22,7 +25,15 @@ async function start() {
     });
   });
 
+  // Ends meetings whose room has sat empty too long, and cancels scheduled
+  // meetings nobody ever joined — see runMeetingAutoCleanup for the rules.
+  runMeetingAutoCleanup().catch((error) => console.error('Meeting auto-cleanup failed:', error));
+  const cleanupInterval = setInterval(() => {
+    runMeetingAutoCleanup().catch((error) => console.error('Meeting auto-cleanup failed:', error));
+  }, MEETING_CLEANUP_INTERVAL_MS);
+
   const shutdown = async () => {
+    clearInterval(cleanupInterval);
     server.close(() => process.exit(0));
   };
 

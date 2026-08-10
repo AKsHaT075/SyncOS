@@ -43,9 +43,27 @@ async function sendInvitationEmail({ to, organizationName, role, inviteUrl }) {
   return enqueueEmail({ to, subject, text, html });
 }
 
+async function sendMeetingInvitationEmail({ to, meetingTopic, projectName, startTime, joinUrl }) {
+  const subject = `Meeting invite: ${meetingTopic}`;
+  const when = startTime ? new Date(startTime).toUTCString() : 'right now';
+  const text = `You've been invited to "${meetingTopic}" on the ${projectName} project, scheduled for ${when}. Join here: ${joinUrl}`;
+  const html = `<p>You've been invited to <strong>${meetingTopic}</strong> on the <strong>${projectName}</strong> project, scheduled for <strong>${when}</strong>.</p><p><a href="${joinUrl}">${joinUrl}</a></p>`;
+  return enqueueEmail({ to, subject, text, html });
+}
+
+async function sendMeetingRequestDecisionEmail({ to, topic, status, remarks }) {
+  const subject = `Your meeting request "${topic}" was ${status.toLowerCase()}`;
+  const remarksLine = remarks ? ` Remarks: ${remarks}` : '';
+  const text = `Your meeting request "${topic}" has been ${status.toLowerCase()}.${remarksLine}`;
+  const html = `<p>Your meeting request <strong>${topic}</strong> has been <strong>${status}</strong>.</p>${remarks ? `<p>${remarks}</p>` : ''}`;
+  return enqueueEmail({ to, subject, text, html });
+}
+
 module.exports = {
   sendEmail,
   sendInvitationEmail,
+  sendMeetingInvitationEmail,
+  sendMeetingRequestDecisionEmail,
   sendOtpEmail,
   sendPasswordResetEmail,
 };

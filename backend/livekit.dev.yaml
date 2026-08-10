@@ -1,0 +1,28 @@
+# Local self-hosted LiveKit server for development — NOT for production.
+#
+# Run with:
+#   npm run livekit:dev   (from backend/)
+# or directly:
+#   livekit-server --config backend/livekit.dev.yaml --dev
+#
+# Matches the LIVEKIT_* values added to backend/.env. The webhook URL
+# assumes the backend is running on PORT=5001 (this repo's backend/.env) —
+# update it if you run the API on a different port.
+
+port: 7880
+
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 50100
+  use_external_ip: false
+
+keys:
+  APIMh4LGjYS4TUA: XguqfYK9LkHxtrLz1t0wIPhBHGreljG3OsPRBbtOElD
+
+webhook:
+  api_key: APIMh4LGjYS4TUA
+  urls:
+    - http://localhost:5001/api/v1/livekit/webhook
+
+log_level: debug
