@@ -1,5 +1,6 @@
 import {
   Bell,
+  Box,
   Calendar,
   CalendarDays,
   CheckSquare,
@@ -19,6 +20,7 @@ export const CATEGORIES = [
   { value: "team", label: "People & teams", description: "Team membership, managers and role changes", email: true },
   { value: "document", label: "Documents", description: "Sharing, access changes and new versions", email: true },
   { value: "calendar", label: "Calendar", description: "Event invitations, changes, cancellations and reminders", email: true },
+  { value: "asset", label: "Assets", description: "Assignments, return requests, maintenance and warranty or license expiry", email: true },
 ];
 
 export const CATEGORY_FILTERS = [...CATEGORIES, { value: "security", label: "Security" }];
@@ -35,6 +37,7 @@ const BY_PREFIX = {
   person: { icon: UserCog, tone: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
   document: { icon: FileText, tone: "bg-rose-500/10 text-rose-600 dark:text-rose-400" },
   calendar: { icon: CalendarDays, tone: "bg-sky-500/10 text-sky-600 dark:text-sky-400" },
+  asset: { icon: Box, tone: "bg-orange-500/10 text-orange-600 dark:text-orange-400" },
   security: { icon: ShieldAlert, tone: "bg-red-500/10 text-red-600 dark:text-red-400" },
 };
 

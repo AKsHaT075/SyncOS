@@ -8,6 +8,7 @@ const { logAudit } = require('./audit.service');
 const teamService = require('./team.service');
 const notificationEvents = require('./notificationEvents');
 const notificationHub = require('./notificationHub');
+const { notifyFormerMemberHoldings } = require('./assetAssignment.service');
 const { revokeAllSessionsForUser } = require('./session.service');
 const { createPasswordResetToken } = require('./password-reset.service');
 const { sendPasswordResetEmail } = require('./email.service');
@@ -236,6 +237,7 @@ async function updatePerson({ userId, actor, updates, req }) {
       // A blocked person can't use the app: drop their live streams everywhere
       // and tell them by email only (organization name, nothing else).
       await notificationHub.closeUser(person._id, 'blocked');
+      await notifyFormerMemberHoldings({ organization: actor.organization, person, actor }); // assets stay assigned; admins/HR are told
       await notificationEvents.personAccessBlocked({ person, organizationId: actor.organization });
     } else {
       await notificationEvents.personAccessRestored({ person, actor });
@@ -282,6 +284,7 @@ async function removeFromOrganization({ userId, actor, req }) {
   });
 
   await notificationHub.closeUser(person._id, 'removed');
+  await notifyFormerMemberHoldings({ organization: actor.organization, person, actor });
   await notificationEvents.personRemovedFromOrganization({ person, organizationId: actor.organization });
 
   return { removed: true };

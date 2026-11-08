@@ -1,3 +1,4 @@
+const Asset = require('../models/Asset');
 const CalendarEvent = require('../models/CalendarEvent');
 const Document = require('../models/Document');
 const Meeting = require('../models/Meeting');
@@ -7,6 +8,7 @@ const Task = require('../models/Task');
 const Team = require('../models/Team');
 const { NOTIFICATION_TARGETS: T } = require('../constants/notification.constants');
 const { NOTIFICATION_TYPES } = require('../constants/notificationTypes');
+const { canViewAsset } = require('../utils/assetAccess');
 const { canViewEvent } = require('../utils/calendarAccess');
 const { resolveDocumentAccess } = require('../utils/documentAccess');
 const { canScheduleMeeting, canViewMeeting } = require('../utils/meetingAccess');
@@ -14,6 +16,7 @@ const { canViewProject } = require('../utils/projectAccess');
 const { canViewTask } = require('../utils/taskAccess');
 const { canViewTeam } = require('../utils/teamAccess');
 const { loadAccessContext } = require('./documentAccess.service');
+const { loadAssetContext } = require('./assetContext');
 const { loadCalendarContext } = require('./calendarContext');
 
 const idOf = (value) => (value ? (value._id ? value._id.toString() : value.toString()) : null);
@@ -37,6 +40,8 @@ function buildLink(target) {
       return '/dashboard/my-team';
     case T.CALENDAR_EVENT:
       return `/dashboard/calendar?event=${id}`;
+    case T.ASSET:
+      return `/dashboard/assets/${id}`;
     default:
       return null;
   }
@@ -57,7 +62,7 @@ const byId = (docs) => new Map(docs.map((doc) => [doc._id.toString(), doc]));
  */
 async function resolveAccess(user, notifications) {
   const result = new Map();
-  const pending = { [T.TASK]: [], [T.PROJECT]: [], [T.MEETING]: [], [T.MEETING_REQUEST]: [], [T.DOCUMENT]: [], [T.TEAM]: [], [T.CALENDAR_EVENT]: [] };
+  const pending = { [T.TASK]: [], [T.PROJECT]: [], [T.MEETING]: [], [T.MEETING_REQUEST]: [], [T.DOCUMENT]: [], [T.TEAM]: [], [T.CALENDAR_EVENT]: [], [T.ASSET]: [] };
 
   notifications.forEach((notification) => {
     const def = NOTIFICATION_TYPES[notification.type];
@@ -140,6 +145,17 @@ async function resolveAccess(user, notifications) {
     pending[T.CALENDAR_EVENT].forEach((n) => {
       const event = events.get(idOf(n.target.id));
       verdicts.set(n._id.toString(), Boolean(event && canViewEvent(ctx, event)));
+    });
+  }
+
+  // assets
+  if (pending[T.ASSET].length) {
+    const assets = byId(await Asset.find({ _id: { $in: pending[T.ASSET].map((n) => n.target.id) }, organization, deletedAt: null })
+      .select('organization assignedUser assignedTeam team').lean());
+    const ctx = await loadAssetContext(user);
+    pending[T.ASSET].forEach((n) => {
+      const asset = assets.get(idOf(n.target.id));
+      verdicts.set(n._id.toString(), Boolean(asset && canViewAsset(ctx, asset)));
     });
   }
 

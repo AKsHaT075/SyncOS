@@ -396,11 +396,22 @@ async function markRead({ user, id }) {
   return { success: true, unreadCount: await countUnread(user) };
 }
 
-async function markAllRead({ user, category }) {
+/** Unread in-app notifications grouped by type: drives the per-section badges in the sidebar. */
+async function getUnreadByType({ user }) {
+  if (!user.organization) return { counts: {} };
+  const rows = await Notification.aggregate([
+    { $match: { ...ownScope(user), inApp: true, unread: true, dismissedAt: null, createdAt: { $gte: cutoff() } } },
+    { $group: { _id: '$type', count: { $sum: 1 } } },
+  ]);
+  return { counts: Object.fromEntries(rows.map((row) => [row._id, Math.min(row.count, UNREAD_COUNT_CAP)])) };
+}
+
+async function markAllRead({ user, category, types }) {
   const filter = { ...ownScope(user), inApp: true, unread: true, dismissedAt: null };
   if (category) filter.category = category;
+  if (types && types.length) filter.type = { $in: types };
   const result = await Notification.updateMany(filter, { $set: { unread: false, readAt: new Date() } });
-  await publishSync(user, 'notification.read_all', { category: category || null });
+  await publishSync(user, 'notification.read_all', { category: category || null, types: types && types.length ? types : null });
   return { success: true, updated: result.modifiedCount, unreadCount: await countUnread(user) };
 }
 
@@ -426,6 +437,7 @@ module.exports = {
   countUnread,
   dismissNotification,
   getPreferences,
+  getUnreadByType,
   getUnreadCount,
   listNotifications,
   markAllRead,

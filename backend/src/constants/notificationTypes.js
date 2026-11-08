@@ -204,6 +204,78 @@ const NOTIFICATION_TYPES = Object.freeze({
     message: ({ p }) => `“${p.event}” starts in about ${p.when}.`,
   },
 
+  // ---- assets
+  'asset.assigned': {
+    category: C.ASSET, target: T.ASSET, link: true, email: true,
+    title: 'Asset assigned to you',
+    message: ({ actor, p }) => `${actor} assigned “${p.asset}” (${p.assetId}) to you${p.when ? `, due back ${p.when}` : ''}.`,
+  },
+  'asset.transferred': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Asset transferred to you',
+    message: ({ actor, p }) => `${actor} transferred “${p.asset}” (${p.assetId}) to you.`,
+  },
+  'asset.transferred_away': {
+    category: C.ASSET, target: T.ASSET, link: false,
+    title: 'Asset transferred away',
+    message: ({ actor, p }) => `${actor} transferred “${p.asset}” (${p.assetId}) from you to ${p.to}.`,
+  },
+  'asset.return_requested': {
+    category: C.ASSET, target: T.ASSET, link: true, email: true,
+    title: 'Please return an asset',
+    message: ({ actor, p }) => `${actor} asked you to return “${p.asset}” (${p.assetId}).${p.note ? ` ${p.note}` : ''}`,
+  },
+  'asset.returned': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Asset returned',
+    message: ({ actor, p }) => `${actor} returned “${p.asset}” (${p.assetId}) in ${p.condition} condition.`,
+  },
+  'asset.lost': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Asset reported lost',
+    message: ({ actor, p }) => `${actor} marked “${p.asset}” (${p.assetId}) as lost.`,
+  },
+  'asset.maintenance_requested': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Maintenance requested',
+    message: ({ actor, p }) => `${actor} reported an issue with “${p.asset}” (${p.assetId}).`,
+  },
+  'asset.maintenance_scheduled': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Maintenance scheduled',
+    message: ({ p }) => `Maintenance for “${p.asset}” (${p.assetId}) is scheduled for ${p.when}.`,
+  },
+  'asset.maintenance_declined': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Maintenance request declined',
+    message: ({ actor, p }) => `${actor} declined your maintenance request for “${p.asset}” (${p.assetId}).${p.note ? ` ${p.note}` : ''}`,
+  },
+  'asset.maintenance_overdue': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Maintenance overdue',
+    message: ({ p }) => `Maintenance for “${p.asset}” (${p.assetId}) was due ${p.when} and hasn’t been started.`,
+  },
+  'asset.maintenance_completed': {
+    category: C.ASSET, target: T.ASSET, link: true,
+    title: 'Maintenance completed',
+    message: ({ p }) => `Maintenance on “${p.asset}” (${p.assetId}) is complete.`,
+  },
+  'asset.warranty_expiring': {
+    category: C.ASSET, target: T.ASSET, link: true, email: true,
+    title: 'Warranty expiring',
+    message: ({ p }) => `The warranty for “${p.asset}” (${p.assetId}) ${p.days <= 0 ? 'expires today' : `expires in ${p.days} day${p.days === 1 ? '' : 's'}`} (${p.when}).`,
+  },
+  'asset.license_expiring': {
+    category: C.ASSET, target: T.ASSET, link: true, email: true,
+    title: 'License expiring',
+    message: ({ p }) => `The ${p.what} for “${p.asset}” (${p.assetId}) ${p.days <= 0 ? 'is due today' : `is due in ${p.days} day${p.days === 1 ? '' : 's'}`} (${p.when}).`,
+  },
+  'asset.former_member_holds': {
+    category: C.ASSET, target: T.ASSET, link: false,
+    title: 'Assets still with a former member',
+    message: ({ p }) => `${p.person} is no longer an active member but still holds ${p.count} asset${p.count === 1 ? '' : 's'}. Review them under Assets › Offboarding.`,
+  },
+
   // ---- security (always on; not configurable)
   'security.access_restored': {
     category: C.SECURITY, target: null, link: false, email: true,

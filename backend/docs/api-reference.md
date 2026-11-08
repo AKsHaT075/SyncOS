@@ -171,6 +171,10 @@ call.
 
 See [calendar.md](calendar.md) for the full endpoint list, scopes, access rules, timezone, recurrence and reminder behaviour (`/api/v1/calendar`).
 
+## Assets
+
+See [assets.md](assets.md) for the endpoint list, role matrix, lifecycle, integrity model, license handling and alerts (`/api/v1/assets`).
+
 ## Notifications
 
 See [notifications.md](notifications.md) (`/api/v1/notifications`).

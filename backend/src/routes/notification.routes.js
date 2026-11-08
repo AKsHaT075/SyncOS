@@ -20,6 +20,7 @@ router.use(authenticate, requireOrgAccess);
 router.get('/', validateQuery(listNotificationsQuerySchema), controller.list);
 router.get('/stream', controller.stream);
 router.get('/unread-count', controller.unreadCount);
+router.get('/unread-by-type', controller.unreadByType);
 router.get('/preferences', controller.getPreferences);
 router.put('/preferences', validateBody(updatePreferencesSchema), controller.updatePreferences);
 router.post('/read-all', validateBody(markAllReadSchema), controller.markAllRead);

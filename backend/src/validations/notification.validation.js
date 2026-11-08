@@ -12,7 +12,9 @@ const listNotificationsQuerySchema = z
   })
   .strict();
 
-const markAllReadSchema = z.object({ category: categoryEnum.optional() }).strict();
+const markAllReadSchema = z
+  .object({ category: categoryEnum.optional(), types: z.array(z.string().regex(/^[a-z_]+\.[a-z_]+$/)).min(1).max(40).optional() })
+  .strict();
 
 const channelsPatch = z.object({ inApp: z.boolean().optional(), email: z.boolean().optional() }).strict();
 

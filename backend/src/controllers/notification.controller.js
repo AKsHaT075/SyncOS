@@ -12,7 +12,9 @@ const unreadCount = asyncHandler(async (req, res) => ok(res, await service.getUn
 const markRead = asyncHandler(async (req, res) => ok(res, await service.markRead({ user: req.user, id: req.params.id })));
 
 const markAllRead = asyncHandler(async (req, res) =>
-  ok(res, await service.markAllRead({ user: req.user, category: req.body.category })));
+  ok(res, await service.markAllRead({ user: req.user, category: req.body.category, types: req.body.types })));
+
+const unreadByType = asyncHandler(async (req, res) => ok(res, await service.getUnreadByType({ user: req.user })));
 
 const dismiss = asyncHandler(async (req, res) =>
   ok(res, await service.dismissNotification({ user: req.user, id: req.params.id })));
@@ -54,4 +56,4 @@ const stream = asyncHandler(async (req, res) => {
   hub.writeEvent(res, { event: 'ready', data: { unreadCount: await service.countUnread(user) } });
 });
 
-module.exports = { dismiss, getPreferences, list, markAllRead, markRead, stream, unreadCount, updatePreferences };
+module.exports = { dismiss, getPreferences, list, markAllRead, markRead, stream, unreadByType, unreadCount, updatePreferences };

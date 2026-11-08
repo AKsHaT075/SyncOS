@@ -9,6 +9,7 @@ import {
   Calendar,
   FileText,
   Box,
+  Laptop,
   FileBarChart,
   LineChart,
   Sparkles,
@@ -61,7 +62,8 @@ export const NAV_GROUPS = [
     label: "Resources",
     items: [
       { label: "Documents", href: "/dashboard/documents", icon: FileText, permission: PERMISSIONS.VIEW_DOCUMENT },
-      { label: "Assets", href: "/dashboard/assets", icon: Box, permission: PERMISSIONS.MANAGE_ASSETS },
+      { label: "Assets", href: "/dashboard/assets", icon: Box, permission: PERMISSIONS.VIEW_ASSETS },
+      { label: "My Assets", href: "/dashboard/my-assets", icon: Laptop, permission: PERMISSIONS.VIEW_OWN_ASSETS },
     ],
   },
   {

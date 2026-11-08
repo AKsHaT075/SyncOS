@@ -37,6 +37,17 @@ export function useUnreadCount({ enabled = true } = {}) {
   });
 }
 
+/** Unread counts per notification type, kept fresh by the same live events as the total. */
+export function useUnreadByType({ enabled = true } = {}) {
+  return useQuery({
+    queryKey: KEYS.byType,
+    queryFn: notificationService.unreadByType,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+    enabled,
+  });
+}
+
 function useOptimistic({ mutationFn, optimistic, errorMessage }) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -122,5 +133,17 @@ export function useUpdateNotificationPreferences() {
       toast.error(getFriendlyErrorMessage(error));
     },
     onSuccess: (data) => queryClient.setQueryData(KEYS.preferences, data),
+  });
+}
+
+/** Marks every unread notification of the given types as read (used when a user opens the section they belong to). */
+export function useMarkTypesRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (types) => notificationService.markTypesRead(types),
+    onSuccess: (data) => {
+      setUnreadCount(queryClient, data?.unreadCount);
+      queryClient.invalidateQueries({ queryKey: KEYS.lists });
+    },
   });
 }

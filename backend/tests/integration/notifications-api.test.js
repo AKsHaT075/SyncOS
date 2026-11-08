@@ -249,6 +249,28 @@ describe('listing, pagination, unread counts', () => {
   });
 });
 
+describe('per-section badges (unread by type)', () => {
+  const row = (recipient, type, category, key) => ({ organization: orgA._id, recipient, type, category, title: 't', message: 'm', dedupeKey: key, createdAt: new Date() });
+
+  it('groups unread notifications by type for the caller only, and marks only the requested types read', async () => {
+    await Notification.insertMany([
+      row(users.empA._id, 'asset.maintenance_requested', 'asset', 'bt:1'),
+      row(users.empA._id, 'asset.maintenance_requested', 'asset', 'bt:2'),
+      row(users.empA._id, 'document.shared', 'document', 'bt:3'),
+      row(users.empB._id, 'document.shared', 'document', 'bt:4'),
+    ]);
+    expect((await as('empA').get('/api/v1/notifications/unread-by-type').expect(200)).body.counts).toEqual({ 'asset.maintenance_requested': 2, 'document.shared': 1 });
+
+    const res = await as('empA').post('/api/v1/notifications/read-all').send({ types: ['asset.maintenance_requested'] }).expect(200);
+    expect(res.body.unreadCount).toBe(1);
+    expect((await as('empA').get('/api/v1/notifications/unread-by-type').expect(200)).body.counts).toEqual({ 'document.shared': 1 });
+    expect(await Notification.countDocuments({ recipient: users.empB._id, unread: true })).toBe(1); // someone else's untouched
+
+    await as('empA').post('/api/v1/notifications/read-all').send({ types: ['not a type'] }).expect(400);
+    await as('empA').post('/api/v1/notifications/read-all').send({ types: [] }).expect(400);
+  });
+});
+
 describe('read / read-all / dismiss', () => {
   it('marks one notification read (idempotently) and updates the count', async () => {
     const { created } = await give('empA');
@@ -527,7 +549,7 @@ describe('preferences', () => {
   it('returns sensible defaults without creating anything', async () => {
     const res = await as('empA').get('/api/v1/notifications/preferences').expect(200);
     expect(res.body.preferences.channels).toEqual({ inApp: true, email: true });
-    expect(Object.keys(res.body.preferences.categories).sort()).toEqual(['calendar', 'document', 'meeting', 'project', 'task', 'team']);
+    expect(Object.keys(res.body.preferences.categories).sort()).toEqual(['asset', 'calendar', 'document', 'meeting', 'project', 'task', 'team']);
     expect(res.body.alwaysOn).toEqual(['security']);
     expect(await NotificationPreference.countDocuments()).toBe(0);
   });

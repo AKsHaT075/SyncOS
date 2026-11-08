@@ -23,6 +23,7 @@ const notificationPreferenceSchema = new mongoose.Schema(
       team: { type: channelSchema, default: () => ({}) },
       document: { type: channelSchema, default: () => ({}) },
       calendar: { type: channelSchema, default: () => ({}) },
+      asset: { type: channelSchema, default: () => ({}) },
     },
   },
   { timestamps: true },

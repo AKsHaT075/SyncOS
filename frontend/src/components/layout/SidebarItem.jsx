@@ -35,9 +35,15 @@ export default function SidebarItem({ item, collapsed, badge }) {
       />
       {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
       {!collapsed && badge > 0 ? (
-        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-violet-600 px-1 text-[11px] font-semibold text-white shadow-sm shadow-violet-500/40">
-          {badge}
+        <span
+          aria-label={`${badge} unread notification${badge === 1 ? "" : "s"}`}
+          className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-violet-600 px-1 text-[11px] font-semibold text-white shadow-sm shadow-violet-500/40"
+        >
+          {badge > 99 ? "99+" : badge}
         </span>
+      ) : null}
+      {collapsed && badge > 0 ? (
+        <span aria-label={`${badge} unread`} className="absolute right-1 top-1 size-2 rounded-full bg-violet-400 ring-2 ring-zinc-950" />
       ) : null}
     </Link>
   );

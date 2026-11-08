@@ -14,7 +14,7 @@ describe('catalogue', () => {
       const message = def.message({ actor: 'Ann', p: { task: 'SECRET', project: 'SECRET', topic: 'SECRET', document: 'SECRET', team: 'SECRET', role: 'r', status: 's', permission: 'p', minutes: 5, newOwner: 'N' } });
       expect(typeof message).toBe('string');
       expect(def.title).not.toContain('SECRET');
-      expect(['task', 'project', 'meeting', 'team', 'document', 'calendar', 'security']).toContain(def.category);
+      expect(['task', 'project', 'meeting', 'team', 'document', 'calendar', 'asset', 'security']).toContain(def.category);
       expect(type).toMatch(/^[a-z_]+\.[a-z_]+$/);
     });
   });
@@ -22,6 +22,7 @@ describe('catalogue', () => {
   it('email-eligible types are a deliberately small, high-signal set', () => {
     const emailTypes = Object.entries(NOTIFICATION_TYPES).filter(([, def]) => def.email).map(([type]) => type).sort();
     expect(emailTypes).toEqual([
+      'asset.assigned', 'asset.license_expiring', 'asset.return_requested', 'asset.warranty_expiring',
       'calendar.event_cancelled', 'calendar.event_invited', 'calendar.reminder',
       'document.shared', 'meeting.cancelled', 'meeting.invited', 'meeting_request.approved',
       'meeting_request.rejected', 'person.role_changed', 'security.access_restored',

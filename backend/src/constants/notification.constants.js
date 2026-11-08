@@ -7,6 +7,7 @@ const NOTIFICATION_CATEGORIES = Object.freeze({
   TEAM: 'team', // people & teams
   DOCUMENT: 'document',
   CALENDAR: 'calendar',
+  ASSET: 'asset',
   SECURITY: 'security', // never user-configurable
 });
 
@@ -23,6 +24,7 @@ const NOTIFICATION_TARGETS = Object.freeze({
   DOCUMENT: 'document',
   TEAM: 'team',
   CALENDAR_EVENT: 'calendar_event',
+  ASSET: 'asset',
 });
 
 const EMAIL_STATUS = Object.freeze({

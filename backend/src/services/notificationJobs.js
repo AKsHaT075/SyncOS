@@ -7,6 +7,7 @@ const Project = require('../models/Project');
 const { meetingReminder } = require('./notificationEvents');
 const { sweepPendingEmails } = require('./notificationEmail.service');
 const { runCalendarReminders } = require('./calendarReminders');
+const { runAssetJobs } = require('./assetJobs');
 
 const TICK_MS = 60 * 1000;
 
@@ -57,6 +58,8 @@ function startNotificationJobs() {
   const tick = () => {
     withLock('reminders', 50, runMeetingReminders).catch((error) => console.error('[notifications] reminders failed:', error.message));
     withLock('calendar-reminders', 50, runCalendarReminders).catch((error) => console.error('[notifications] calendar reminders failed:', error.message));
+    // Hourly across all instances: the lock outlives the tick interval, so only one tick per hour wins it.
+    withLock('asset-jobs', 3500, runAssetJobs).catch((error) => console.error('[assets] jobs failed:', error.message));
     withLock('email-sweep', 50, sweepPendingEmails).catch((error) => console.error('[notifications] email sweep failed:', error.message));
   };
   tick();

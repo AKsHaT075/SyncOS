@@ -15,6 +15,7 @@ import {
 import Can from "@/components/auth/Can";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
+import { useSectionBadges } from "@/features/notifications/hooks/useSectionBadges";
 import { useUnreadCount } from "@/features/notifications/hooks/notificationHooks";
 import { NAV_GROUPS, QUICK_LINKS, SETTINGS_ITEM } from "@/components/layout/navConfig";
 import SidebarItem from "@/components/layout/SidebarItem";
@@ -26,6 +27,7 @@ export default function MobileSidebar() {
   // Real unread count (kept live by the notification stream) — replaces the old placeholder store.
   const { data: unread } = useUnreadCount();
   const unreadCount = unread?.count ?? 0;
+  const { badgeFor } = useSectionBadges();
   const pathname = usePathname();
 
   const [openGroups, setOpenGroups] = useState(() =>
@@ -112,10 +114,10 @@ export default function MobileSidebar() {
                     {group.items.map((item) =>
                       item.permission ? (
                         <Can key={item.href} permission={item.permission}>
-                          <SidebarItem item={item} collapsed={false} />
+                          <SidebarItem item={item} collapsed={false} badge={badgeFor(item.href)} />
                         </Can>
                       ) : (
-                        <SidebarItem key={item.href} item={item} collapsed={false} />
+                        <SidebarItem key={item.href} item={item} collapsed={false} badge={badgeFor(item.href)} />
                       )
                     )}
                   </div>

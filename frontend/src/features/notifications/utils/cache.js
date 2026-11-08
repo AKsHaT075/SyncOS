@@ -4,6 +4,7 @@ export const KEYS = {
   all: ["notifications"],
   lists: ["notifications", "list"],
   unread: ["notifications", "unread"],
+  byType: ["notifications", "unread-by-type"],
   preferences: ["notifications", "preferences"],
 };
 
@@ -28,6 +29,8 @@ function patchLists(queryClient, patch) {
 }
 
 export function setUnreadCount(queryClient, count) {
+  // Every change to the unread total can change a per-section badge too; it is one cheap request.
+  queryClient.invalidateQueries({ queryKey: KEYS.byType });
   if (typeof count !== "number") return;
   queryClient.setQueryData(KEYS.unread, { count, capped: count >= UNREAD_CAP });
 }
@@ -90,7 +93,8 @@ export function applyEvent(queryClient, { event, data }) {
       setUnreadCount(queryClient, data.unreadCount);
       return;
     case "notification.read_all":
-      markAllReadInCache(queryClient, data.category);
+      if (data.types) queryClient.invalidateQueries({ queryKey: KEYS.lists }); // partial read: resync rather than patch
+      else markAllReadInCache(queryClient, data.category);
       setUnreadCount(queryClient, data.unreadCount);
       return;
     case "notification.dismissed":
