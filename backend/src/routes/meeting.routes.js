@@ -1,6 +1,6 @@
 const express = require('express');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
-const { authenticate } = require('../middlewares/authenticate');
+const { authenticate, requireOrgAccess } = require('../middlewares/authenticate');
 const {
   activity,
   addParticipantsHandler,
@@ -29,7 +29,7 @@ const {
 // project-role-aware and happen inside meeting.service.js — see meetingAccess.js.
 const router = express.Router({ mergeParams: true });
 
-router.use(authenticate);
+router.use(authenticate, requireOrgAccess);
 
 router.get('/', validateQuery(listMeetingsQuerySchema), list);
 router.post('/', validateBody(createMeetingSchema), schedule);

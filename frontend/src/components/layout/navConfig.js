@@ -45,8 +45,9 @@ export const NAV_GROUPS = [
   {
     label: "People",
     items: [
-      { label: "People", href: "/dashboard/people", icon: Users, permission: PERMISSIONS.MANAGE_USERS },
-      { label: "Teams", href: "/dashboard/teams", icon: Users2, permission: PERMISSIONS.UPDATE_TEAM },
+      { label: "People", href: "/dashboard/people", icon: Users, permission: PERMISSIONS.VIEW_PEOPLE },
+      { label: "My Team", href: "/dashboard/my-team", icon: Sparkles, permission: PERMISSIONS.VIEW_TEAM },
+      { label: "Manage Teams", href: "/dashboard/teams", icon: Users2, permission: PERMISSIONS.VIEW_TEAM },
     ],
   },
   {

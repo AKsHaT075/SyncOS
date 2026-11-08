@@ -37,6 +37,20 @@ async function authenticate(req, res, next) {
   }
 }
 
+/**
+ * Org-level access gate, applied after authenticate() on org-scoped routes.
+ * Deliberately separate from the isActive check in authenticate: a blocked
+ * user still holds a valid session (so /auth/me, /organizations/me and
+ * logout keep working, letting the UI show why they're blocked) but every
+ * feature route rejects them here.
+ */
+function requireOrgAccess(req, res, next) {
+  if (req.user?.orgBlocked) {
+    return next(new AppError('You have been blocked from this organization', 403, 'ORG_BLOCKED'));
+  }
+  return next();
+}
+
 function optionalAuthenticate(req, res, next) {
   const token = getAccessToken(req);
   if (!token) {
@@ -56,4 +70,5 @@ function optionalAuthenticate(req, res, next) {
 module.exports = {
   authenticate,
   optionalAuthenticate,
+  requireOrgAccess,
 };

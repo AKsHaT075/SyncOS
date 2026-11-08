@@ -1,6 +1,6 @@
 const express = require('express');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
-const { authenticate } = require('../middlewares/authenticate');
+const { authenticate, requireOrgAccess } = require('../middlewares/authenticate');
 const { approve, create, list, reject, schedule } = require('../controllers/meetingRequest.controller');
 const {
   createMeetingRequestSchema,
@@ -15,7 +15,7 @@ const {
 // approve/reject/schedule them.
 const router = express.Router({ mergeParams: true });
 
-router.use(authenticate);
+router.use(authenticate, requireOrgAccess);
 
 router.get('/', validateQuery(listMeetingRequestsQuerySchema), list);
 router.post('/', validateBody(createMeetingRequestSchema), create);

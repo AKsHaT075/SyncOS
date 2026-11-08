@@ -55,6 +55,14 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     const requestPath = originalRequest?.url || "";
 
+    if (status === 403 && error?.response?.data?.code === "ORG_BLOCKED") {
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser && !currentUser.orgBlocked) {
+        useAuthStore.getState().setUser({ ...currentUser, orgBlocked: true });
+      }
+      return Promise.reject(error);
+    }
+
     if (status !== 401 || originalRequest?._retry || [...refreshExemptPaths].some((path) => requestPath.includes(path))) {
       return Promise.reject(error);
     }

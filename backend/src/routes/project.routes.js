@@ -1,6 +1,6 @@
 const express = require('express');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
-const { authenticate } = require('../middlewares/authenticate');
+const { authenticate, requireOrgAccess } = require('../middlewares/authenticate');
 const checkPermission = require('../middlewares/checkPermission');
 const { uploadSingleResource } = require('../middlewares/upload');
 const { PERMISSIONS } = require('../constants/permissions');
@@ -39,7 +39,7 @@ const {
 
 const router = express.Router();
 
-router.use(authenticate);
+router.use(authenticate, requireOrgAccess);
 
 // Read access is scoped per-project inside the service (org role + team +
 // membership + visibility) rather than gated by a single coarse permission,

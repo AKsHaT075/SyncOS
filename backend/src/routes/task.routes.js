@@ -1,6 +1,6 @@
 const express = require('express');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
-const { authenticate } = require('../middlewares/authenticate');
+const { authenticate, requireOrgAccess } = require('../middlewares/authenticate');
 const { uploadSingleTaskAttachment, uploadTaskAttachments } = require('../middlewares/upload');
 const {
   activity,
@@ -33,7 +33,7 @@ const {
 // via a coarse route-level checkPermission — see taskAccess.js.
 const router = express.Router({ mergeParams: true });
 
-router.use(authenticate);
+router.use(authenticate, requireOrgAccess);
 
 router.get('/', validateQuery(listTasksQuerySchema), list);
 router.post('/', validateBody(createTaskSchema), create);

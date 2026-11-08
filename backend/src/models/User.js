@@ -46,11 +46,6 @@ const userSchema = new mongoose.Schema(
 			default: null,
 			index: true,
 		},
-		position: {
-			type: String,
-			default: '',
-			trim: true,
-		},
 		skills: {
 			type: [String],
 			default: [],
@@ -88,6 +83,21 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: true,
 			index: true,
+		},
+		/**
+		 * Org-level access block. Distinct from isActive: a blocked user can
+		 * still authenticate (so a future multi-org account isn't locked out
+		 * everywhere), but every org-scoped route rejects them with
+		 * ORG_BLOCKED (see requireOrgAccess). isActive remains the full
+		 * account deactivation switch.
+		 */
+		orgBlocked: {
+			type: Boolean,
+			default: false,
+		},
+		orgBlockedAt: {
+			type: Date,
+			default: null,
 		},
 		hasCreatedOrganization: {
 			type: Boolean,
@@ -128,8 +138,8 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 		permissions: ROLE_PERMISSIONS[this.role] || [],
 		organization: this.organization ? this.organization.toString() : null,
 		team: this.team ? this.team.toString() : null,
-		position: this.position,
 		skills: this.skills,
+		orgBlocked: this.orgBlocked,
 		emailVerified: this.emailVerified,
 		presenceStatus: this.presenceStatus,
 		isActive: this.isActive,
