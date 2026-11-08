@@ -166,3 +166,11 @@ Outside the CSRF-exempt list, every non-`GET`/`HEAD`/`OPTIONS` request must incl
 `X-CSRF-Token` header set to the current value of the CSRF cookie. Get a fresh one via
 `GET /api/v1/auth/csrf-token`, or simply reuse the one reissued by the last login/refresh
 call.
+
+## Calendar
+
+See [calendar.md](calendar.md) for the full endpoint list, scopes, access rules, timezone, recurrence and reminder behaviour (`/api/v1/calendar`).
+
+## Notifications
+
+See [notifications.md](notifications.md) (`/api/v1/notifications`).

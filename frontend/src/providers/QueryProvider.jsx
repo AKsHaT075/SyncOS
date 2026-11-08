@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function QueryProvider({ children }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
+  const [queryClient] = useState(() => {
+    // Tasks, meetings and projects all appear on the calendar. Rather than editing every one of their
+    // hooks, any successful mutation marks calendar data stale; only a calendar view that is currently
+    // on screen actually refetches, otherwise it refreshes the next time it is opened.
+    let client;
+    client = new QueryClient({
+      mutationCache: new MutationCache({ onSuccess: () => client.invalidateQueries({ queryKey: ["calendar"] }) }),
         defaultOptions: {
           queries: {
             refetchOnWindowFocus: false,
@@ -17,8 +21,9 @@ export default function QueryProvider({ children }) {
             retry: 0,
           },
         },
-      })
-  );
+    });
+    return client;
+  });
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

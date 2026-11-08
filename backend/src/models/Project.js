@@ -185,6 +185,8 @@ projectSchema.index(
 );
 projectSchema.index({ 'members.user': 1 });
 projectSchema.index({ organization: 1, archived: 1 });
+// Calendar: project deadline range queries.
+projectSchema.index({ organization: 1, dueDate: 1 });
 
 // `owner`/`members.user` may or may not be populated depending on the query
 // that loaded this document — these helpers work either way.

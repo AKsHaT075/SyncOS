@@ -1,3 +1,4 @@
+const path = require('path');
 require('dotenv').config();
 
 function required(name) {
@@ -50,6 +51,14 @@ module.exports = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: Number(process.env.PORT || 5000),
   REDIS_URL: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
+  STORAGE_DRIVER: process.env.STORAGE_DRIVER || 'local',
+  STORAGE_LOCAL_ROOT: process.env.STORAGE_LOCAL_ROOT || path.join(__dirname, '..', '..', 'uploads', 'documents'),
+  UPLOAD_TMP_DIR: process.env.UPLOAD_TMP_DIR || path.join(__dirname, '..', '..', 'uploads', 'tmp'),
+  DOCUMENT_MAX_FILE_SIZE_MB: Number(process.env.DOCUMENT_MAX_FILE_SIZE_MB || 25),
+  // Redis key/channel prefixes — overridable so test runs never touch a dev worker's queue.
+  EMAIL_QUEUE_PREFIX: process.env.EMAIL_QUEUE_PREFIX || 'email',
+  NOTIFICATION_CHANNEL_PREFIX: process.env.NOTIFICATION_CHANNEL_PREFIX || 'notif',
+  NOTIFICATION_RETENTION_DAYS: Number(process.env.NOTIFICATION_RETENTION_DAYS || 90),
   SESSION_SECRET: process.env.SESSION_SECRET || process.env.JWT_SECRET,
   SMTP_FROM: process.env.SMTP_FROM || 'Sync Os <no-reply@syncos.local>',
   SMTP_HOST: process.env.SMTP_HOST || '',

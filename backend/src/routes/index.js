@@ -5,7 +5,12 @@ const organizationRoutes = require('./organization.routes');
 const auditRoutes = require('./audit.routes');
 const platformRoutes = require('./platform.routes');
 const projectRoutes = require('./project.routes');
+const teamRoutes = require('./team.routes');
+const peopleRoutes = require('./people.routes');
 const taskRoutes = require('./task.routes');
+const documentRoutes = require('./document.routes');
+const notificationRoutes = require('./notification.routes');
+const calendarRoutes = require('./calendar.routes');
 const meetingRoutes = require('./meeting.routes');
 const meetingRequestRoutes = require('./meetingRequest.routes');
 const { authenticate } = require('../middlewares/authenticate');
@@ -23,6 +28,11 @@ router.use('/organizations', organizationRoutes);
 router.use('/audit-logs', auditRoutes);
 router.use('/platform/organizations', platformRoutes);
 router.use('/projects', projectRoutes);
+router.use('/teams', teamRoutes);
+router.use('/people', peopleRoutes);
+router.use('/documents', documentRoutes);
+router.use('/notifications', notificationRoutes);
+router.use('/calendar', calendarRoutes);
 
 // My Tasks — user's tasks across all projects
 router.get('/tasks', authenticate, validateQuery(listTasksQuerySchema), listMy);

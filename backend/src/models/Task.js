@@ -195,6 +195,8 @@ taskSchema.index({ organization: 1, project: 1, status: 1 });
 taskSchema.index({ organization: 1, project: 1, archived: 1 });
 taskSchema.index({ 'assignees': 1 });
 taskSchema.index({ project: 1, dueDate: 1 });
+// Calendar: org-wide deadline range queries.
+taskSchema.index({ organization: 1, dueDate: 1 });
 
 // `owner`/`assignees`/`approvers`/`createdBy` may come in populated or as
 // bare ObjectIds depending on the query that loaded this document.
