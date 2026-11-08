@@ -2,7 +2,9 @@ const env = require('./config/env');
 const { connectMongo } = require('./config/db');
 const { connectRedis } = require('./config/redis');
 const { createApp } = require('./app');
-const { processEmailQueue } = require('./services/email-queue');
+const { processEmailQueue, stopEmailWorker } = require('./services/email-queue');
+const notificationHub = require('./services/notificationHub');
+const { startNotificationJobs } = require('./services/notificationJobs');
 const { runMeetingAutoCleanup } = require('./services/meeting.service');
 
 const MEETING_CLEANUP_INTERVAL_MS = 2 * 60 * 1000;
@@ -32,8 +34,14 @@ async function start() {
     runMeetingAutoCleanup().catch((error) => console.error('Meeting auto-cleanup failed:', error));
   }, MEETING_CLEANUP_INTERVAL_MS);
 
+  // Meeting reminders + reconciliation of emails that never reached the queue.
+  const stopNotificationJobs = startNotificationJobs();
+
   const shutdown = async () => {
     clearInterval(cleanupInterval);
+    stopNotificationJobs();
+    stopEmailWorker();
+    await notificationHub.shutdown(); // ends open SSE streams so server.close() can finish
     server.close(() => process.exit(0));
   };
 

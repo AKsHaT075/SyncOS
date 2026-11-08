@@ -6,6 +6,7 @@ import MobileSidebar from "@/components/layout/MobileSidebar";
 import Topbar from "@/components/layout/Topbar";
 import CommandPalette from "@/components/layout/CommandPalette";
 import AIAssistantPanel from "@/components/layout/AIAssistantPanel";
+import NotificationRealtime from "@/features/notifications/realtime/NotificationRealtime";
 
 export default function AppShell({ children }) {
   return (
@@ -23,6 +24,7 @@ export default function AppShell({ children }) {
       </div>
 
       <CommandPalette />
+      <NotificationRealtime />
     </TooltipProvider>
   );
 }

@@ -11,6 +11,7 @@ const User = require('../models/User');
 const Team = require('../models/Team');
 const AuditLog = require('../models/AuditLog');
 const { logAudit } = require('./audit.service');
+const notificationEvents = require('./notificationEvents');
 
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -262,6 +263,8 @@ async function archiveProject({ projectId, actor, req }) {
     userId: actor._id,
   });
 
+  await notificationEvents.projectArchived({ project, actor });
+
   return project.toSafeObject(actor._id);
 }
 
@@ -314,6 +317,8 @@ async function softDeleteProject({ projectId, actor, req }) {
     req,
     userId: actor._id,
   });
+
+  await notificationEvents.projectDeleted({ project, actor });
 
   return { success: true };
 }
@@ -426,6 +431,8 @@ async function addMember({ projectId, actor, userId, role, req }) {
     userId: actor._id,
   });
 
+  await notificationEvents.projectMemberAdded({ project, actor, userId, role: role || PROJECT_MEMBER_ROLES.CONTRIBUTOR });
+
   return project.toSafeObject(actor._id);
 }
 
@@ -457,6 +464,8 @@ async function updateMemberRole({ projectId, actor, userId, role, req }) {
     userId: actor._id,
   });
 
+  await notificationEvents.projectRoleChanged({ project, actor, userId, role });
+
   return project.toSafeObject(actor._id);
 }
 
@@ -487,6 +496,8 @@ async function removeMember({ projectId, actor, userId, req }) {
     req,
     userId: actor._id,
   });
+
+  await notificationEvents.projectMemberRemoved({ project, actor, userId });
 
   return project.toSafeObject(actor._id);
 }
@@ -573,6 +584,14 @@ async function transferOwnership({ projectId, actor, newOwnerId, req }) {
     organizationId: actor.organization,
     req,
     userId: actor._id,
+  });
+
+  await notificationEvents.projectOwnershipTransferred({
+    project,
+    actor,
+    newOwnerId,
+    previousOwnerId,
+    newOwnerName: `${newOwner.firstName} ${newOwner.lastName}`.trim(),
   });
 
   return project.toSafeObject(actor._id);

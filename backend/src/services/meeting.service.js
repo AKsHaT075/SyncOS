@@ -13,7 +13,7 @@ const { canViewProject, getProjectMemberRole } = require('../utils/projectAccess
 const { canJoinMeeting, canManageMeeting, canScheduleMeeting, canViewMeeting } = require('../utils/meetingAccess');
 const { findActiveProject } = require('./project.service');
 const { logAudit } = require('./audit.service');
-const { sendMeetingInvitationEmail } = require('./email.service');
+const notificationEvents = require('./notificationEvents');
 const livekitService = require('./livekit.service');
 const Meeting = require('../models/Meeting');
 const User = require('../models/User');
@@ -115,23 +115,13 @@ function getAllProjectMemberIds(project) {
   return [...ids].filter(Boolean);
 }
 
-async function notifyParticipants(meeting, project, userIds) {
+// Invitations now flow through the notification system: an in-app
+// notification for everyone, plus the same invitation email for people whose
+// preferences allow it (so email delivery is deduplicated and retried by
+// the hardened email queue instead of fire-and-forget).
+async function notifyParticipants(meeting, project, userIds, actor) {
   if (!userIds || userIds.length === 0) return;
-
-  const users = await User.find({ _id: { $in: userIds } }).select('email firstName');
-  const joinUrl = `${env.CLIENT_URL}/dashboard/projects/${project._id.toString()}/meetings/${meeting._id.toString()}`;
-
-  await Promise.all(
-    users.map((user) =>
-      sendMeetingInvitationEmail({
-        to: user.email,
-        meetingTopic: meeting.topic,
-        projectName: project.name,
-        startTime: meeting.startTime,
-        joinUrl,
-      }).catch(() => {})
-    )
-  );
+  await notificationEvents.meetingInvited({ meeting, project, actor, userIds });
 }
 
 async function createMeeting({ type, projectId, topic, description, participants, startTime, endTime, sourceRequest, creator, req }) {
@@ -175,7 +165,7 @@ async function createMeeting({ type, projectId, topic, description, participants
   });
 
   const hostId = creator._id.toString();
-  await notifyParticipants(meeting, project, invitedIds.filter((id) => id !== hostId));
+  await notifyParticipants(meeting, project, invitedIds.filter((id) => id !== hostId), creator);
   await populateMeeting(meeting);
   return meeting.toSafeObject();
 }
@@ -330,6 +320,8 @@ async function updateMeeting({ meetingId, actor, updates, req }) {
     userId: actor._id,
   });
 
+  await notificationEvents.meetingUpdated({ meeting, project, actor, changedFields: Object.keys(updates) });
+
   await populateMeeting(meeting);
   return meeting.toSafeObject();
 }
@@ -358,6 +350,8 @@ async function cancelMeeting({ meetingId, actor, req }) {
     req,
     userId: actor._id,
   });
+
+  await notificationEvents.meetingCancelled({ meeting, project, actor });
 
   await populateMeeting(meeting);
   return meeting.toSafeObject();
@@ -395,7 +389,7 @@ async function addParticipants({ meetingId, actor, participants, req }) {
     userId: actor._id,
   });
 
-  await notifyParticipants(meeting, project, newIds);
+  await notifyParticipants(meeting, project, newIds, actor);
   await populateMeeting(meeting);
   return meeting.toSafeObject();
 }
@@ -428,6 +422,8 @@ async function removeParticipant({ meetingId, userId, actor, req }) {
     req,
     userId: actor._id,
   });
+
+  await notificationEvents.meetingRemoved({ meeting, project, actor, userId });
 
   await populateMeeting(meeting);
   return meeting.toSafeObject();

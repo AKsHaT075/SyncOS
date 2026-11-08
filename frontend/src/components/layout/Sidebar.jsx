@@ -8,6 +8,7 @@ import { ChevronDown } from "lucide-react";
 import Can from "@/components/auth/Can";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
+import { useUnreadCount } from "@/features/notifications/hooks/notificationHooks";
 import { NAV_GROUPS, QUICK_LINKS, SETTINGS_ITEM } from "@/components/layout/navConfig";
 import SidebarItem from "@/components/layout/SidebarItem";
 import SidebarProfile from "@/components/layout/SidebarProfile";
@@ -15,8 +16,9 @@ import OrganizationSwitcher from "@/components/layout/OrganizationSwitcher";
 
 export default function Sidebar() {
   const collapsed = useUIStore((state) => state.sidebarCollapsed);
-  const notifications = useUIStore((state) => state.notifications);
-  const unreadCount = notifications.filter((item) => !item.read).length;
+  // Real unread count (kept live by the notification stream) — replaces the old placeholder store.
+  const { data: unread } = useUnreadCount();
+  const unreadCount = unread?.count ?? 0;
   const pathname = usePathname();
 
   const [openGroups, setOpenGroups] = useState(() =>

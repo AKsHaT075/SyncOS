@@ -7,7 +7,7 @@ const { getProjectMemberRole } = require('../utils/projectAccess');
 const { findActiveProject } = require('./project.service');
 const { createScheduledMeeting } = require('./meeting.service');
 const { logAudit } = require('./audit.service');
-const { sendMeetingRequestDecisionEmail } = require('./email.service');
+const notificationEvents = require('./notificationEvents');
 const MeetingRequest = require('../models/MeetingRequest');
 const User = require('../models/User');
 
@@ -73,6 +73,8 @@ async function createMeetingRequest({ projectId, topic, reason, requestedMembers
     userId: actor._id,
   });
 
+  await notificationEvents.meetingRequestReceived({ request, project, actor });
+
   await populateRequest(request);
   return request.toSafeObject();
 }
@@ -125,7 +127,7 @@ async function assertPendingAndSchedulable(request, actor) {
 
 async function approveMeetingRequest({ requestId, actor, remarks, req }) {
   const request = await findActiveMeetingRequest(requestId, actor.organization);
-  await assertPendingAndSchedulable(request, actor);
+  const project = await assertPendingAndSchedulable(request, actor);
 
   // A request can sit Pending for days — if the requester's preferredDate
   // has since slipped into the past, fall back to "an hour from now" rather
@@ -163,14 +165,14 @@ async function approveMeetingRequest({ requestId, actor, remarks, req }) {
     userId: actor._id,
   });
 
-  await notifyRequester(request, MEETING_REQUEST_STATUS.APPROVED, remarks);
+  await notifyRequester({ request, project, actor, status: MEETING_REQUEST_STATUS.APPROVED, remarks });
   await populateRequest(request);
   return request.toSafeObject();
 }
 
 async function scheduleMeetingRequest({ requestId, actor, remarks, startTime, endTime, req }) {
   const request = await findActiveMeetingRequest(requestId, actor.organization);
-  await assertPendingAndSchedulable(request, actor);
+  const project = await assertPendingAndSchedulable(request, actor);
 
   const meeting = await createScheduledMeeting({
     projectId: request.project,
@@ -201,14 +203,14 @@ async function scheduleMeetingRequest({ requestId, actor, remarks, startTime, en
     userId: actor._id,
   });
 
-  await notifyRequester(request, MEETING_REQUEST_STATUS.SCHEDULED, remarks);
+  await notifyRequester({ request, project, actor, status: MEETING_REQUEST_STATUS.SCHEDULED, remarks });
   await populateRequest(request);
   return request.toSafeObject();
 }
 
 async function rejectMeetingRequest({ requestId, actor, remarks, req }) {
   const request = await findActiveMeetingRequest(requestId, actor.organization);
-  await assertPendingAndSchedulable(request, actor);
+  const project = await assertPendingAndSchedulable(request, actor);
 
   request.status = MEETING_REQUEST_STATUS.REJECTED;
   request.decidedBy = actor._id;
@@ -226,21 +228,15 @@ async function rejectMeetingRequest({ requestId, actor, remarks, req }) {
     userId: actor._id,
   });
 
-  await notifyRequester(request, MEETING_REQUEST_STATUS.REJECTED, remarks);
+  await notifyRequester({ request, project, actor, status: MEETING_REQUEST_STATUS.REJECTED, remarks });
   await populateRequest(request);
   return request.toSafeObject();
 }
 
-async function notifyRequester(request, status, remarks) {
-  const requester = await User.findById(request.requestedBy).select('email');
-  if (!requester) return;
-
-  await sendMeetingRequestDecisionEmail({
-    to: requester.email,
-    topic: request.topic,
-    status,
-    remarks,
-  }).catch(() => {});
+// The decision reaches the requester as an in-app notification and — per
+// their preferences — the same decision email as before, via the email queue.
+async function notifyRequester({ request, project, actor, status, remarks }) {
+  await notificationEvents.meetingRequestDecided({ request, project, actor, status, remarks });
 }
 
 module.exports = {

@@ -16,6 +16,7 @@ import { useTask } from "@/features/tasks/hooks/useTask";
 import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { useMeeting } from "@/features/meetings/hooks/useMeeting";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import NotificationBell from "@/features/notifications/components/NotificationBell";
 
 const ALL_NAV_ITEMS = [...NAV_ITEMS, ...QUICK_LINKS, SETTINGS_ITEM];
 const TASK_DETAIL_PATTERN = /^\/dashboard\/projects\/([^/]+)\/tasks\/([^/]+)$/;
@@ -408,6 +409,7 @@ export default function Topbar() {
 
       <div className="flex flex-1 items-center justify-end gap-1.5 md:flex-none">
         <SearchBar compact />
+        <NotificationBell />
         <AIAssistantButton />
         {/* Profile lives in the sidebar on desktop; the sidebar is hidden on
             mobile, so keep the account menu reachable here below md. */}

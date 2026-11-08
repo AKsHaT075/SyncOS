@@ -21,6 +21,7 @@ const Task = require('../models/Task');
 const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 const { logAudit } = require('./audit.service');
+const notificationEvents = require('./notificationEvents');
 
 const TASK_POPULATE = ['owner', 'assignees', 'approvers', 'checklist.addedBy', 'submissions.submittedBy', 'reviews.reviewer'];
 
@@ -164,6 +165,8 @@ async function createTask({
     req,
     userId: creator._id,
   });
+
+  await notificationEvents.taskAssignment({ task, project, actor: creator, assigneeIds: task.assignees });
 
   await populateTask(task);
   return task.toSafeObject();
@@ -337,6 +340,19 @@ async function updateTask({ taskId, actor, updates, req }) {
     userId: actor._id,
   });
 
+  if (assigneesChanged) {
+    await notificationEvents.taskAssignment({
+      task,
+      project,
+      actor,
+      assigneeIds: task.assignees,
+      previousAssigneeIds: previousAssignees,
+    });
+  }
+  if (statusChanged) {
+    await notificationEvents.taskStatusChanged({ task, project, actor, from: previousStatus, to: task.status });
+  }
+
   await populateTask(task);
   return task.toSafeObject();
 }
@@ -382,6 +398,13 @@ async function submitForReview({ taskId, actor, description, files, req }) {
     organizationId: actor.organization,
     req,
     userId: actor._id,
+  });
+
+  await notificationEvents.taskSubmitted({
+    task,
+    project,
+    actor,
+    submission: task.submissions[task.submissions.length - 1],
   });
 
   await populateTask(task);
@@ -439,6 +462,14 @@ async function reviewTask({ taskId, actor, action, remarks, submissionId, req })
     organizationId: actor.organization,
     req,
     userId: actor._id,
+  });
+
+  await notificationEvents.taskReviewed({
+    task,
+    project,
+    actor,
+    review: task.reviews[task.reviews.length - 1],
+    submission: targetSubmission,
   });
 
   await populateTask(task);
