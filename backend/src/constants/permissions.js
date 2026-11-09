@@ -23,6 +23,7 @@ const PERMISSIONS = Object.freeze({
   CREATE_EVENT: 'CREATE_EVENT',
 
   VIEW_ANALYTICS: 'VIEW_ANALYTICS',
+  VIEW_OWN_ANALYTICS: 'VIEW_OWN_ANALYTICS', // personal analytics only (own tasks, meetings, assets, activity)
 
   MANAGE_USERS: 'MANAGE_USERS',
 

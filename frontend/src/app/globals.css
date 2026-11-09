@@ -103,3 +103,19 @@ body {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Printable reports (analytics): hide the app chrome and let the content flow across pages. */
+@media print {
+  aside,
+  header.sticky,
+  [data-print-hide] {
+    display: none !important;
+  }
+  .h-screen {
+    height: auto !important;
+  }
+  .overflow-hidden,
+  .overflow-y-auto {
+    overflow: visible !important;
+  }
+}

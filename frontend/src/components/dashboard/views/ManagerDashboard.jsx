@@ -1,23 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
 import { FolderKanban, ListChecks, Users, CalendarClock } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import KpiStrip from "@/components/dashboard/KpiStrip";
 import QuickActionsCard from "@/components/dashboard/QuickActionsCard";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 import RecentActivityFeed from "@/components/dashboard/RecentActivityFeed";
-import ProjectsOverviewCard from "@/components/dashboard/ProjectsOverviewCard";
-import TeamWorkloadCard from "@/components/dashboard/TeamWorkloadCard";
+import { ProjectProgressCard, TaskTrendCard, WorkloadCard, kpi, useDashboardAnalytics } from "@/components/dashboard/AnalyticsWidgets";
 import TeamSnapshotCard from "@/components/dashboard/TeamSnapshotCard";
 import UpcomingMeetingsCard from "@/components/dashboard/UpcomingMeetingsCard";
-import OverdueTasksCard from "@/components/dashboard/OverdueTasksCard";
 import {
-  MOCK_PROJECTS,
-  TASK_STATUS_BREAKDOWN,
-  TEAM_WORKLOAD,
   MOCK_MEETINGS,
-  OVERDUE_TASKS,
   PREVIEW_ACTIVITY,
   aiInsightsFor,
 } from "@/components/dashboard/mockDashboardData";
@@ -32,16 +25,14 @@ const QUICK_ACTIONS = [
 export default function ManagerDashboard() {
   const user = useAuthStore((state) => state.user);
 
-  const openTasks = useMemo(
-    () => TASK_STATUS_BREAKDOWN.filter((item) => item.name !== "Done").reduce((sum, item) => sum + item.value, 0),
-    []
-  );
+  const overview = useDashboardAnalytics("overview");
+  const sections = overview.data?.sections;
 
   const kpiCards = [
-    { label: "Active projects", value: 4, icon: FolderKanban, accent: "from-violet-500 to-indigo-600" },
-    { label: "Open tasks", value: openTasks, icon: ListChecks, accent: "from-emerald-500 to-teal-600" },
-    { label: "Team members", value: 9, icon: Users, accent: "from-amber-500 to-orange-600" },
-    { label: "Due this week", value: 6, icon: CalendarClock, accent: "from-sky-500 to-blue-600" },
+    { label: "Team projects", value: kpi(overview, sections?.projects.kpis.total), icon: FolderKanban, accent: "from-violet-500 to-indigo-600" },
+    { label: "Open tasks", value: kpi(overview, sections?.tasks.kpis.open), icon: ListChecks, accent: "from-emerald-500 to-teal-600" },
+    { label: "Team members", value: kpi(overview, sections?.people.kpis.members), icon: Users, accent: "from-amber-500 to-orange-600" },
+    { label: "Overdue tasks", value: kpi(overview, sections?.tasks.kpis.overdue), icon: CalendarClock, accent: "from-rose-500 to-red-600" },
   ];
 
   return (
@@ -59,22 +50,22 @@ export default function ManagerDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <TeamWorkloadCard workload={TEAM_WORKLOAD} />
+          <WorkloadCard rows={sections?.people.breakdowns.workload} loading={overview.isLoading} title="Team workload" description="Open tasks per team member. Counts only, not performance." />
         </div>
         <AIInsightsCard insights={aiInsightsFor("manager")} />
       </div>
 
-      <ProjectsOverviewCard projects={MOCK_PROJECTS} />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TaskTrendCard series={sections?.tasks.series.createdVsCompleted} loading={overview.isLoading} title="Team tasks created vs completed" />
+        <ProjectProgressCard data={sections?.projects} loading={overview.isLoading} />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <TeamSnapshotCard />
         <UpcomingMeetingsCard meetings={MOCK_MEETINGS} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <OverdueTasksCard tasks={OVERDUE_TASKS} />
-        <RecentActivityFeed logs={PREVIEW_ACTIVITY} />
-      </div>
+      <RecentActivityFeed logs={PREVIEW_ACTIVITY} />
     </div>
   );
 }

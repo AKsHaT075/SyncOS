@@ -197,6 +197,11 @@ taskSchema.index({ 'assignees': 1 });
 taskSchema.index({ project: 1, dueDate: 1 });
 // Calendar: org-wide deadline range queries.
 taskSchema.index({ organization: 1, dueDate: 1 });
+// Analytics: overdue / status breakdowns, completion and creation trends, and per-assignee workload.
+taskSchema.index({ organization: 1, status: 1, dueDate: 1 });
+taskSchema.index({ organization: 1, completedAt: 1 });
+taskSchema.index({ organization: 1, createdAt: 1 });
+taskSchema.index({ organization: 1, assignees: 1, status: 1 });
 
 // `owner`/`assignees`/`approvers`/`createdBy` may come in populated or as
 // bare ObjectIds depending on the query that loaded this document.

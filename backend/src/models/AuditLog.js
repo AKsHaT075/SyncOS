@@ -50,5 +50,8 @@ const auditLogSchema = new mongoose.Schema(
 );
 
 auditLogSchema.index({ organization: 1, createdAt: -1 });
+// Analytics: activity trends, project completion events, and platform login counts.
+auditLogSchema.index({ organization: 1, action: 1, createdAt: -1 });
+auditLogSchema.index({ action: 1, createdAt: -1 });
 
 module.exports = mongoose.model('AuditLog', auditLogSchema);

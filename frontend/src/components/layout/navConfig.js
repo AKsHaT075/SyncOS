@@ -70,7 +70,7 @@ export const NAV_GROUPS = [
     label: "Insights",
     items: [
       { label: "Reports", href: "/dashboard/reports", icon: FileBarChart, permission: PERMISSIONS.VIEW_ANALYTICS },
-      { label: "Analytics", href: "/dashboard/analytics", icon: LineChart, permission: PERMISSIONS.VIEW_ANALYTICS },
+      { label: "Analytics", href: "/dashboard/analytics", icon: LineChart, permission: null },
     ],
   },
   {

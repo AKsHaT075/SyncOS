@@ -18,6 +18,7 @@ const {
 } = require('../utils/taskAccess');
 const { findActiveProject } = require('./project.service');
 const Task = require('../models/Task');
+const Project = require('../models/Project');
 const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 const { logAudit } = require('./audit.service');
@@ -300,8 +301,10 @@ async function updateTask({ taskId, actor, updates, req }) {
   const previousStatus = task.status;
 
   Object.assign(task, updates);
-  if (statusChanged && updates.status === TASK_STATUS.COMPLETED) {
-    task.completedAt = new Date();
+  // completedAt always reflects the CURRENT completion: set on every transition into Completed, cleared when the
+  // task is reopened (or cancelled). Records completed before this rule keep whatever they had; nothing is rewritten.
+  if (statusChanged) {
+    task.completedAt = updates.status === TASK_STATUS.COMPLETED ? new Date() : null;
   }
   task.updatedBy = actor._id;
   await task.save();
@@ -658,12 +661,19 @@ async function listMyTasks({
   const conditions = [{ organization: actor.organization }, { deletedAt: null }];
   conditions.push({ archived: Boolean(archived) });
 
+  // Public tasks are included only for projects the user actually belongs to (as owner or member). Without this
+  // restriction every Public task in the organization leaked into everyone's "My tasks".
+  const memberProjects = isOrgAdmin
+    ? []
+    : (await Project.find({ organization: actor.organization, deletedAt: null, $or: [{ owner: actor._id }, { 'members.user': actor._id }] })
+      .select('_id').lean()).map((project) => project._id);
+
   conditions.push({
     $or: [
       { assignees: actor._id },
       { owner: actor._id },
       { approvers: actor._id },
-      ...(isOrgAdmin ? [] : [{ visibility: TASK_VISIBILITY.PUBLIC }]),
+      ...(isOrgAdmin ? [] : [{ visibility: TASK_VISIBILITY.PUBLIC, project: { $in: memberProjects } }]),
     ],
   });
 

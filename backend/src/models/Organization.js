@@ -81,4 +81,7 @@ organizationSchema.methods.toSafeObject = function toSafeObject() {
   };
 };
 
+// Platform analytics: organization growth over time.
+organizationSchema.index({ createdAt: 1 });
+
 module.exports = mongoose.model('Organization', organizationSchema);

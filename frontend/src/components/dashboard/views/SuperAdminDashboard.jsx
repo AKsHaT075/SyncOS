@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import { Building2, Users, CreditCard, Database } from "lucide-react";
+import { Building2, Users, CreditCard, Database, LogIn } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useOrganizations } from "@/features/platform/hooks/useOrganizations";
 import KpiRow from "@/components/dashboard/KpiRow";
@@ -10,9 +9,11 @@ import OrganizationsTableCard from "@/components/dashboard/OrganizationsTableCar
 import RecentlyCreatedOrganizationsCard from "@/components/dashboard/RecentlyCreatedOrganizationsCard";
 import PlatformHealthCard from "@/components/dashboard/PlatformHealthCard";
 import FeatureFlagsCard from "@/components/dashboard/FeatureFlagsCard";
-import GrowthTrendsCard from "@/components/dashboard/GrowthTrendsCard";
+import { PlatformGrowthCard, kpi } from "@/components/dashboard/AnalyticsWidgets";
+import { usePlatformAnalytics } from "@/features/analytics/hooks/analyticsHooks";
+import { presetRange } from "@/features/analytics/utils/format";
 import RecentActivityFeed from "@/components/dashboard/RecentActivityFeed";
-import { PLATFORM_HEALTH_STATS, GLOBAL_FEATURE_FLAGS, GROWTH_DATA, PREVIEW_ACTIVITY } from "@/components/dashboard/mockDashboardData";
+import { PLATFORM_HEALTH_STATS, GLOBAL_FEATURE_FLAGS, PREVIEW_ACTIVITY } from "@/components/dashboard/mockDashboardData";
 import { toast } from "sonner";
 
 function describeQuickAction(action) {
@@ -29,19 +30,15 @@ export default function SuperAdminDashboard() {
   const user = useAuthStore((state) => state.user);
   const { data, isLoading } = useOrganizations({ limit: 50 });
   const organizations = data?.organizations ?? [];
-  const totalOrganizations = data?.pagination?.total ?? organizations.length;
 
-  const activeUsers = useMemo(
-    () => organizations.reduce((sum, org) => sum + (org.limits?.seats ?? 0), 0),
-    [organizations]
-  );
-  const distinctPlans = useMemo(() => new Set(organizations.map((org) => org.plan)).size, [organizations]);
+  const platform = usePlatformAnalytics(presetRange("30"));
+  const k = platform.data?.kpis;
 
   const kpiCards = [
-    { label: "Organizations", value: isLoading ? "…" : totalOrganizations, icon: Building2, accent: "from-violet-500 to-indigo-600" },
-    { label: "Active users", value: isLoading ? "…" : activeUsers, icon: Users, accent: "from-emerald-500 to-teal-600" },
-    { label: "Plans in use", value: isLoading ? "…" : distinctPlans, icon: CreditCard, accent: "from-amber-500 to-orange-600" },
-    { label: "Storage usage", value: "1.2 TB", icon: Database, accent: "from-sky-500 to-blue-600" },
+    { label: "Organizations", value: kpi(platform, k?.organizations), icon: Building2, accent: "from-violet-500 to-indigo-600" },
+    { label: "Users", value: kpi(platform, k?.users), icon: Users, accent: "from-emerald-500 to-teal-600" },
+    { label: "New organizations (30 days)", value: kpi(platform, k?.newOrganizations), icon: CreditCard, accent: "from-amber-500 to-orange-600" },
+    { label: "Sign-ins (30 days)", value: kpi(platform, k?.logins), icon: LogIn, accent: "from-sky-500 to-blue-600" },
   ];
 
   return (
@@ -63,7 +60,7 @@ export default function SuperAdminDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <GrowthTrendsCard data={GROWTH_DATA} />
+        <PlatformGrowthCard series={platform.data?.series.organizationGrowth.map((point, i) => ({ ...point, users: platform.data.series.userGrowth[i]?.users ?? 0 }))} loading={platform.isLoading} />
         <FeatureFlagsCard flags={GLOBAL_FEATURE_FLAGS} />
       </div>
 

@@ -12,6 +12,7 @@ const documentRoutes = require('./document.routes');
 const notificationRoutes = require('./notification.routes');
 const calendarRoutes = require('./calendar.routes');
 const assetRoutes = require('./asset.routes');
+const analyticsRoutes = require('./analytics.routes');
 const meetingRoutes = require('./meeting.routes');
 const meetingRequestRoutes = require('./meetingRequest.routes');
 const { authenticate } = require('../middlewares/authenticate');
@@ -35,6 +36,7 @@ router.use('/documents', documentRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/calendar', calendarRoutes);
 router.use('/assets', assetRoutes);
+router.use('/analytics', analyticsRoutes);
 
 // My Tasks — user's tasks across all projects
 router.get('/tasks', authenticate, validateQuery(listTasksQuerySchema), listMy);

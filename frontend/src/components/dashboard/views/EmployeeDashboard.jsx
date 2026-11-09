@@ -1,16 +1,14 @@
 "use client";
 
-import { ListTodo, CheckCheck, CalendarClock, FileText } from "lucide-react";
+import { ListTodo, CheckCheck, CalendarClock, FileText, AlertTriangle } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import KpiStrip from "@/components/dashboard/KpiStrip";
 import QuickActionsCard from "@/components/dashboard/QuickActionsCard";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
-import TodaysTasksCard from "@/components/dashboard/TodaysTasksCard";
-import UpcomingMeetingsCard from "@/components/dashboard/UpcomingMeetingsCard";
-import MyProjectsCard from "@/components/dashboard/MyProjectsCard";
+import { DeadlinesCard, MyMeetingsRealCard, MyProjectsRealCard, TaskTrendCard, kpi, useDashboardAnalytics } from "@/components/dashboard/AnalyticsWidgets";
 import PinnedItemsButton from "@/components/dashboard/PinnedItemsButton";
 import MyTeamButton from "@/components/dashboard/MyTeamButton";
-import { TODAYS_TASKS, MOCK_MEETINGS, MY_PROJECTS, LATEST_DOCUMENTS, PINNED_ITEMS, MY_TEAM, aiInsightsFor } from "@/components/dashboard/mockDashboardData";
+import { PINNED_ITEMS, MY_TEAM, aiInsightsFor } from "@/components/dashboard/mockDashboardData";
 
 const QUICK_ACTIONS = [
   { label: "Log a task", href: "/dashboard/tasks/new", icon: ListTodo, accent: "from-violet-500 to-indigo-600" },
@@ -20,15 +18,14 @@ const QUICK_ACTIONS = [
 
 export default function EmployeeDashboard() {
   const user = useAuthStore((state) => state.user);
-  const tasksToday = TODAYS_TASKS.filter((task) => !task.done).length;
-  const completedThisWeek = TODAYS_TASKS.filter((task) => task.done).length + 5;
-  const meetingsToday = MOCK_MEETINGS.filter((meeting) => meeting.group === "today").length;
+  const me = useDashboardAnalytics("me");
+  const data = me.data;
 
   const kpiCards = [
-    { label: "My tasks", value: tasksToday, icon: ListTodo, accent: "from-violet-500 to-indigo-600" },
-    { label: "Completed this week", value: completedThisWeek, icon: CheckCheck, accent: "from-emerald-500 to-teal-600" },
-    { label: "Meetings today", value: meetingsToday, icon: CalendarClock, accent: "from-sky-500 to-blue-600" },
-    { label: "Shared documents", value: LATEST_DOCUMENTS.length, icon: FileText, accent: "from-amber-500 to-orange-600" },
+    { label: "My open tasks", value: kpi(me, data?.kpis.open), icon: ListTodo, accent: "from-violet-500 to-indigo-600" },
+    { label: "Completed (30 days)", value: kpi(me, data?.kpis.completedInRange), icon: CheckCheck, accent: "from-emerald-500 to-teal-600" },
+    { label: "Overdue", value: kpi(me, data?.kpis.overdue), icon: AlertTriangle, accent: "from-rose-500 to-red-600" },
+    { label: "Meetings (30 days)", value: kpi(me, data?.kpis.meetings), icon: CalendarClock, accent: "from-sky-500 to-blue-600" },
   ];
 
   return (
@@ -52,15 +49,16 @@ export default function EmployeeDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <TodaysTasksCard tasks={TODAYS_TASKS} />
+          <DeadlinesCard upcoming={data?.lists.upcomingDeadlines} overdue={data?.lists.overdueTasks} loading={me.isLoading} />
         </div>
         <AIInsightsCard title="AI Assistant" insights={aiInsightsFor("employee")} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <UpcomingMeetingsCard meetings={MOCK_MEETINGS} />
-        <MyProjectsCard projects={MY_PROJECTS} />
+        <MyMeetingsRealCard meetings={data?.lists.upcomingMeetings} loading={me.isLoading} />
+        <MyProjectsRealCard projects={data?.lists.projects} loading={me.isLoading} />
       </div>
+      <TaskTrendCard series={data?.series.createdVsCompleted} loading={me.isLoading} title="My tasks created vs completed" />
     </div>
   );
 }

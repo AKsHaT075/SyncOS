@@ -175,6 +175,10 @@ See [calendar.md](calendar.md) for the full endpoint list, scopes, access rules,
 
 See [assets.md](assets.md) for the endpoint list, role matrix, lifecycle, integrity model, license handling and alerts (`/api/v1/assets`).
 
+## Analytics & Reporting
+
+See [analytics.md](analytics.md) for roles, endpoints, metric definitions, date/timezone rules, caching and limits (`/api/v1/analytics`).
+
 ## Notifications
 
 See [notifications.md](notifications.md) (`/api/v1/notifications`).

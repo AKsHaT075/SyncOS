@@ -152,6 +152,8 @@ const meetingSchema = new mongoose.Schema(
 meetingSchema.index({ organization: 1, project: 1, status: 1 });
 meetingSchema.index({ organization: 1, project: 1, startTime: 1 });
 meetingSchema.index({ 'participants.user': 1 });
+// Analytics: organization-wide meeting frequency over a date range.
+meetingSchema.index({ organization: 1, startTime: 1 });
 
 // `host`/`participants.user`/`project` may come in populated or as bare
 // ObjectIds depending on the query that loaded this document.

@@ -151,4 +151,7 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 
 userSchema.statics.loginLockThreshold = AUTH_CONSTANTS.ACCOUNT_LOCK_ATTEMPTS;
 
+// Analytics: member growth and headcount per organization.
+userSchema.index({ organization: 1, createdAt: 1 });
+
 module.exports = mongoose.model('User', userSchema);

@@ -8,7 +8,6 @@ import { useResendInvitation } from "@/features/invitations/hooks/useResendInvit
 import { useRecentActivity } from "@/features/audit/hooks/useRecentActivity";
 import InviteTeammateDialog from "@/components/dashboard/InviteTeammateDialog";
 import WorkspaceUsageStrip from "@/components/dashboard/WorkspaceUsageStrip";
-import ProjectsOverviewCard from "@/components/dashboard/ProjectsOverviewCard";
 import TeamSnapshotCard from "@/components/dashboard/TeamSnapshotCard";
 import SecuritySnapshotCard from "@/components/dashboard/SecuritySnapshotCard";
 import ResourceUsageCard from "@/components/dashboard/ResourceUsageCard";
@@ -16,15 +15,13 @@ import KpiStrip from "@/components/dashboard/KpiStrip";
 import QuickActionsCard from "@/components/dashboard/QuickActionsCard";
 import ActivityOverviewCard from "@/components/dashboard/ActivityOverviewCard";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
-import AtRiskProjectsCard from "@/components/dashboard/AtRiskProjectsCard";
 import OrgHealthRing from "@/components/dashboard/OrgHealthRing";
 import LatestDocumentsCard from "@/components/dashboard/LatestDocumentsCard";
 import RecentlyJoinedMembersCard from "@/components/dashboard/RecentlyJoinedMembersCard";
 import PendingInvitationsCard from "@/components/dashboard/PendingInvitationsCard";
 import UpcomingMeetingsCard from "@/components/dashboard/UpcomingMeetingsCard";
+import { ProjectProgressCard, TaskTrendCard, kpi, useDashboardAnalytics } from "@/components/dashboard/AnalyticsWidgets";
 import {
-  MOCK_PROJECTS,
-  TASK_STATUS_BREAKDOWN,
   MOCK_MEETINGS,
   RECENTLY_JOINED,
   LATEST_DOCUMENTS,
@@ -88,18 +85,16 @@ export default function OrgAdminDashboard() {
   const activityLogs = activityData?.logs ?? [];
 
   const activityTrend = useMemo(() => buildActivityTrend(activityLogs), [activityLogs]);
-  const openTasks = useMemo(
-    () => TASK_STATUS_BREAKDOWN.filter((item) => item.name !== "Done").reduce((sum, item) => sum + item.value, 0),
-    []
-  );
+  const overview = useDashboardAnalytics("overview");
+  const sections = overview.data?.sections;
 
   const workspaceAge = organizationDetails?.createdAt ? formatRelativeTime(organizationDetails.createdAt) : "—";
   const seatsLimit = organizationDetails?.limits?.seats;
 
   const kpiCards = [
-    { label: "Active projects", value: 4, icon: FolderKanban, accent: "from-violet-500 to-indigo-600" },
-    { label: "Open tasks", value: openTasks, icon: ListChecks, accent: "from-emerald-500 to-teal-600" },
-    { label: "Completed this week", value: 12, icon: CheckCheck, accent: "from-sky-500 to-blue-600" },
+    { label: "Active projects", value: kpi(overview, sections?.projects.kpis.active), icon: FolderKanban, accent: "from-violet-500 to-indigo-600" },
+    { label: "Open tasks", value: kpi(overview, sections?.tasks.kpis.open), icon: ListChecks, accent: "from-emerald-500 to-teal-600" },
+    { label: "Completed (30 days)", value: kpi(overview, sections?.tasks.kpis.completedInRange), icon: CheckCheck, accent: "from-sky-500 to-blue-600" },
     { label: "Pending invites", value: invitationsLoading ? "…" : pendingCount, icon: Mail, accent: "from-amber-500 to-orange-600" },
   ];
 
@@ -127,7 +122,7 @@ export default function OrgAdminDashboard() {
 
       <WorkspaceUsageStrip
         plan={organizationDetails?.plan ?? "free"}
-        seatsUsed={4}
+        seatsUsed={sections?.people.kpis.members ?? 0}
         seatsLimit={seatsLimit}
         workspaceAge={workspaceAge}
       />
@@ -147,7 +142,10 @@ export default function OrgAdminDashboard() {
         </div>
       </div>
 
-      <ProjectsOverviewCard projects={MOCK_PROJECTS} />
+      <div className="grid gap-5 lg:grid-cols-2">
+        <TaskTrendCard series={sections?.tasks.series.createdVsCompleted} loading={overview.isLoading} />
+        <ProjectProgressCard data={sections?.projects} loading={overview.isLoading} />
+      </div>
 
       <ActivityOverviewCard
         trend={activityTrend}
@@ -155,8 +153,6 @@ export default function OrgAdminDashboard() {
         isLoading={activityLoading}
         eventCount={activityLogs.length}
       />
-
-      <AtRiskProjectsCard projects={MOCK_PROJECTS} />
 
       <SecuritySnapshotCard />
 
