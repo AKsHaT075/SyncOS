@@ -1,0 +1,58 @@
+{
+  "pipelineVersion": "p2",
+  "formats": [
+    "pdf",
+    "docx",
+    "xlsx",
+    "pptx",
+    "txt",
+    "csv"
+  ],
+  "unsupportedExtensions": [
+    "doc",
+    "xls",
+    "ppt",
+    "zip",
+    "png",
+    "jpg",
+    "jpeg"
+  ],
+  "skipReasons": [
+    "UNSUPPORTED_FORMAT",
+    "FILE_TOO_LARGE",
+    "ENCRYPTED",
+    "NO_EXTRACTABLE_TEXT",
+    "EMPTY",
+    "CORRUPT",
+    "TOO_MUCH_TEXT",
+    "ARCHIVE_LIMIT"
+  ],
+  "failReasons": [
+    "EXTRACTION_TIMEOUT",
+    "EXTRACTION_CRASHED",
+    "EXTRACTION_OOM",
+    "CHECKSUM_MISMATCH",
+    "DOWNLOAD_FAILED",
+    "INTERNAL_ERROR"
+  ],
+  "statuses": [
+    "queued",
+    "processing",
+    "indexed",
+    "failed",
+    "dead",
+    "skipped"
+  ],
+  "chunkLocationKeys": [
+    "pageStart",
+    "pageEnd",
+    "headingPath",
+    "sheet",
+    "rowStart",
+    "rowEnd",
+    "slideStart",
+    "slideEnd",
+    "charStart",
+    "charEnd"
+  ]
+}

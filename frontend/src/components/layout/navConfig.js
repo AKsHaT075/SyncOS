@@ -76,7 +76,7 @@ export const NAV_GROUPS = [
   {
     label: "Automation",
     items: [
-      { label: "AI Studio", href: "/dashboard/ai-studio", icon: Sparkles, permission: PERMISSIONS.MANAGE_AI },
+      { label: "AI Studio", href: "/dashboard/ai-studio", icon: Sparkles, permission: PERMISSIONS.USE_AI },
     ],
   },
 ];

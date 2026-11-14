@@ -1,0 +1,175 @@
+{
+  "cases": [
+    {
+      "name": "plain text answer",
+      "events": [
+        {
+          "type": "text",
+          "text": "Hello"
+        },
+        {
+          "type": "text",
+          "text": " world"
+        },
+        {
+          "type": "usage",
+          "inputTokens": 12,
+          "outputTokens": 3,
+          "totalTokens": 15,
+          "estimated": false
+        },
+        {
+          "type": "done",
+          "finishReason": "stop",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "requestId": "req_1",
+          "firstEventMs": 120
+        }
+      ],
+      "wire": "event: text\ndata: {\"type\":\"text\",\"text\":\"Hello\"}\n\nevent: text\ndata: {\"type\":\"text\",\"text\":\" world\"}\n\nevent: usage\ndata: {\"type\":\"usage\",\"inputTokens\":12,\"outputTokens\":3,\"totalTokens\":15,\"estimated\":false}\n\nevent: done\ndata: {\"type\":\"done\",\"finishReason\":\"stop\",\"model\":\"openai/gpt-oss-120b\",\"provider\":\"groq\",\"requestId\":\"req_1\",\"firstEventMs\":120}\n\n"
+    },
+    {
+      "name": "tool call",
+      "events": [
+        {
+          "type": "tool_calls",
+          "calls": [
+            {
+              "id": "call_1",
+              "name": "list_tasks",
+              "arguments": "{\"limit\":5}",
+              "input": {
+                "limit": 5
+              },
+              "inputError": false
+            }
+          ]
+        },
+        {
+          "type": "usage",
+          "inputTokens": 40,
+          "outputTokens": 9,
+          "totalTokens": 49,
+          "estimated": true
+        },
+        {
+          "type": "done",
+          "finishReason": "tool_calls",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "requestId": null,
+          "firstEventMs": 300
+        }
+      ],
+      "wire": "event: tool_calls\ndata: {\"type\":\"tool_calls\",\"calls\":[{\"id\":\"call_1\",\"name\":\"list_tasks\",\"arguments\":\"{\\\"limit\\\":5}\",\"input\":{\"limit\":5},\"inputError\":false}]}\n\nevent: usage\ndata: {\"type\":\"usage\",\"inputTokens\":40,\"outputTokens\":9,\"totalTokens\":49,\"estimated\":true}\n\nevent: done\ndata: {\"type\":\"done\",\"finishReason\":\"tool_calls\",\"model\":\"openai/gpt-oss-120b\",\"provider\":\"groq\",\"requestId\":null,\"firstEventMs\":300}\n\n"
+    },
+    {
+      "name": "malformed tool arguments are flagged, not dropped",
+      "events": [
+        {
+          "type": "tool_calls",
+          "calls": [
+            {
+              "id": "call_2",
+              "name": "x",
+              "arguments": "{oops",
+              "input": null,
+              "inputError": true
+            }
+          ]
+        },
+        {
+          "type": "done",
+          "finishReason": "tool_calls",
+          "model": "m",
+          "provider": "groq",
+          "requestId": null,
+          "firstEventMs": 1
+        }
+      ],
+      "wire": "event: tool_calls\ndata: {\"type\":\"tool_calls\",\"calls\":[{\"id\":\"call_2\",\"name\":\"x\",\"arguments\":\"{oops\",\"input\":null,\"inputError\":true}]}\n\nevent: done\ndata: {\"type\":\"done\",\"finishReason\":\"tool_calls\",\"model\":\"m\",\"provider\":\"groq\",\"requestId\":null,\"firstEventMs\":1}\n\n"
+    },
+    {
+      "name": "unicode survives",
+      "events": [
+        {
+          "type": "text",
+          "text": "\u0928\u092e\u0938\u094d\u0924\u0947 \ud83d\udc4b \u2014 \u201cquotes\u201d"
+        },
+        {
+          "type": "done",
+          "finishReason": "stop",
+          "model": "m",
+          "provider": "groq",
+          "requestId": null,
+          "firstEventMs": 1
+        }
+      ],
+      "wire": "event: text\ndata: {\"type\":\"text\",\"text\":\"\u0928\u092e\u0938\u094d\u0924\u0947 \ud83d\udc4b \u2014 \u201cquotes\u201d\"}\n\nevent: done\ndata: {\"type\":\"done\",\"finishReason\":\"stop\",\"model\":\"m\",\"provider\":\"groq\",\"requestId\":null,\"firstEventMs\":1}\n\n"
+    },
+    {
+      "name": "failure after output began",
+      "events": [
+        {
+          "type": "text",
+          "text": "partial"
+        },
+        {
+          "type": "error",
+          "code": "AI_PROVIDER_UNAVAILABLE",
+          "retryable": false,
+          "streamStarted": true,
+          "upstreamStatus": null
+        }
+      ],
+      "wire": "event: text\ndata: {\"type\":\"text\",\"text\":\"partial\"}\n\nevent: error\ndata: {\"type\":\"error\",\"code\":\"AI_PROVIDER_UNAVAILABLE\",\"retryable\":false,\"streamStarted\":true,\"upstreamStatus\":null}\n\n"
+    },
+    {
+      "name": "failure before any output",
+      "events": [
+        {
+          "type": "error",
+          "code": "AI_PROVIDER_RATE_LIMITED",
+          "retryable": true,
+          "streamStarted": false,
+          "upstreamStatus": 429
+        }
+      ],
+      "wire": "event: error\ndata: {\"type\":\"error\",\"code\":\"AI_PROVIDER_RATE_LIMITED\",\"retryable\":true,\"streamStarted\":false,\"upstreamStatus\":429}\n\n"
+    },
+    {
+      "name": "tool activity before the answer",
+      "events": [
+        {
+          "type": "tool_activity",
+          "tool": "list_projects"
+        },
+        {
+          "type": "tool_activity",
+          "tool": "get_workload_summary"
+        },
+        {
+          "type": "text",
+          "text": "You have 3 projects."
+        },
+        {
+          "type": "usage",
+          "inputTokens": 3400,
+          "outputTokens": 120,
+          "totalTokens": 3520,
+          "estimated": false
+        },
+        {
+          "type": "done",
+          "finishReason": "stop",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "requestId": "req_2",
+          "firstEventMs": 900
+        }
+      ],
+      "wire": "event: tool_activity\ndata: {\"type\":\"tool_activity\",\"tool\":\"list_projects\"}\n\nevent: tool_activity\ndata: {\"type\":\"tool_activity\",\"tool\":\"get_workload_summary\"}\n\nevent: text\ndata: {\"type\":\"text\",\"text\":\"You have 3 projects.\"}\n\nevent: usage\ndata: {\"type\":\"usage\",\"inputTokens\":3400,\"outputTokens\":120,\"totalTokens\":3520,\"estimated\":false}\n\nevent: done\ndata: {\"type\":\"done\",\"finishReason\":\"stop\",\"model\":\"openai/gpt-oss-120b\",\"provider\":\"groq\",\"requestId\":\"req_2\",\"firstEventMs\":900}\n\n"
+    }
+  ]
+}

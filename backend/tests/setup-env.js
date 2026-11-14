@@ -17,3 +17,12 @@ process.env.DOCUMENT_MAX_FILE_SIZE_MB = '1';
 // Isolate Redis keys/channels from a running dev server.
 process.env.EMAIL_QUEUE_PREFIX = 'test:email';
 process.env.NOTIFICATION_CHANNEL_PREFIX = 'test:notif';
+
+// AI: tests must never reach the Python AI service or a provider, even if a developer's .env configures them.
+// dotenv does not override variables that already exist, so setting these (even to '') wins.
+// Suites that need an AI engine install a fake (aiService.setEngine) or start their own local stub/service.
+process.env.AI_SERVICE_URL = 'http://127.0.0.1:9';
+process.env.AI_SERVICE_SIGNING_KEY = '';
+process.env.AI_SERVICE_SIGNING_KEY_FILE = '';
+process.env.AI_GLOBAL_ENABLED = 'true';
+process.env.AI_REDIS_PREFIX = 'test:ai';

@@ -7,6 +7,7 @@ const { decodeOriginalName, getExtension, inspectUpload } = require('../utils/fi
 const { assertCanEdit, getAccessibleDocument } = require('./documentAccess.service');
 const { logAudit } = require('./audit.service');
 const notificationEvents = require('./notificationEvents');
+const ingestion = require('./ai/ingestion');
 
 const UPLOADER_POPULATE = 'firstName lastName';
 
@@ -63,6 +64,8 @@ async function commitVersion({ actor, document, number, storageKey, meta, fileNa
     await getStorage().remove(storageKey).catch(() => {});
     throw error;
   }
+
+  await ingestion.documentChanged(document._id, actor.organization, restoredFrom != null ? 'restore' : 'version'); // best effort
 
   await logAudit({
     action,

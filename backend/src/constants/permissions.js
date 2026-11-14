@@ -27,7 +27,10 @@ const PERMISSIONS = Object.freeze({
 
   MANAGE_USERS: 'MANAGE_USERS',
 
-  MANAGE_AI: 'MANAGE_AI',
+  MANAGE_AI: 'MANAGE_AI', // org AI administration: enable/disable, quotas
+  USE_AI: 'USE_AI', // use the assistant (never granted to guests or super-admin)
+  VIEW_AI_USAGE: 'VIEW_AI_USAGE', // organization-wide AI usage (members always see their own)
+  MANAGE_AI_KNOWLEDGE: 'MANAGE_AI_KNOWLEDGE', // knowledge-index administration (status, re-index)
 
   CREATE_TEAM: 'CREATE_TEAM',
   UPDATE_TEAM: 'UPDATE_TEAM',

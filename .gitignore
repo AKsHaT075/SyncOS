@@ -39,3 +39,17 @@ backend/uploads/
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+
+# Python AI service
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+ai/keys/
+
+# Phase 4 local tooling (never committed)
+ai/.qdrant/
+ai/.qdrant-data/
+ai/.cache/
+ai/.qdrant-initialized
+.qdrant-initialized

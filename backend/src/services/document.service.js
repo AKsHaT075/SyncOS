@@ -30,6 +30,7 @@ const {
 } = require('./documentAccess.service');
 const { findFolder } = require('./documentFolder.service');
 const { logAudit } = require('./audit.service');
+const ingestion = require('./ai/ingestion');
 
 const NAME_COLLATION = { locale: 'en', strength: 2 };
 
@@ -240,6 +241,7 @@ async function createDocument({ actor, file, body, req }) {
     visibility: document.visibility,
     folder: idOf(document.folder),
   });
+  await ingestion.documentChanged(document._id, actor.organization, 'upload'); // best effort: never fails the upload
 
   await document.populate([
     { path: 'owner', select: 'firstName lastName email' },
@@ -336,6 +338,7 @@ async function deleteDocument({ actor, id, req }) {
   document.deletedBy = actor._id;
   document.trashedWithFolder = null;
   await document.save();
+  await ingestion.documentsTrashed(actor.organization, [document._id]); // no queued work, no chunks for trashed documents
 
   await audit(actor, req, AUDIT_EVENTS.DOCUMENT_DELETED, document);
   return { success: true };

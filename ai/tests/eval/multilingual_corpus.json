@@ -1,0 +1,109 @@
+{
+ "note": "Small hand-written policy corpus: 6 topics x 3 languages. Query i must retrieve passage i. A smoke test of retrieval quality, NOT a benchmark.",
+ "topics": [
+  "leave",
+  "expenses",
+  "passwords",
+  "remote",
+  "laptop",
+  "hours"
+ ],
+ "languages": {
+  "en": [
+   {
+    "topic": "leave",
+    "passage": "All employees receive 24 days of paid leave per year, and up to 5 unused days may be carried over to the next year.",
+    "query": "How many days of paid leave do I get in a year?"
+   },
+   {
+    "topic": "expenses",
+    "passage": "Expense claims must be submitted with receipts within 30 days of the expense to be reimbursed.",
+    "query": "By when do I have to submit an expense claim?"
+   },
+   {
+    "topic": "passwords",
+    "passage": "Passwords must be changed every 90 days and two-factor authentication must stay enabled on all accounts.",
+    "query": "How often must passwords be changed?"
+   },
+   {
+    "topic": "remote",
+    "passage": "Employees may work from home two days per week, subject to their manager's approval.",
+    "query": "How many days can I work from home?"
+   },
+   {
+    "topic": "laptop",
+    "passage": "On resignation, employees must return their laptop and ID card to the IT department by their last working day.",
+    "query": "When do I return my laptop if I quit?"
+   },
+   {
+    "topic": "hours",
+    "passage": "Office hours are 9 am to 6 pm, and the office is closed on Saturdays and Sundays.",
+    "query": "What time does the office open?"
+   }
+  ],
+  "hi": [
+   {
+    "topic": "leave",
+    "passage": "सभी कर्मचारियों को प्रति वर्ष 24 दिन की सवेतन छुट्टी मिलती है। इनमें से अधिकतम 5 दिन अगले वर्ष में आगे ले जाए जा सकते हैं।",
+    "query": "एक साल में कितनी छुट्टियाँ मिलती हैं?"
+   },
+   {
+    "topic": "expenses",
+    "passage": "खर्च की प्रतिपूर्ति के लिए रसीदों के साथ दावा खर्च होने के 30 दिनों के भीतर जमा करना अनिवार्य है।",
+    "query": "खर्च का दावा कब तक जमा करना होता है?"
+   },
+   {
+    "topic": "passwords",
+    "passage": "सुरक्षा के लिए पासवर्ड हर 90 दिन में बदलना होगा और सभी खातों पर दो-चरणीय सत्यापन चालू रखना आवश्यक है।",
+    "query": "पासवर्ड कितने दिनों में बदलना चाहिए?"
+   },
+   {
+    "topic": "remote",
+    "passage": "कर्मचारी सप्ताह में दो दिन घर से काम कर सकते हैं, बशर्ते उनके प्रबंधक की स्वीकृति हो।",
+    "query": "घर से काम करने की अनुमति कितने दिन की है?"
+   },
+   {
+    "topic": "laptop",
+    "passage": "इस्तीफ़ा देने पर कर्मचारी को अंतिम कार्यदिवस तक अपना लैपटॉप और पहचान पत्र आईटी विभाग को लौटाना होगा।",
+    "query": "नौकरी छोड़ने पर लैपटॉप कब लौटाना है?"
+   },
+   {
+    "topic": "hours",
+    "passage": "कार्यालय का समय सुबह 9 बजे से शाम 6 बजे तक है, और शनिवार-रविवार को अवकाश रहता है।",
+    "query": "ऑफिस कितने बजे खुलता है?"
+   }
+  ],
+  "pa": [
+   {
+    "topic": "leave",
+    "passage": "ਸਾਰੇ ਕਰਮਚਾਰੀਆਂ ਨੂੰ ਹਰ ਸਾਲ 24 ਦਿਨ ਦੀ ਤਨਖਾਹ ਸਮੇਤ ਛੁੱਟੀ ਮਿਲਦੀ ਹੈ। ਇਨ੍ਹਾਂ ਵਿੱਚੋਂ ਵੱਧ ਤੋਂ ਵੱਧ 5 ਦਿਨ ਅਗਲੇ ਸਾਲ ਲਈ ਅੱਗੇ ਲਿਜਾਏ ਜਾ ਸਕਦੇ ਹਨ।",
+    "query": "ਇੱਕ ਸਾਲ ਵਿੱਚ ਕਿੰਨੀਆਂ ਛੁੱਟੀਆਂ ਮਿਲਦੀਆਂ ਹਨ?"
+   },
+   {
+    "topic": "expenses",
+    "passage": "ਖਰਚੇ ਦੀ ਭਰਪਾਈ ਲਈ ਰਸੀਦਾਂ ਸਮੇਤ ਦਾਅਵਾ ਖਰਚ ਹੋਣ ਤੋਂ 30 ਦਿਨਾਂ ਦੇ ਅੰਦਰ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣਾ ਲਾਜ਼ਮੀ ਹੈ।",
+    "query": "ਖਰਚੇ ਦਾ ਦਾਅਵਾ ਕਦੋਂ ਤੱਕ ਜਮ੍ਹਾਂ ਕਰਨਾ ਹੈ?"
+   },
+   {
+    "topic": "passwords",
+    "passage": "ਸੁਰੱਖਿਆ ਲਈ ਪਾਸਵਰਡ ਹਰ 90 ਦਿਨਾਂ ਵਿੱਚ ਬਦਲਣਾ ਪਵੇਗਾ ਅਤੇ ਸਾਰੇ ਖਾਤਿਆਂ ਉੱਤੇ ਦੋ-ਪੜਾਅ ਪ੍ਰਮਾਣਿਕਤਾ ਚਾਲੂ ਰੱਖਣੀ ਜ਼ਰੂਰੀ ਹੈ।",
+    "query": "ਪਾਸਵਰਡ ਕਿੰਨੇ ਦਿਨਾਂ ਵਿੱਚ ਬਦਲਣਾ ਚਾਹੀਦਾ ਹੈ?"
+   },
+   {
+    "topic": "remote",
+    "passage": "ਕਰਮਚਾਰੀ ਹਫ਼ਤੇ ਵਿੱਚ ਦੋ ਦਿਨ ਘਰੋਂ ਕੰਮ ਕਰ ਸਕਦੇ ਹਨ, ਬਸ਼ਰਤੇ ਉਨ੍ਹਾਂ ਦੇ ਮੈਨੇਜਰ ਦੀ ਮਨਜ਼ੂਰੀ ਹੋਵੇ।",
+    "query": "ਘਰੋਂ ਕੰਮ ਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਕਿੰਨੇ ਦਿਨ ਦੀ ਹੈ?"
+   },
+   {
+    "topic": "laptop",
+    "passage": "ਅਸਤੀਫ਼ਾ ਦੇਣ 'ਤੇ ਕਰਮਚਾਰੀ ਨੂੰ ਆਖਰੀ ਕੰਮ ਵਾਲੇ ਦਿਨ ਤੱਕ ਆਪਣਾ ਲੈਪਟਾਪ ਅਤੇ ਪਛਾਣ ਪੱਤਰ ਆਈਟੀ ਵਿਭਾਗ ਨੂੰ ਵਾਪਸ ਕਰਨਾ ਹੋਵੇਗਾ।",
+    "query": "ਨੌਕਰੀ ਛੱਡਣ 'ਤੇ ਲੈਪਟਾਪ ਕਦੋਂ ਵਾਪਸ ਕਰਨਾ ਹੈ?"
+   },
+   {
+    "topic": "hours",
+    "passage": "ਦਫ਼ਤਰ ਦਾ ਸਮਾਂ ਸਵੇਰੇ 9 ਵਜੇ ਤੋਂ ਸ਼ਾਮ 6 ਵਜੇ ਤੱਕ ਹੈ, ਅਤੇ ਸ਼ਨੀਵਾਰ-ਐਤਵਾਰ ਨੂੰ ਛੁੱਟੀ ਰਹਿੰਦੀ ਹੈ।",
+    "query": "ਦਫ਼ਤਰ ਕਿੰਨੇ ਵਜੇ ਖੁੱਲ੍ਹਦਾ ਹੈ?"
+   }
+  ]
+ }
+}

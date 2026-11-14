@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "tools": [
+    {
+      "name": "get_project_overview",
+      "description": "Shows one project the signed-in user can see, by id or name: status, priority, type, owner, start and due dates, member count, whether it is past due, and counts of tasks by status (only tasks the user is allowed to see). If the name matches several projects it returns the candidates instead of choosing. Read-only; never shows descriptions, clients, budgets or links.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_team",
+      "description": "Without arguments, lists the teams the signed-in user can see (name, lead, active member count). With a team id or name, shows that team: its lead and the names of its active members. Administrators and HR can see every team; other people only teams they lead or belong to. If the name matches several teams it returns the candidates instead of choosing. Read-only; shows no contact details.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_workload_summary",
+      "description": "Counts tasks: total, to do, in progress, in review, completed, cancelled, open, overdue, due today and open without a due date. scope \"me\" (default) is the signed-in user's own assigned tasks; \"my_team\" is the teams they lead (managers, needs at least 5 people); \"organization\" is administrators and HR only (aggregate counts, needs at least 5 people). It never names people or tasks and never gives per-person figures. Only tasks the user can see are counted; private tasks they cannot access are never included. Report the returned numbers exactly; if outcome is not_available, say so and do not estimate.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": [
+              "me",
+              "my_team",
+              "organization"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_my_schedule",
+      "description": "Lists the signed-in user's own schedule for a range (today, next_7_days, this_week = Monday to Sunday, or next_14_days): meetings they host or attend, their open tasks that fall due, and deadlines of projects they belong to, in chronological order. Read-only; shows only items the user is allowed to see. Does not include meeting descriptions, locations, attendee lists or join links.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "range": {
+            "type": "string",
+            "enum": [
+              "today",
+              "next_7_days",
+              "this_week",
+              "next_14_days"
+            ]
+          },
+          "types": {
+            "minItems": 1,
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "meeting",
+                "task",
+                "project"
+              ]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_my_tasks",
+      "description": "Lists the signed-in user's own tasks (assigned to them, awaiting their approval, or owned by them), with title, status, priority, due date, whether it is overdue, project and assignees. Use status \"open\" for pending work, due \"overdue\" for late tasks, relation \"approver\" with status \"In Review\" for tasks awaiting their review. Read-only; shows only tasks the user is allowed to see.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "Todo",
+              "In Progress",
+              "In Review",
+              "Completed",
+              "Cancelled",
+              "open"
+            ]
+          },
+          "due": {
+            "type": "string",
+            "enum": [
+              "overdue",
+              "today",
+              "next_7_days",
+              "this_week",
+              "none"
+            ]
+          },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "assigned",
+              "approver",
+              "owner"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_project_members",
+      "description": "Lists who is on one project the signed-in user can see, by id or name: each person's name and their role on THAT project (Owner, Manager, Contributor, Viewer). Inactive or blocked people are left out. If the name matches several projects it returns the candidates instead of choosing. Read-only; shows no contact details.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_project_tasks",
+      "description": "Lists tasks of one project the signed-in user can see, by project id or name, with title, status, priority, due date, whether it is overdue and assignees. Filter by status (\"open\" by default, or a status, or \"all\"), due (overdue, today, next_7_days, this_week, none) and assignee (\"any\" by default, or \"me\" for only the user's own tasks). Read-only; only tasks the user is allowed to see are listed or counted. If the project name matches several projects it returns the candidates instead of choosing.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Todo",
+              "In Progress",
+              "In Review",
+              "Completed",
+              "Cancelled",
+              "open",
+              "all"
+            ]
+          },
+          "due": {
+            "type": "string",
+            "enum": [
+              "overdue",
+              "today",
+              "next_7_days",
+              "this_week",
+              "none"
+            ]
+          },
+          "assignee": {
+            "type": "string",
+            "enum": [
+              "me",
+              "any"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_projects",
+      "description": "Lists the projects the signed-in user can see, with status, priority, type, owner, start and due dates, whether the project is past its due date, member count and the number of open and overdue tasks they can see in it. Filter by status (\"all\" by default), overdue (true = past due date), or name_contains (matched literally); sort by due (default), open_tasks or overdue_tasks. Read-only; private projects appear only to their owner and members.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "Planning",
+              "Active",
+              "On Hold",
+              "Completed",
+              "all"
+            ]
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "name_contains": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "due",
+              "open_tasks",
+              "overdue_tasks"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

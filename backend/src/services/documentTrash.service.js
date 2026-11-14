@@ -9,6 +9,7 @@ const { idOf, isDocumentAdmin, isGuest, isSameId } = require('../utils/documentA
 const { assertObjectId, getAccessibleDocument } = require('./documentAccess.service');
 const { assertUniqueName, findFolder, rewriteSubtreeAncestors } = require('./documentFolder.service');
 const { logAudit } = require('./audit.service');
+const ingestion = require('./ai/ingestion');
 
 const NAME_COLLATION = { locale: 'en', strength: 2 };
 
@@ -103,6 +104,7 @@ async function restoreDocument({ actor, id, req }) {
   document.trashedWithFolder = null;
   document.updatedBy = actor._id;
   await document.save();
+  await ingestion.documentChanged(document._id, actor.organization, 'restore'); // re-index what the trash had un-indexed
 
   await logAudit({
     action: AUDIT_EVENTS.DOCUMENT_RESTORED,
@@ -137,6 +139,7 @@ async function purgeDocuments(organization, documentIds) {
 
   await DocumentVersion.deleteMany({ organization, document: { $in: documentIds } });
   await Document.deleteMany({ organization, _id: { $in: documentIds } });
+  await ingestion.documentsPurged(organization, documentIds); // extracted text and jobs go with the document
 
   const storage = getStorage();
   await Promise.all([...keys].map((key) => storage.remove(key).catch(() => {})));

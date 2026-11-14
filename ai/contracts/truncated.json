@@ -1,0 +1,16 @@
+{
+  "truncated": [
+    {
+      "name": "text then connection closed",
+      "wire": "event: text\ndata: {\"type\":\"text\",\"text\":\"half\"}\n\n"
+    },
+    {
+      "name": "empty body",
+      "wire": ""
+    },
+    {
+      "name": "only keepalives",
+      "wire": ": ping\n\n: ping\n\n"
+    }
+  ]
+}

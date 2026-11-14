@@ -1,0 +1,76 @@
+{
+  "embeddingPipeline": "e1",
+  "ingestionPipeline": "p2",
+  "defaultSpace": "multilingual-e5-small",
+  "statuses": [
+    "queued",
+    "processing",
+    "completed",
+    "failed",
+    "dead",
+    "skipped"
+  ],
+  "kinds": [
+    "embed",
+    "purge"
+  ],
+  "failReasons": [
+    "VECTOR_STORE_UNAVAILABLE",
+    "VECTOR_STORE_AUTH",
+    "VECTOR_DIMENSION_MISMATCH",
+    "VECTOR_INVALID",
+    "VECTOR_COUNT_MISMATCH",
+    "EMBEDDING_UNAVAILABLE",
+    "EMBEDDING_INPUT_TOO_LONG",
+    "EMBEDDING_BAD_OUTPUT",
+    "NODE_UNAVAILABLE",
+    "INTERNAL_ERROR"
+  ],
+  "nodeReasons": [
+    "LOCK_EXPIRED",
+    "RESULT_MISMATCH",
+    "SUPERSEDED",
+    "DOCUMENT_DELETED",
+    "NO_CHUNKS",
+    "INGESTION_NOT_INDEXED",
+    "SPACE_RETIRED"
+  ],
+  "spaces": {
+    "multilingual-e5-small": {
+      "descriptor": {
+        "provider": "fastembed-onnx",
+        "model": "intfloat/multilingual-e5-small",
+        "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "modelFile": "onnx/model.onnx",
+        "dimensions": 384,
+        "pooling": "mean",
+        "normalize": true,
+        "queryPrefix": "query: ",
+        "passagePrefix": "passage: ",
+        "maxTokens": 512,
+        "distance": "cosine",
+        "embeddingPipeline": "e1",
+        "ingestionPipeline": "p2"
+      },
+      "spaceId": "e75cd080f1d0"
+    },
+    "fake-hash-384": {
+      "descriptor": {
+        "provider": "fake",
+        "model": "syncos/fake-hash",
+        "revision": "test",
+        "modelFile": "none",
+        "dimensions": 384,
+        "pooling": "mean",
+        "normalize": true,
+        "queryPrefix": "query: ",
+        "passagePrefix": "passage: ",
+        "maxTokens": 512,
+        "distance": "cosine",
+        "embeddingPipeline": "e1",
+        "ingestionPipeline": "p2"
+      },
+      "spaceId": "95f57f7ae3d3"
+    }
+  }
+}

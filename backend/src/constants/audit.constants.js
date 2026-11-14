@@ -133,6 +133,22 @@ const AUDIT_EVENTS = Object.freeze({
   ASSET_VENDOR_CREATED: 'asset_vendor.created',
   ASSET_VENDOR_UPDATED: 'asset_vendor.updated',
   ASSET_VENDOR_ARCHIVED: 'asset_vendor.archived',
+
+  AI_ENABLED: 'ai.enabled',
+  AI_DISABLED: 'ai.disabled',
+  AI_LIVE_DATA_ENABLED: 'ai.live_data_enabled',
+  AI_LIVE_DATA_DISABLED: 'ai.live_data_disabled',
+  AI_TOOL_INVOKED: 'ai.tool_invoked',
+  AI_PLATFORM_CONTROL_CHANGED: 'ai.platform_control_changed',
+  AI_SETTINGS_UPDATED: 'ai.settings_updated',
+  AI_INGESTION_RETRIED: 'ai.ingestion_retried',
+  AI_INGESTION_RECONCILED: 'ai.ingestion_reconciled',
+  AI_EMBEDDING_RETRIED: 'ai.embedding_retried',
+  AI_EMBEDDING_RECONCILED: 'ai.embedding_reconciled',
+  AI_EMBEDDING_VERIFY_REQUESTED: 'ai.embedding_verify_requested',
+  AI_EMBEDDING_SPACE_PROMOTED: 'ai.embedding_space_promoted',
+  AI_EMBEDDING_MIGRATION_STARTED: 'ai.embedding_migration_started',
+  AI_EMBEDDING_MIGRATION_ABANDONED: 'ai.embedding_migration_abandoned',
 });
 
 module.exports = { AUDIT_EVENTS };

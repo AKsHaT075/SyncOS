@@ -131,4 +131,4 @@ Run in this order against a fresh database:
 
 ## Notes / known repo cleanup
 
-- `backend/src/routes/index 2.js` is a stray leftover file (not wired into `app.js`) — safe to delete, not used by this collection.
+- The stray `backend/src/routes/index 2.js` leftover has been removed; it was never wired into `app.js` or used by this collection.

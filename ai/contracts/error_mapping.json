@@ -1,0 +1,156 @@
+{
+  "cases": [
+    {
+      "status": 401,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_AUTH",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 403,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_AUTH",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 429,
+      "body": {
+        "error": {
+          "message": "slow down"
+        }
+      },
+      "headers": {
+        "retry-after": "2"
+      },
+      "code": "AI_PROVIDER_RATE_LIMITED",
+      "retryable": true,
+      "retryAfterMs": 2000
+    },
+    {
+      "status": 429,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_RATE_LIMITED",
+      "retryable": true,
+      "retryAfterMs": null
+    },
+    {
+      "status": 413,
+      "body": null,
+      "headers": {},
+      "code": "AI_CONTEXT_TOO_LONG",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "context_length_exceeded",
+          "message": "x"
+        }
+      },
+      "headers": {},
+      "code": "AI_CONTEXT_TOO_LONG",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "Please reduce the length of the messages"
+        }
+      },
+      "headers": {},
+      "code": "AI_CONTEXT_TOO_LONG",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "tool_use_failed",
+          "message": "Failed to call a function"
+        }
+      },
+      "headers": {},
+      "code": "AI_PROVIDER_TOOL_ERROR",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "type": "content_filter"
+        }
+      },
+      "headers": {},
+      "code": "AI_CONTENT_FILTERED",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "bad field"
+        }
+      },
+      "headers": {},
+      "code": "AI_PROVIDER_BAD_REQUEST",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 404,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_BAD_REQUEST",
+      "retryable": false,
+      "retryAfterMs": null
+    },
+    {
+      "status": 408,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_UNAVAILABLE",
+      "retryable": true,
+      "retryAfterMs": null
+    },
+    {
+      "status": 500,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_UNAVAILABLE",
+      "retryable": true,
+      "retryAfterMs": null
+    },
+    {
+      "status": 503,
+      "body": {
+        "error": {
+          "message": "overloaded"
+        }
+      },
+      "headers": {},
+      "code": "AI_PROVIDER_UNAVAILABLE",
+      "retryable": true,
+      "retryAfterMs": null
+    },
+    {
+      "status": 200,
+      "body": null,
+      "headers": {},
+      "code": "AI_PROVIDER_INVALID_RESPONSE",
+      "retryable": false,
+      "retryAfterMs": null
+    }
+  ]
+}
