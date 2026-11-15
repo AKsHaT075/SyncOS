@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, UserPlus2, Mail, Briefcase, ListChecks, AlertTriangle } from "lucide-react";
+import { Users, UserPlus2, Briefcase, ListChecks, AlertTriangle } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import KpiStrip from "@/components/dashboard/KpiStrip";
 import QuickActionsCard from "@/components/dashboard/QuickActionsCard";
@@ -21,10 +21,9 @@ import {
 } from "@/components/dashboard/mockDashboardData";
 
 const QUICK_ACTIONS = [
-  { label: "Invite employee", href: "/dashboard/people/invite", icon: UserPlus2, accent: "from-violet-500 to-indigo-600" },
-  { label: "Review onboarding", href: "/dashboard/people/onboarding", icon: Briefcase, accent: "from-emerald-500 to-teal-600" },
-  { label: "Manage people", href: "/dashboard/people", icon: Users, accent: "from-amber-500 to-orange-600" },
-  { label: "Pending invites", href: "/dashboard/people/invitations", icon: Mail, accent: "from-sky-500 to-blue-600" },
+  { label: "People directory", href: "/dashboard/people", icon: Users, accent: "from-amber-500 to-orange-600" },
+  { label: "Teams", href: "/dashboard/teams", icon: Briefcase, accent: "from-emerald-500 to-teal-600" },
+  { label: "Reports", href: "/dashboard/reports", icon: ListChecks, accent: "from-sky-500 to-blue-600" },
 ];
 
 export default function HrDashboard() {

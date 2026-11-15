@@ -1,5 +1,8 @@
 # Sync OS — RBAC & Multi-Tenant Architecture
 
+> **Note:** this document was written when only users, teams, invitations and the audit log existed. The rules still apply to every later module (projects, tasks, meetings, documents, calendar, assets, analytics, AI). For the current module list and permissions see [modules.md](modules.md) and `backend/src/constants/rolePermissions.js`.
+
+
 This document explains how Sync OS isolates organizations from each other and controls what
 each role inside an organization is allowed to do. It assumes you have read
 `auth-system.md` for how a user authenticates in the first place — this document picks up

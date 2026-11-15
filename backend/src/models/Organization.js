@@ -72,6 +72,7 @@ organizationSchema.methods.toSafeObject = function toSafeObject() {
     name: this.name,
     slug: this.slug,
     logo: this.logo,
+    timeZone: (this.settings && this.settings.timezone) || null,
     plan: this.plan,
     limits: this.limits,
     featureFlags: this.featureFlags,

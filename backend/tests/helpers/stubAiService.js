@@ -3,7 +3,7 @@ const http = require('http');
 const jwt = require('jsonwebtoken');
 
 /**
- * A real HTTP server that speaks the Python AI service's wire contract (ai/contracts/CONTRACT.md):
+ * A real HTTP server that speaks the Python AI service's wire contract (docs/ai/ai-service-contract.md):
  * verifies ES256 tokens exactly like Python does, enforces single-use `jti`, streams SSE frames.
  * Used to test the REAL Node client (fetch, SSE parsing, timeouts, abort) without Python or Groq.
  *

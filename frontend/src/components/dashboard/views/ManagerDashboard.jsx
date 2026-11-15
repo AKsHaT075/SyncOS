@@ -8,18 +8,17 @@ import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 import RecentActivityFeed from "@/components/dashboard/RecentActivityFeed";
 import { ProjectProgressCard, TaskTrendCard, WorkloadCard, kpi, useDashboardAnalytics } from "@/components/dashboard/AnalyticsWidgets";
 import TeamSnapshotCard from "@/components/dashboard/TeamSnapshotCard";
-import UpcomingMeetingsCard from "@/components/dashboard/UpcomingMeetingsCard";
+import { LiveUpcomingMeetingsCard } from "@/components/dashboard/LiveWidgets";
 import {
-  MOCK_MEETINGS,
   PREVIEW_ACTIVITY,
   aiInsightsFor,
 } from "@/components/dashboard/mockDashboardData";
 
 const QUICK_ACTIONS = [
   { label: "Create project", href: "/dashboard/projects/new", icon: FolderKanban, accent: "from-violet-500 to-indigo-600" },
-  { label: "Assign task", href: "/dashboard/tasks/new", icon: ListChecks, accent: "from-emerald-500 to-teal-600" },
+  { label: "Assign task", href: "/dashboard/projects", icon: ListChecks, accent: "from-emerald-500 to-teal-600" },
   { label: "Team", href: "/dashboard/people", icon: Users, accent: "from-amber-500 to-orange-600" },
-  { label: "Schedule meeting", href: "/dashboard/meetings/new", icon: CalendarClock, accent: "from-sky-500 to-blue-600" },
+  { label: "Schedule meeting", href: "/dashboard/meetings", icon: CalendarClock, accent: "from-sky-500 to-blue-600" },
 ];
 
 export default function ManagerDashboard() {
@@ -62,7 +61,7 @@ export default function ManagerDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <TeamSnapshotCard />
-        <UpcomingMeetingsCard meetings={MOCK_MEETINGS} />
+        <LiveUpcomingMeetingsCard />
       </div>
 
       <RecentActivityFeed logs={PREVIEW_ACTIVITY} />

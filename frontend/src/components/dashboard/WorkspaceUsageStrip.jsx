@@ -41,7 +41,7 @@ export default function WorkspaceUsageStrip({ plan = "free", seatsUsed, seatsLim
       <span className="shrink-0 text-xs text-zinc-500">Workspace age · {workspaceAge}</span>
 
       <Link
-        href="/dashboard/settings/organization"
+        href="/dashboard/settings"
         className="flex shrink-0 items-center gap-1 text-xs font-semibold text-violet-600 hover:text-violet-700"
       >
         Manage plan

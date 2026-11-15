@@ -18,7 +18,17 @@ const updateFeatureFlagsSchema = z.object({
   featureFlags: z.record(z.string(), z.boolean()),
 });
 
+const updateLimitsSchema = z
+  .object({
+    seats: z.number().int().min(1).max(1_000_000).optional(),
+    storageGB: z.number().min(0.1).max(1_000_000).optional(),
+    aiCredits: z.number().int().min(0).max(1_000_000_000).optional(),
+  })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, 'Nothing to update');
+
 module.exports = {
+  updateLimitsSchema,
   listOrganizationsQuerySchema,
   suspendOrganizationSchema,
   updateFeatureFlagsSchema,

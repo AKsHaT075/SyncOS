@@ -1,7 +1,7 @@
 # Sync OS AI service
 
 Python (FastAPI) service that talks to Groq. It is **internal**: only the Node backend calls it, and it trusts nothing
-from the browser. Read [contracts/CONTRACT.md](contracts/CONTRACT.md) first — it defines who decides what, the
+from the browser. Read [docs/ai/ai-service-contract.md](../docs/ai/ai-service-contract.md) first — it defines who decides what, the
 token model, the streaming frames, replay protection and settlement.
 
 Status: generation + streaming + Groq adapter; **document ingestion** (`app/ingestion`); and **embeddings + vector store** (`app/embeddings`,
@@ -26,7 +26,7 @@ Needs Redis (replay protection) unless you opt into `AI_REPLAY_STORE=memory` + `
 AI_WORKER_SIGNING_KEY_FILE=./keys/ai-worker-private.pem AI_NODE_INTERNAL_URL=http://127.0.0.1:5002 \
   .venv/bin/python -m app.ingestion.worker          # add --once to drain the queue and exit
 ```
-It needs no Groq key and no database access; Node must have `AI_WORKER_PUBLIC_KEY_FILE` set. See `contracts/CONTRACT.md` §11.
+It needs no Groq key and no database access; Node must have `AI_WORKER_PUBLIC_KEY_FILE` set. See `../docs/ai/ai-service-contract.md` §11.
 
 ## Embeddings and Qdrant
 
@@ -52,7 +52,7 @@ and TLS enabled (`QDRANT__SERVICE__ENABLE_TLS=true` + cert/key), persistent stor
 rebuilt - so Qdrant snapshots are a convenience, not the only copy. Pre-populate the model cache (or bake it into the image) and run
 with `AI_EMBEDDING_OFFLINE=true`. Budget **≥2 GB RAM per embedding worker**.
 
-**Changing the model** is a migration, not an edit: see `backend/docs/ai.md` (Phase 4). `python scripts/benchmark_embeddings.py` measures
+**Changing the model** is a migration, not an edit: see `../docs/ai/ai-overview.md` (Phase 4). `python scripts/benchmark_embeddings.py` measures
 load time, memory, latency and the multilingual smoke test on your hardware.
 
 ## Test
@@ -71,5 +71,5 @@ No test uses a real Groq key. Groq is replaced by `httpx.MockTransport`. Embeddi
 Real Groq behaviour (no key was available), the Dockerfile (Docker not installed where it was written).
 
 ## Live tools, configuration and operations
-Setup, every environment variable (Node and Python), permissions, the emergency kill switch, the rollout/rollback checklist and the honest verification status are in [`../backend/docs/ai-operations.md`](../backend/docs/ai-operations.md). Live tools are OFF by default (`AI_LIVE_TOOLS_ENABLED=false` on the Node side). While a model call is in flight the service sends `: keepalive` SSE comments (`AI_TOOL_KEEPALIVE_MS`).
+Setup, every environment variable (Node and Python), permissions, the emergency kill switch, the rollout/rollback checklist and the honest verification status are in [`../docs/ai/ai-operations.md`](../docs/ai/ai-operations.md). Live tools are OFF by default (`AI_LIVE_TOOLS_ENABLED=false` on the Node side). While a model call is in flight the service sends `: keepalive` SSE comments (`AI_TOOL_KEEPALIVE_MS`).
 

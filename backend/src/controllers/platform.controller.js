@@ -6,6 +6,7 @@ const {
   suspendOrganization,
   updateFeatureFlags,
   updateOrganizationPlan,
+  updateOrganizationLimits,
 } = require('../services/platform.service');
 
 const list = asyncHandler(async (req, res) => {
@@ -47,6 +48,11 @@ const reactivate = asyncHandler(async (req, res) => {
   return res.status(200).json({ success: true, organization });
 });
 
+const updateLimits = asyncHandler(async (req, res) => {
+  const organization = await updateOrganizationLimits({ organizationId: req.params.id, limits: req.body, actor: req.user, req });
+  return res.status(200).json({ success: true, organization });
+});
+
 const updateFlags = asyncHandler(async (req, res) => {
   const organization = await updateFeatureFlags({
     organizationId: req.params.id,
@@ -63,5 +69,6 @@ module.exports = {
   reactivate,
   suspend,
   updateFlags,
+  updateLimits,
   updatePlan,
 };

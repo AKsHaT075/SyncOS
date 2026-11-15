@@ -11,7 +11,7 @@ const tokens = require('./tokens');
  *   chat({ identity:{userId,orgId,requestKey}, purpose, messages, tools?, toolChoice?, temperature?,
  *          maxOutputTokens, signal? }) -> async iterable of events
  *
- * Rules (ai/contracts/CONTRACT.md):
+ * Rules (docs/ai/ai-service-contract.md):
  *  - A stream is complete only when a terminal `done` or `error` frame arrives. Anything else is a
  *    truncated stream and surfaces as AI_SERVICE_UNAVAILABLE (with `streamStarted` if output was seen).
  *  - NO retry here, ever. Python retries Groq before output; a second generate request would need a

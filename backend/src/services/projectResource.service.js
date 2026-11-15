@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const { assertStorageAvailable } = require('./planLimits.service');
 const AppError = require('../utils/app-error');
 const { AUDIT_EVENTS } = require('../constants/audit.constants');
 const { canManageProject, canViewProject } = require('../utils/projectAccess');
@@ -43,6 +44,7 @@ async function uploadResource({ projectId, actor, file, req }) {
     throw new AppError('A file is required', 400, 'FILE_REQUIRED');
   }
 
+  await assertStorageAvailable(actor.organization, file.size);
   const resource = await ProjectResource.create({
     organization: actor.organization,
     project: project._id,

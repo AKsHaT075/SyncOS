@@ -125,7 +125,20 @@ async function updateFeatureFlags({ organizationId, featureFlags, actor, req }) 
   return organization.toSafeObject();
 }
 
+async function updateOrganizationLimits({ organizationId, limits, actor, req }) {
+  const organization = await Organization.findById(organizationId);
+  if (!organization) {
+    throw new AppError('Organization not found', 404, 'NOT_FOUND');
+  }
+  const before = { seats: organization.limits?.seats, storageGB: organization.limits?.storageGB, aiCredits: organization.limits?.aiCredits };
+  organization.limits = { ...before, ...limits };
+  await organization.save();
+  await logAudit({ action: AUDIT_EVENTS.ORG_LIMITS_CHANGED, entityId: organization._id.toString(), entityType: 'organization', metadata: { before, after: limits }, req, userId: actor._id });
+  return organization.toSafeObject();
+}
+
 module.exports = {
+  updateOrganizationLimits,
   getOrganization,
   listOrganizations,
   reactivateOrganization,

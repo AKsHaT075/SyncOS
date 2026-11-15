@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { assertSeatForInvitation, assertSeatForMember } = require('./planLimits.service');
 const AppError = require('../utils/app-error');
 const { AUDIT_EVENTS } = require('../constants/audit.constants');
 const { AUTH_CONSTANTS } = require('../constants/auth.constants');
@@ -62,6 +63,7 @@ async function inviteUser({ email, role, inviter, req }) {
   if (!organization) {
     throw new AppError('Organization not found', 404, 'NOT_FOUND');
   }
+  await assertSeatForInvitation(organization._id);
 
   const token = generateRandomToken(32);
   const invitation = await Invitation.create({
@@ -100,6 +102,7 @@ async function acceptInvitation({ token, firstName, lastName, password, req }) {
     throw new AppError('Email is already registered', 409, 'EMAIL_EXISTS');
   }
 
+  await assertSeatForMember(invitation.organization);
   const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   const user = await User.create({
     email: invitation.email,
@@ -144,6 +147,7 @@ async function acceptInvitationForExistingUser({ token, user, req }) {
     throw new AppError('This invitation was sent to a different email address', 400, 'EMAIL_MISMATCH');
   }
 
+  await assertSeatForMember(invitation.organization);
   user.organization = invitation.organization;
   user.role = invitation.role;
   await user.save();

@@ -79,3 +79,19 @@ export function useDeleteConversation({ onDeleted } = {}) {
     },
   });
 }
+
+// ---- Organization AI settings (admins; MANAGE_AI). The server is the authority; these only read and submit.
+export const useAiSettings = () =>
+  useQuery({ queryKey: [AI_KEY, "settings"], queryFn: () => aiService.getSettings(), staleTime: 15_000 });
+
+export const useUpdateAiSettings = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => aiService.updateSettings(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [AI_KEY] });
+      toast.success("AI settings saved");
+    },
+    onError: (error) => toast.error(aiErrorMessage(error)),
+  });
+};

@@ -16,17 +16,13 @@ import QuickActionsCard from "@/components/dashboard/QuickActionsCard";
 import ActivityOverviewCard from "@/components/dashboard/ActivityOverviewCard";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 import OrgHealthRing from "@/components/dashboard/OrgHealthRing";
-import LatestDocumentsCard from "@/components/dashboard/LatestDocumentsCard";
 import RecentlyJoinedMembersCard from "@/components/dashboard/RecentlyJoinedMembersCard";
 import PendingInvitationsCard from "@/components/dashboard/PendingInvitationsCard";
-import UpcomingMeetingsCard from "@/components/dashboard/UpcomingMeetingsCard";
+import { LiveLatestDocumentsCard, LiveUpcomingMeetingsCard } from "@/components/dashboard/LiveWidgets";
 import { ProjectProgressCard, TaskTrendCard, kpi, useDashboardAnalytics } from "@/components/dashboard/AnalyticsWidgets";
 import {
-  MOCK_MEETINGS,
   RECENTLY_JOINED,
-  LATEST_DOCUMENTS,
   HEALTH_BREAKDOWN,
-  RESOURCE_USAGE,
   aiInsightsFor,
 } from "@/components/dashboard/mockDashboardData";
 
@@ -46,9 +42,9 @@ function formatRelativeTime(dateInput) {
 const QUICK_ACTIONS = [
   { label: "Invite member", href: "/dashboard/people", icon: UserPlus, accent: "from-violet-500 to-indigo-600" },
   { label: "Create project", href: "/dashboard/projects/new", icon: FolderKanban, accent: "from-emerald-500 to-teal-600" },
-  { label: "Create team", href: "/dashboard/teams/new", icon: Users2, accent: "from-amber-500 to-orange-600" },
-  { label: "Upload document", href: "/dashboard/documents/upload", icon: FileUp, accent: "from-sky-500 to-blue-600" },
-  { label: "Schedule meeting", href: "/dashboard/meetings/new", icon: CalendarClock, accent: "from-rose-500 to-pink-600" },
+  { label: "Create team", href: "/dashboard/teams", icon: Users2, accent: "from-amber-500 to-orange-600" },
+  { label: "Upload document", href: "/dashboard/documents", icon: FileUp, accent: "from-sky-500 to-blue-600" },
+  { label: "Schedule meeting", href: "/dashboard/meetings", icon: CalendarClock, accent: "from-rose-500 to-pink-600" },
 ];
 
 function buildActivityTrend(logs) {
@@ -133,8 +129,8 @@ export default function OrgAdminDashboard() {
 
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
-          <TeamSnapshotCard seatsLimit={seatsLimit} />
-          <ResourceUsageCard storage={RESOURCE_USAGE.storage} aiCredits={RESOURCE_USAGE.aiCredits} />
+          <TeamSnapshotCard />
+          <ResourceUsageCard />
         </div>
         <div className="space-y-5">
           <OrgHealthRing overall={79} breakdown={HEALTH_BREAKDOWN} />
@@ -157,7 +153,7 @@ export default function OrgAdminDashboard() {
       <SecuritySnapshotCard />
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <LatestDocumentsCard documents={LATEST_DOCUMENTS} />
+        <LiveLatestDocumentsCard />
         <RecentlyJoinedMembersCard members={RECENTLY_JOINED} />
         <PendingInvitationsCard
           invitations={pendingInvitations}
@@ -165,7 +161,7 @@ export default function OrgAdminDashboard() {
           onResend={(id) => resendInvitation.mutate(id)}
           isResending={resendInvitation.isPending}
         />
-        <UpcomingMeetingsCard meetings={MOCK_MEETINGS} />
+        <LiveUpcomingMeetingsCard />
       </div>
     </div>
   );

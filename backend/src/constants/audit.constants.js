@@ -65,6 +65,10 @@ const AUDIT_EVENTS = Object.freeze({
   ORG_SUSPENDED: 'org.suspended',
   ORG_REACTIVATED: 'org.reactivated',
   ORG_PLAN_CHANGED: 'org.plan_changed',
+  ORG_UPDATED: 'org.updated',
+  ORG_LIMITS_CHANGED: 'org.limits_changed',
+  PROFILE_UPDATED: 'user.profile_updated',
+  PASSWORD_CHANGED: 'auth.password_changed',
 
   MEETING_CREATED: 'meeting.created',
   MEETING_UPDATED: 'meeting.updated',

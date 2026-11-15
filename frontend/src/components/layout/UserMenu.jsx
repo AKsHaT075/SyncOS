@@ -50,19 +50,19 @@ export default function UserMenu({ triggerClassName }) {
           <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings/profile")}>
+        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings")}>
           <User className="size-4" />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings/account")}>
+        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings")}>
           <Settings className="size-4" />
           Account settings
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings/organization")}>
+        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings")}>
           <Building2 className="size-4" />
           Organization settings
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings/security")}>
+        <DropdownMenuItem onSelect={() => router.push("/dashboard/settings")}>
           <ShieldCheck className="size-4" />
           Security
         </DropdownMenuItem>

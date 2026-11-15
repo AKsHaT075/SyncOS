@@ -2,7 +2,7 @@ import { FileText } from "lucide-react";
 import { DashboardCard, DashboardCardHeader } from "@/components/dashboard/DashboardCard";
 import EmptyStateCard from "@/components/dashboard/EmptyStateCard";
 
-export default function LatestDocumentsCard({ documents, title = "Latest documents" }) {
+export default function LatestDocumentsCard({ documents, title = "Latest documents", preview = true }) {
   return (
     <DashboardCard>
       <DashboardCardHeader
@@ -10,7 +10,7 @@ export default function LatestDocumentsCard({ documents, title = "Latest documen
         iconClassName="bg-sky-50 text-sky-600"
         title={title}
         description="Recently uploaded to your workspace."
-        preview
+        preview={preview}
       />
 
       <div className="mt-4 space-y-1">

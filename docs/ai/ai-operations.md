@@ -1,7 +1,7 @@
 # Sync OS AI — operations, configuration and limits
 
 Status: implemented and verified, **not deployed and not activated**. Live organizational tools are OFF by default (`AI_LIVE_TOOLS_ENABLED=false`).
-Detail lives elsewhere: design and phases in [`ai.md`](ai.md), the wire protocol in [`../../ai/contracts/CONTRACT.md`](../../ai/contracts/CONTRACT.md), the Python service in [`../../ai/README.md`](../../ai/README.md).
+Detail lives elsewhere: design and phases in [`ai-overview.md`](ai-overview.md), the wire protocol in [`ai-service-contract.md`](ai-service-contract.md), the Python service in [`../../ai/README.md`](../../ai/README.md).
 
 ## 1. Architecture in one page
 
@@ -25,7 +25,7 @@ The eight tools (read-only, fixed, schemas owned by Node): `list_my_tasks`, `lis
 
 ## 2. Setup (development)
 
-1. Services: MongoDB, Redis. For documents: a Qdrant server and the embedding model (see `ai.md`).
+1. Services: MongoDB, Redis. For documents: a Qdrant server and the embedding model (see `ai-overview.md`).
 2. Keys: `node backend/scripts/generate-ai-keys.js` writes `ai/keys/` (gitignored) and prints the lines for both env files.
 3. Node `backend/.env`: `AI_SERVICE_URL`, `AI_SERVICE_SIGNING_KEY` (or `_FILE`), `AI_SERVICE_KEY_ID`. Node never holds Groq or Qdrant settings.
 4. Python `ai/.env` (gitignored; copy `ai/.env.example`): `GROQ_API_KEY`, `AI_JWT_PUBLIC_KEY_FILE`, `AI_NODE_INTERNAL_URL`, Redis settings.

@@ -76,7 +76,27 @@ async function createOrganization({ name, slug: requestedSlug, logo, owner, req 
   return { organization };
 }
 
+/** Owner-level edit of the organization's own details. Plan, limits, flags and suspension stay platform-only. */
+async function updateOrganization({ actor, changes, req }) {
+  if (!actor.organization) throw new AppError('Not found', 404, 'NOT_FOUND');
+  if (![ROLES.ORG_ADMIN].includes(actor.role)) throw new AppError('Only the organization owner can edit organization details', 403, 'FORBIDDEN');
+  const organization = await Organization.findById(actor.organization);
+  if (!organization) throw new AppError('Not found', 404, 'NOT_FOUND');
+  const fields = [];
+  if (changes.name !== undefined) { organization.name = changes.name; fields.push('name'); }
+  if (changes.logo !== undefined) { organization.logo = changes.logo || null; fields.push('logo'); }
+  if (changes.timeZone !== undefined) {
+    organization.settings = { ...(organization.settings || {}), timezone: changes.timeZone };
+    organization.markModified('settings');
+    fields.push('timeZone');
+  }
+  await organization.save();
+  await logAudit({ action: AUDIT_EVENTS.ORG_UPDATED, entityId: organization._id.toString(), entityType: 'organization', metadata: { fields }, organizationId: organization._id, req, userId: actor._id });
+  return { organization };
+}
+
 module.exports = {
+  updateOrganization,
   createOrganization,
   getOrganizationsForUser,
 };

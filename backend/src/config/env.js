@@ -107,6 +107,8 @@ module.exports = {
   AI_EMBEDDING_RETIRE_GRACE_HOURS: asPositiveInt(process.env.AI_EMBEDDING_RETIRE_GRACE_HOURS, 24), // the previous space survives this long after a promotion
   // Optional JSON overriding/adding prices: {"model-id":{"input":0.15,"output":0.6}} in USD per 1M tokens.
   AI_PRICING_JSON: process.env.AI_PRICING_JSON || '',
+  // Tokens one plan "AI credit" is worth. Unset = AI credits are not enforced (no such unit exists until this is configured).
+  AI_TOKENS_PER_CREDIT: Number(process.env.AI_TOKENS_PER_CREDIT) > 0 ? Number(process.env.AI_TOKENS_PER_CREDIT) : null,
   CLIENT_ORIGINS: asList(process.env.CLIENT_URL, ['http://localhost:3000', 'http://127.0.0.1:3000']),
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
   AUTH_ACCESS_COOKIE_NAME: process.env.AUTH_ACCESS_COOKIE_NAME || 'sync_access_token',

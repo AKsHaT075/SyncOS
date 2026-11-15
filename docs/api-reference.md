@@ -32,6 +32,8 @@ All routes are mounted under **`/api/v1`**. All request/response bodies are JSON
 | `POST /logout` | none (reads cookies) | **enforced** | – | Revokes current device's session |
 | `POST /logout-all` | `authenticate` | **enforced** | – | Bumps `tokenVersion`, revokes every session |
 | `GET /me` | `authenticate` | n/a (GET) | – | Returns `{ user }` (`toSafeObject()`) |
+| `PATCH /me` | `authenticate` | **enforced** | `{ firstName?, lastName?, skills? }` (strict, at least one field) | Edit own profile. Role, email and organization cannot be set here. Audit: `user.profile_updated` |
+| `POST /change-password` | `authenticate` | **enforced** | `{ currentPassword, newPassword }` (new password follows the register rules and must differ) | `authLimiter`. `400 INVALID_CURRENT_PASSWORD` (counts toward lockout, `423 ACCOUNT_LOCKED`). Success bumps `tokenVersion`, revokes every session and clears cookies, so the client must sign in again. Audit: `auth.password_changed` |
 | `GET /sessions` | `authenticate` | n/a (GET) | – | List this user's active/past sessions |
 | `DELETE /sessions/:sessionId` | `authenticate` | **enforced** | – | Revoke one specific device |
 | `POST /forgot-password` | none | exempt | `{ email }` | `passwordResetLimiter` (5/15min). Always 200, no enumeration |
@@ -57,11 +59,13 @@ cookie-only, not in the body).
 | Method & Path | Auth | CSRF | Body | Notes |
 |---|---|---|---|---|
 | `GET /me` | `authenticate` | n/a (GET) | – | Returns `{ organizations: [...] }` — orgs the caller belongs to (today: 0 or 1) |
+| `PATCH /me` | `authenticate` + `requireOrgAccess` + role `org-admin` | enforced | `{ name?, logo?, timeZone? }` (strict, at least one; `timeZone` must be a valid IANA zone, stored as `settings.timezone`) | Owner edits organization details. Others get 403. Audit: `org.updated` |
+| `GET /me/usage` | `org-admin`, `admin` | n/a (GET) | – | `{ usage: { plan, seats: { used, pendingInvitations, limit }, storage: { usedBytes, limitBytes, limitGB }, aiCredits: { limit, enforced } } }` |
 | `POST /` | `authenticate` | enforced | `{ name }` (2–120 chars) | Creates the org, caller becomes `ORG_ADMIN`. `409 ORGANIZATION_ALREADY_CREATED` if `hasCreatedOrganization` is already true |
 
 **Organization shape** (`Organization.toSafeObject()`):
 ```json
-{ "id", "name", "slug", "logo", "plan", "limits": { "seats", "aiCredits", "storageGB" },
+{ "id", "name", "slug", "logo", "timeZone", "plan", "limits": { "seats", "aiCredits", "storageGB" },
   "featureFlags": {}, "isActive", "createdAt", "updatedAt" }
 ```
 
@@ -97,6 +101,7 @@ metadata only — see `rbac-multi-tenant-architecture.md` §12 for why that boun
 | `PATCH /:id/plan` | `{ plan }` — `free\|starter\|pro\|enterprise` | Audit: `ORG_PLAN_CHANGED` |
 | `POST /:id/suspend` | `{ reason? }` | Sets `isActive: false`. Audit: `ORG_SUSPENDED` |
 | `POST /:id/reactivate` | – | Clears suspension. Audit: `ORG_REACTIVATED` |
+| `PATCH /:id/limits` | `{ seats?, storageGB?, aiCredits? }` (strict, at least one; seats and storage must be positive) | Changes the plan limits that are enforced. Audit: `org.limits_changed` |
 | `PATCH /:id/feature-flags` | `{ featureFlags: { [key]: boolean } }` | Merges into existing flags |
 
 All responses: `{ success, organization }` (single) or `{ success, organizations, pagination }` (list).
@@ -127,6 +132,9 @@ Every error follows the same envelope (`middlewares/error.middleware.js`):
 | `UNAUTHENTICATED` | 401 | Missing/invalid/expired access token |
 | `INVALID_CREDENTIALS` | 401 | Login: wrong email or password |
 | `ACCOUNT_LOCKED` | 423 | Login: 5+ failed attempts within 15 min |
+| `INVALID_CURRENT_PASSWORD` | 400 | Change password: the current password is wrong |
+| `SEAT_LIMIT_REACHED` | 403 | Inviting or accepting when the plan's seats are used |
+| `STORAGE_LIMIT_REACHED` | 413 | Upload, new version or version restore beyond the plan's storage |
 | `EMAIL_NOT_VERIFIED` | 403 | Login before OTP verification |
 | `EMAIL_ALREADY_VERIFIED` | 409 | Re-verifying an already-verified email |
 | `EMAIL_EXISTS` | 409 | Register / accept-invite with a duplicate email |

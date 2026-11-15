@@ -15,7 +15,7 @@ const { projectResult } = require('./tools/toolResult');
 const toolRuns = require('./tools/toolRuns');
 
 /**
- * Callbacks from the Python AI service into Node (ai/contracts/CONTRACT.md §8).
+ * Callbacks from the Python AI service into Node (docs/ai/ai-service-contract.md §8).
  *
  * Python is NOT trusted to say who may do what. Every callback independently:
  *   1. verifies a callback token (ES256, audience, scope, lifetime)

@@ -11,11 +11,6 @@ export const MOCK_PROJECTS = [
   { id: 5, name: "Design system v3", status: "on track", priority: "low", owner: "Riya Mehta", tasks: "20/22", due: "Jun 26", pinned: false },
 ];
 
-export const RESOURCE_USAGE = {
-  storage: { used: 18, total: 50, unit: "GB" },
-  aiCredits: { used: 640, total: 1000, unit: "credits" },
-};
-
 export const TEAM_INSIGHTS = {
   mostActive: "Engineering",
   largest: "Engineering",

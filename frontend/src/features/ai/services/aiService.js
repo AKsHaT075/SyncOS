@@ -23,6 +23,9 @@ function readCookie(name) {
 // Conversations live ONLY on the server (MongoDB). Nothing here is cached in localStorage / sessionStorage.
 export const aiService = {
   status: async () => (await api.get(`${base}/status`)).data,
+  getSettings: async () => (await api.get(`${base}/settings`)).data,
+  updateSettings: async (payload) => (await api.put(`${base}/settings`, payload)).data,
+  orgUsage: async () => (await api.get(`${base}/usage`)).data,
   listConversations: async (params) => (await api.get(`${base}/conversations`, { params })).data,
   createConversation: async (payload = {}) => (await api.post(`${base}/conversations`, payload)).data,
   getConversation: async (id) => (await api.get(`${base}/conversations/${id}`)).data,

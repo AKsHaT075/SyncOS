@@ -9,7 +9,7 @@ Browser ─► Next.js ─► Node backend (authority) ─► Python AI service 
                             └── callbacks (scoped token) ──┘
 ```
 
-The wire contract, token model and fixtures are in **[`ai/contracts/CONTRACT.md`](../../ai/contracts/CONTRACT.md)**.
+The wire contract, token model and fixtures are in **[`docs/ai/ai-service-contract.md`](ai-service-contract.md)**.
 That file is the source of truth for the Node⇄Python boundary; this one covers the Node side.
 
 ## Decisions (approved)
@@ -117,7 +117,7 @@ Known limitation: a disclosure version bump flags `needsReacceptance` but does n
 
 ## Phase 3: document ingestion and extraction
 
-Full wire contract: `ai/contracts/CONTRACT.md` §11. Summary of the Node side:
+Full wire contract: `docs/ai/ai-service-contract.md` §11. Summary of the Node side:
 
 | File | Role |
 |---|---|
@@ -168,7 +168,7 @@ env vars in `ai/.env.example`; give it no Groq key). Several workers may run at 
 
 ## Phase 4: embeddings and the vector store
 
-Wire contract: `ai/contracts/CONTRACT.md` §12. Python (`ai/app/embeddings/`, `ai/app/vectorstore/`) embeds and writes vectors; Node
+Wire contract: `docs/ai/ai-service-contract.md` §12. Python (`ai/app/embeddings/`, `ai/app/vectorstore/`) embeds and writes vectors; Node
 (`backend/src/services/ai/embedding/`) owns jobs, spaces and lifecycle and **never talks to Qdrant**.
 
 **The model — evidence, not assumption.** `intfloat/multilingual-e5-small`: MIT licence; 384 dimensions; 512-token input window; mean
@@ -231,7 +231,7 @@ server with an API key and TLS**. Mongo is the source of truth: a lost Qdrant is
 
 - Public endpoint: `POST /api/v1/ai/ask` `{question}` (JSON, or SSE with `Accept: text/event-stream`/`?stream=1`). Requires `USE_AI`. Returns `{answer, citations[], unverifiedMarkers, droppedCitations, sourcesUsed}`; no raw retrieval internals reach the browser.
 - Code: `services/ai/rag/{ask,knowledgeAccess}.service.js`, `aiCallbacks.authorizeKnowledge`, internal route `POST /internal/ai/knowledge/authorize` (`internalApp.js`), `aiService/client.js` (`rag` routes to `/internal/v1/answer`).
-- Authorization is per request and live (see CONTRACT.md section 13). Private documents are owner-only for AI, admins excluded. Stale versions, trashed documents, other orgs and chunks outside the active space are rejected before any text leaves Node.
+- Authorization is per request and live (see ai-service-contract.md section 13). Private documents are owner-only for AI, admins excluded. Stale versions, trashed documents, other orgs and chunks outside the active space are rejected before any text leaves Node.
 - Metering: reserve = estimate + `AI_RAG_CONTEXT_TOKENS` + 600 overhead + output cap, settled to Groq's real usage; no-answer charges 0.
 - Env (Node): `AI_RAG_CONTEXT_TOKENS`, `AI_RAG_MAX_QUESTION_CHARS`, `AI_RAG_AUTHORIZE_MAX_CANDIDATES`, `AI_RAG_AUTHORIZED_TTL_SECONDS`. Env (Python): `AI_RAG_ENABLED` (default false), `AI_NODE_INTERNAL_URL`, `AI_RAG_TOP_K|CANDIDATES|MAX_CANDIDATES|MIN_SCORE|SCORE_WINDOW|CONTEXT_TOKENS|MAX_PER_DOCUMENT|NEAR_DUPLICATE|AUTHORIZE_TIMEOUT_SECONDS|MAX_QUESTION_CHARS`.
 - Ops: the API process now loads the E5 model (~1 GB RSS) and needs a Qdrant SERVER in dev (embedded Qdrant is single-process and conflicts with the embedding worker).
@@ -318,7 +318,7 @@ One new tool, `scope` = `me` (default) | `my_team` | `organization`; no ids, fil
 
 ### Phase 8 Step 6: Python tool orchestration and the trusted authorization signal (dormant)
 
-Node side (minimal): `signGenerateToken({liveTools})` adds `lt: true`; `client.chat` sends `X-Syncos-Tool-Token` (scope `tool:execute`, same request id) ONLY when the pipeline passes `liveTools: true`, which it does only after `openBudget` succeeded (`options.toolBudget`). Retrieval never gets it and `toolBudget` + `rag` is refused. No production caller sets `toolBudget`, so nothing is live. Python side and the full rules: `ai/contracts/CONTRACT.md` §8a. Tool contract file: `ai/app/tools/contract.json` (regenerate with `node scripts/export-ai-tool-contract.js`). Tests: `integration/ai-live-tools-authorization`; Python `test_tools_{definitions,client,auth,loop}`.
+Node side (minimal): `signGenerateToken({liveTools})` adds `lt: true`; `client.chat` sends `X-Syncos-Tool-Token` (scope `tool:execute`, same request id) ONLY when the pipeline passes `liveTools: true`, which it does only after `openBudget` succeeded (`options.toolBudget`). Retrieval never gets it and `toolBudget` + `rag` is refused. No production caller sets `toolBudget`, so nothing is live. Python side and the full rules: `docs/ai/ai-service-contract.md` §8a. Tool contract file: `ai/app/tools/contract.json` (regenerate with `node scripts/export-ai-tool-contract.js`). Tests: `integration/ai-live-tools-authorization`; Python `test_tools_{definitions,client,auth,loop}`.
 
 ### Phase 8 Step 6A: live verification and reliability audit
 
@@ -329,13 +329,13 @@ Node side (minimal): `signGenerateToken({liveTools})` adds `lt: true`; `client.c
 
 ### Phase 8 Step 7A: the `tool_activity` event (backend only)
 
-Contract and timer rules: `ai/contracts/CONTRACT.md` §8a. Python emits `{type:'tool_activity', tool}` per validated call right before its callback; `client.js` `toEvent` accepts exactly that shape and the eight names (`AI_LIVE_TOOL_NAMES`, pinned to the registry by a test) else a protocol error; `ai.controller.js` `forUser` rebuilds `{type, tool}` for browsers. The idle timer is armed only AFTER a frame validated, the total ceiling timer is never re-armed. Nothing sends a tool budget in production, so no browser receives this yet. Tests: `integration/ai-tool-activity`, Python `test_tools_activity`, shared wire fixture `frames.json`.
+Contract and timer rules: `docs/ai/ai-service-contract.md` §8a. Python emits `{type:'tool_activity', tool}` per validated call right before its callback; `client.js` `toEvent` accepts exactly that shape and the eight names (`AI_LIVE_TOOL_NAMES`, pinned to the registry by a test) else a protocol error; `ai.controller.js` `forUser` rebuilds `{type, tool}` for browsers. The idle timer is armed only AFTER a frame validated, the total ceiling timer is never re-armed. Nothing sends a tool budget in production, so no browser receives this yet. Tests: `integration/ai-tool-activity`, Python `test_tools_activity`, shared wire fixture `frames.json`.
 
 ### Phase 8 Steps 8A + 9 (production-readiness engineering; still NOT activated)
 
-- **8A usage:** cumulative snapshots, latest-valid-wins, validated and monotonic (`aiPipeline.acceptUsage`); see CONTRACT.md §8a. Cancel before the first callback now charges the snapshot that reached Node (it used to be 0); the multi-round estimate under-count is gone whenever a snapshot arrived. Residual: Python dying before it sent a snapshot.
+- **8A usage:** cumulative snapshots, latest-valid-wins, validated and monotonic (`aiPipeline.acceptUsage`); see ai-service-contract.md §8a. Cancel before the first callback now charges the snapshot that reached Node (it used to be 0); the multi-round estimate under-count is gone whenever a snapshot arrived. Residual: Python dying before it sent a snapshot.
 - **Keepalive:** Python sends `: keepalive` while a model call is in flight; Node counts exactly that as proof of life (idle/first-frame), never against the absolute ceiling. This also removes a latent 35 s-idle failure for slow buffered answers.
-- **9A hybrid:** `ask.service.streamAnswer` picks `rag` (default), `hybrid` or `tools` on the server, see CONTRACT.md §8b. The pipeline no longer refuses a tool budget together with `rag`.
+- **9A hybrid:** `ask.service.streamAnswer` picks `rag` (default), `hybrid` or `tools` on the server, see ai-service-contract.md §8b. The pipeline no longer refuses a tool budget together with `rag`.
 - **9B guard:** a tool budget opens only after `assertLiveDataAvailable` (fresh user, USE_AI, AI + live data, platform switches) in the pipeline, before any slot/reservation/budget exists; `liveToolsEligibility` decides what a conversation may offer. Deploy-time activation = `AI_LIVE_TOOLS_ENABLED` (default OFF).
 - **9C emergency switch:** `AiPlatformControl` (one row), super-admin `GET/PUT /api/v1/ai/platform/control` (`aiDisabled`, `liveToolsDisabled`, fixed reason code), audited as `ai.platform_control_changed`; read fresh on every gate and every tool callback and after a tool finishes; an unreadable row means OFF (fail closed). Distinct from the organization settings, which stay in force. Python treats the platform refusal as fatal.
 - **9D:** a user cancel before the first frame keeps the message and saves an incomplete reply; only a refusal (nothing accepted) rolls back.

@@ -8,7 +8,7 @@ const GROUP_LABELS = {
   upcoming: "Upcoming",
 };
 
-export default function UpcomingMeetingsCard({ meetings }) {
+export default function UpcomingMeetingsCard({ meetings, preview = true }) {
   const groups = ["today", "tomorrow", "upcoming"].map((key) => ({
     key,
     label: GROUP_LABELS[key],
@@ -24,7 +24,7 @@ export default function UpcomingMeetingsCard({ meetings }) {
         iconClassName="bg-indigo-50 text-indigo-600"
         title="Upcoming meetings"
         description="From your team calendar."
-        preview
+        preview={preview}
       />
 
       <div className="mt-4 space-y-4">

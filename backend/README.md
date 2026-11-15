@@ -3,9 +3,9 @@
 Node.js / Express / MongoDB / Redis API for Sync OS — a multi-tenant SaaS workspace. This
 README is the quick-start; for how the system actually works, read:
 
-- [`docs/auth-system.md`](docs/auth-system.md) — authentication, tokens, sessions, CSRF, rate limiting
-- [`docs/rbac-multi-tenant-architecture.md`](docs/rbac-multi-tenant-architecture.md) — organizations, roles, permissions, isolation
-- [`docs/api-reference.md`](docs/api-reference.md) — every route, request/response shape, error codes
+- [`docs/authentication.md`](../docs/authentication.md) — authentication, tokens, sessions, CSRF, rate limiting
+- [`docs/rbac-multi-tenancy.md`](../docs/rbac-multi-tenancy.md) — organizations, roles, permissions, isolation
+- [`docs/api-reference.md`](../docs/api-reference.md) — every route, request/response shape, error codes
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ README is the quick-start; for how the system actually works, read:
 
 ```bash
 npm install
-cp .env.example .env   # if present; otherwise create .env using the table below
+cp .env.example .env   # then set MONGO_URI, JWT_SECRET, JWT_REFRESH_SECRET
 npm run dev
 ```
 

@@ -5,8 +5,7 @@ import { Users } from "lucide-react";
 import { DashboardCard, DashboardCardHeader } from "@/components/dashboard/DashboardCard";
 import { TEAM_INSIGHTS } from "@/components/dashboard/mockDashboardData";
 
-// People module has no "list members" endpoint yet — role mix is a preview,
-// headcount/seatsLimit below comes from the real organization record.
+// Sample role mix (marked Preview). Real headcount and seats are shown by the workspace strip and the Plan usage card.
 const ROLE_MIX = [
   { name: "Org admin", value: 1, color: "#6366f1" },
   { name: "Manager", value: 2, color: "#0ea5e9" },
@@ -14,9 +13,7 @@ const ROLE_MIX = [
   { name: "Guest", value: 1, color: "#a1a1aa" },
 ];
 
-export default function TeamSnapshotCard({ seatsLimit }) {
-  const headcount = ROLE_MIX.reduce((sum, item) => sum + item.value, 0);
-  const hasLimit = Number.isFinite(seatsLimit) && seatsLimit > 0;
+export default function TeamSnapshotCard() {
 
   return (
     <DashboardCard>
@@ -24,7 +21,7 @@ export default function TeamSnapshotCard({ seatsLimit }) {
         icon={Users}
         iconClassName="bg-indigo-50 text-indigo-600"
         title="Team"
-        description={hasLimit ? `${headcount} / ${seatsLimit} seats` : `${headcount} members`}
+        description="Sample role mix"
         preview
       />
 

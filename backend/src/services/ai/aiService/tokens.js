@@ -7,7 +7,7 @@ const { limitsClaim } = require('../tools/toolLimits');
 const { AI_ERROR_CODES: C } = require('../../../constants/ai.constants');
 
 /**
- * Tokens for the Node <-> Python hop. See ai/contracts/CONTRACT.md §2.
+ * Tokens for the Node <-> Python hop. See docs/ai/ai-service-contract.md §2.
  *
  * ES256 only. Node holds the private key; Python gets the public half, so Python can verify user
  * context but never mint it. Audiences are distinct per purpose, claims are opaque ids only.

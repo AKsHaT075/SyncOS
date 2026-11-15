@@ -462,6 +462,46 @@ async function getProfile(userId) {
   return withResolvedStatus(user);
 }
 
+async function updateProfile({ userId, changes, req }) {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  const before = {};
+  for (const key of ['firstName', 'lastName', 'skills']) {
+    if (changes[key] === undefined) continue;
+    before[key] = user[key];
+    user[key] = changes[key];
+  }
+  await user.save();
+  await logAudit({ action: AUDIT_EVENTS.PROFILE_UPDATED, entityId: user._id.toString(), entityType: 'user', metadata: { fields: Object.keys(before) }, req, success: true, userId: user._id, organizationId: user.organization });
+  return withResolvedStatus(user);
+}
+
+/**
+ * Authenticated password change. Requires the current password (a stolen access token alone is not enough), counts failures like a login
+ * (same lockout), and signs the account out everywhere, exactly like a password reset, so every session must log in again.
+ */
+async function changePassword({ userId, currentPassword, newPassword, req }) {
+  const user = await User.findById(userId).select('+passwordHash');
+  if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  if (user.lockUntil && user.lockUntil.getTime() > Date.now()) {
+    throw new AppError('Account is temporarily locked. Try again later', 423, 'ACCOUNT_LOCKED');
+  }
+  if (!(await authenticateWithPassword(user, currentPassword))) {
+    applyAccountLock(user);
+    await user.save();
+    await logAudit({ action: AUDIT_EVENTS.PASSWORD_CHANGED, entityId: user._id.toString(), entityType: 'user', req, success: false, userId: user._id });
+    throw new AppError('Your current password is incorrect', 400, 'INVALID_CURRENT_PASSWORD');
+  }
+  user.passwordHash = await buildPasswordHash(newPassword);
+  user.passwordChangedAt = new Date();
+  clearAccountLockState(user);
+  user.tokenVersion += 1;
+  await user.save();
+  await revokeAllSessionsForUser(user._id, 'password_changed');
+  await logAudit({ action: AUDIT_EVENTS.PASSWORD_CHANGED, entityId: user._id.toString(), entityType: 'user', req, success: true, userId: user._id });
+  return { message: 'Password changed. Please sign in again' };
+}
+
 async function getSessions(userId) {
   return listSessionsForUser(userId);
 }
@@ -493,6 +533,8 @@ function issueCsrfToken() {
 }
 
 module.exports = {
+  changePassword,
+  updateProfile,
   getProfile,
   getSessions,
   issueCsrfToken,

@@ -5,6 +5,7 @@ const { AI_DISCLOSURE, AI_ERROR_CODES, AI_LIVE_DATA_DISCLOSURE, AI_QUOTA_DEFAULT
 const { PERMISSIONS } = require('../../constants/permissions');
 const { ROLE_PERMISSIONS } = require('../../constants/rolePermissions');
 const AiOrgSettings = require('../../models/AiOrgSettings');
+const { capAiQuotas } = require('../planLimits.service');
 const { logAudit } = require('../audit.service');
 const platformControl = require('./aiPlatformControl.service');
 const { platformStatus } = require('./aiService');
@@ -196,7 +197,7 @@ async function assertAiAvailable({ actor }) {
   if (!platform.configured) throw new AppError('AI is not configured on this server', 503, AI_ERROR_CODES.NOT_CONFIGURED);
   const row = await AiOrgSettings.findOne({ organization: actor.organization }).select('enabled liveDataEnabled quotas').lean();
   if (!row?.enabled) throw new AppError('AI is not enabled for this organization', 403, AI_ERROR_CODES.DISABLED);
-  return { quotas: effectiveQuotas(row), liveDataEnabled: Boolean(row.liveDataEnabled) };
+  return { quotas: await capAiQuotas(actor.organization, effectiveQuotas(row)), liveDataEnabled: Boolean(row.liveDataEnabled) };
 }
 
 /**
@@ -255,7 +256,7 @@ async function getPlatformStatus() {
 /** Effective quotas for an org (its overrides, else platform defaults). */
 async function getEffectiveQuotas(organizationId) {
   const row = await AiOrgSettings.findOne({ organization: organizationId }).select('quotas').lean();
-  return effectiveQuotas(row);
+  return capAiQuotas(organizationId, effectiveQuotas(row));
 }
 
 module.exports = { assertAiAvailable, assertLiveDataAvailable, assertLiveToolsStillAllowed, liveToolsEligibility, getDisclosure, getLiveDataDisclosure, getEffectiveQuotas, getPlatformStatus, getSettings, getStatus, updateSettings };

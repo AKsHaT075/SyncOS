@@ -150,7 +150,7 @@ Settlement is **Node-only**. Python never reads or writes quota counters.
 * Charge by outcome (unchanged from Phase 2): real `usage` wins; `done` without usage ⇒ estimate; error/cancel before
   output ⇒ 0; error/cancel/truncation after output ⇒ estimate of input + output so far.
 * Known limit: if Python spent Groq tokens but the hop failed before any frame reached Node, Node charges 0. The loss
-  is bounded by one request's reservation and is reported in `docs/ai.md`.
+  is bounded by one request's reservation and is reported in `docs/ai/ai-overview.md`.
 
 ## 8. Callbacks into Node **[Built: the authorization gate and internal listener · Not built: any real tool, and Python never calls it yet]**
 

@@ -1,3 +1,4 @@
+const { assertStorageAvailable } = require('./planLimits.service');
 const AppError = require('../utils/app-error');
 const { AUDIT_EVENTS } = require('../constants/audit.constants');
 const Document = require('../models/Document');
@@ -100,6 +101,7 @@ async function uploadVersion({ actor, id, file, changeNote, req }) {
   }
   const { document, access } = await getAccessibleDocument(id, actor);
   assertCanEdit(access);
+  await assertStorageAvailable(actor.organization, file.size);
 
   const originalName = decodeOriginalName(file.originalname);
   // A replacement keeps the document's format, so previews and the file
@@ -154,6 +156,7 @@ async function restoreVersion({ actor, id, version, req }) {
     throw new AppError('That version is already the current one', 400, 'VERSION_ALREADY_CURRENT');
   }
 
+  await assertStorageAvailable(actor.organization, source.size);
   const storage = getStorage();
   if (!(await storage.stat(source.storageKey))) {
     throw new AppError('The file for that version is no longer available', 404, 'FILE_MISSING');

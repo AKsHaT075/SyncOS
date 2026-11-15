@@ -43,6 +43,20 @@ const resetPasswordSchema = z.object({
   password,
 });
 
+const updateProfileSchema = z
+  .object({
+    firstName: z.string().trim().min(1).max(80).optional(),
+    lastName: z.string().trim().min(1).max(80).optional(),
+    skills: z.array(z.string().trim().min(1).max(60)).max(50).optional(),
+  })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, 'Nothing to update');
+
+const changePasswordSchema = z
+  .object({ currentPassword: z.string().min(1).max(128), newPassword: password })
+  .strict()
+  .refine((value) => value.currentPassword !== value.newPassword, { message: 'The new password must be different', path: ['newPassword'] });
+
 const updateRoleSchema = z.object({
   role: z.enum(Object.values(ROLES)),
 });
@@ -53,6 +67,8 @@ const updatePresenceStatusSchema = z.object({
 });
 
 module.exports = {
+  changePasswordSchema,
+  updateProfileSchema,
   forgotPasswordSchema,
   loginSchema,
   password,

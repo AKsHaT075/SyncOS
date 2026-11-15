@@ -89,6 +89,6 @@ export const SETTINGS_ITEM = { label: "Settings", href: "/dashboard/settings", i
 // Shown above the main menu. No badge count is wired for "My Tasks" — there's
 // no Tasks feature yet to source a real number from.
 export const QUICK_LINKS = [
-  { label: "My Tasks", href: "/dashboard/mytask", icon: CheckCircle2, permission: null },
+  { label: "My Tasks", href: "/dashboard/tasks", icon: CheckCircle2, permission: null },
   { label: "Notifications", href: "/dashboard/notifications", icon: Bell, permission: null },
 ];

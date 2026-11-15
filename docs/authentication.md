@@ -74,7 +74,7 @@ Key points:
 - Password is hashed with **bcrypt, 12 salt rounds** before it ever touches the database.
 - The user document is created with `emailVerified: false` and `organization: null`. The
   account exists but cannot log in yet (see §3) and does not belong to any tenant yet — that
-  happens during onboarding (`docs/rbac-multi-tenant-architecture.md`, §5).
+  happens during onboarding (`docs/rbac-multi-tenancy.md`, §5).
 - The OTP itself is never stored in plaintext — only its SHA-256 hash, in Redis, with a TTL.
   Even a full Redis dump does not reveal valid OTPs.
 - Duplicate-email registration is rejected with `409 EMAIL_EXISTS` (no information about

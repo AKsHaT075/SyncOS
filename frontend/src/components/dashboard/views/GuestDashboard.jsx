@@ -3,10 +3,9 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { RestrictedAnalyticsCard } from "@/components/dashboard/AnalyticsWidgets";
 import RecentActivityFeed from "@/components/dashboard/RecentActivityFeed";
-import LatestDocumentsCard from "@/components/dashboard/LatestDocumentsCard";
-import UpcomingMeetingsCard from "@/components/dashboard/UpcomingMeetingsCard";
+import { LiveLatestDocumentsCard, LiveUpcomingMeetingsCard } from "@/components/dashboard/LiveWidgets";
 import AnnouncementsCard from "@/components/dashboard/AnnouncementsCard";
-import { LATEST_DOCUMENTS, MOCK_MEETINGS, ANNOUNCEMENTS, PREVIEW_ACTIVITY } from "@/components/dashboard/mockDashboardData";
+import { ANNOUNCEMENTS, PREVIEW_ACTIVITY } from "@/components/dashboard/mockDashboardData";
 
 export default function GuestDashboard() {
   const user = useAuthStore((state) => state.user);
@@ -23,8 +22,8 @@ export default function GuestDashboard() {
       <RestrictedAnalyticsCard />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <LatestDocumentsCard documents={LATEST_DOCUMENTS} title="Shared documents" />
-        <UpcomingMeetingsCard meetings={MOCK_MEETINGS} />
+        <LiveLatestDocumentsCard title="Shared documents" />
+        <LiveUpcomingMeetingsCard />
       </div>
 
       <AnnouncementsCard announcements={ANNOUNCEMENTS} />

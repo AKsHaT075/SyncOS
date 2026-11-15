@@ -11,7 +11,7 @@ import MyTeamButton from "@/components/dashboard/MyTeamButton";
 import { PINNED_ITEMS, MY_TEAM, aiInsightsFor } from "@/components/dashboard/mockDashboardData";
 
 const QUICK_ACTIONS = [
-  { label: "Log a task", href: "/dashboard/tasks/new", icon: ListTodo, accent: "from-violet-500 to-indigo-600" },
+  { label: "My tasks", href: "/dashboard/tasks", icon: ListTodo, accent: "from-violet-500 to-indigo-600" },
   { label: "Join meeting", href: "/dashboard/meetings", icon: CalendarClock, accent: "from-sky-500 to-blue-600" },
   { label: "My projects", href: "/dashboard/projects", icon: FileText, accent: "from-emerald-500 to-teal-600" },
 ];

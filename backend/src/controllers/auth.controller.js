@@ -2,6 +2,7 @@ const asyncHandler = require('../utils/async-handler');
 const { AUTH_CONSTANTS } = require('../constants/auth.constants');
 const { getCookieToken, clearAuthCookies, setAuthCookies } = require('../utils/cookies');
 const {
+  changePassword,
   getProfile,
   getSessions,
   issueCsrfToken,
@@ -14,6 +15,7 @@ const {
   revokeAllDevices,
   revokeCurrentDevice,
   revokeDeviceSession,
+  updateProfile,
   verifyEmailWithOtp,
 } = require('../services/auth.service');
 const { setPresenceStatus } = require('../services/presence.service');
@@ -77,6 +79,17 @@ const me = asyncHandler(async (req, res) => {
   return res.status(200).json({ success: true, user });
 });
 
+const updateMyProfile = asyncHandler(async (req, res) => {
+  const user = await updateProfile({ userId: req.user._id, changes: req.body, req });
+  return res.status(200).json({ success: true, user });
+});
+
+const changeMyPassword = asyncHandler(async (req, res) => {
+  const result = await changePassword({ userId: req.user._id, currentPassword: req.body.currentPassword, newPassword: req.body.newPassword, req });
+  clearAuthCookies(res);
+  return res.status(200).json({ success: true, ...result });
+});
+
 const updateStatus = asyncHandler(async (req, res) => {
   const user = await setPresenceStatus(req.user._id, req.body.status);
   return res.status(200).json({ success: true, user });
@@ -126,5 +139,7 @@ module.exports = {
   revokeSession,
   sessions,
   updateStatus,
+  updateMyProfile,
+  changeMyPassword,
   verifyEmail,
 };

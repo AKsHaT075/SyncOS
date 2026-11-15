@@ -9,8 +9,8 @@ const ROLE_PERMISSIONS = Object.freeze({
   /**
    * ADMIN exists for organizations with more than one owner-level person
    * (e.g. co-founders). It carries the exact same permission set as
-   * ORG_ADMIN — the one distinction (an admin may invite/promote other
-   * admins) lives in the invite allow-list, not here.
+   * ORG_ADMIN — the one distinction (only an ORG_ADMIN may invite/promote
+   * someone to ADMIN) lives in the invite allow-list, not here.
    */
   [ROLES.ADMIN]: Object.values(PERMISSIONS),
 

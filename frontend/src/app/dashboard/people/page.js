@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   Search,
   LayoutGrid,
@@ -23,8 +22,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import EmptyStateCard from "@/components/dashboard/EmptyStateCard";
-import Can from "@/components/auth/Can";
-import { PERMISSIONS } from "@/constants/permissions";
+import InviteTeammateDialog from "@/components/dashboard/InviteTeammateDialog";
+import { useAuthStore } from "@/store/useAuthStore";
 import { ROLES, ORG_ADMIN_TEXT_CLASS } from "@/constants/roles";
 import { usePeople } from "@/features/people/hooks/usePeople";
 import { useTeams } from "@/features/teams/hooks/teamHooks";
@@ -34,6 +33,8 @@ import PersonDetailDialog from "@/features/people/components/PersonDetailDialog"
 const ALL = "all";
 
 export default function PeopleDirectoryPage() {
+  // The invitations API is limited to the organization owner and admins (HR can manage people but not invite).
+  const canInvite = useAuthStore((state) => [ROLES.ORG_ADMIN, ROLES.ADMIN].includes(state.user?.role));
   const [view, setView] = useState("table");
   const [selectedPersonId, setSelectedPersonId] = useState(null);
   const [searchInput, setSearchInput] = useState("");
@@ -84,13 +85,13 @@ export default function PeopleDirectoryPage() {
             <h1 className="text-3xl font-bold tracking-tight text-foreground">People</h1>
             <p className="text-sm text-muted-foreground">Directory of colleagues and teams</p>
           </div>
-          <Can permission={PERMISSIONS.MANAGE_USERS}>
-            <Link href="/dashboard/people/invite" passHref>
+          {canInvite && (
+            <InviteTeammateDialog>
               <Button className="gap-2 bg-brand hover:bg-brand/90">
                 <UserPlus className="size-4" /> Invite Teammate
               </Button>
-            </Link>
-          </Can>
+            </InviteTeammateDialog>
+          )}
         </div>
 
         {/* Filters Panel */}

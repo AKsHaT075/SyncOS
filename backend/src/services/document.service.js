@@ -1,3 +1,4 @@
+const { assertStorageAvailable } = require('./planLimits.service');
 const AppError = require('../utils/app-error');
 const { AUDIT_EVENTS } = require('../constants/audit.constants');
 const { ALLOWED_FILE_TYPES, DOCUMENT_VISIBILITY } = require('../constants/document.constants');
@@ -181,6 +182,7 @@ async function createDocument({ actor, file, body, req }) {
     throw new AppError('A file is required', 400, 'FILE_REQUIRED');
   }
 
+  await assertStorageAvailable(actor.organization, file.size);
   const originalName = decodeOriginalName(file.originalname);
   const meta = await inspectUpload({ filePath: file.path, originalName, clientMime: file.mimetype });
 
