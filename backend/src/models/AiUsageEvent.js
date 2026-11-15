@@ -9,7 +9,7 @@ const { AI_FEATURES, AI_USAGE_STATUS } = require('../constants/ai.constants');
  * DELIBERATELY ABSENT: prompts, completions, tool arguments/results, document
  * text, titles, names and the API key. The schema is strict, so a stray field
  * is dropped rather than stored. Conversation content lives only in the
- * member's own conversation (Phase 6).
+ * member's own conversation.
  */
 const aiUsageEventSchema = new mongoose.Schema(
   {
@@ -38,7 +38,7 @@ const aiUsageEventSchema = new mongoose.Schema(
     chargedTokens: { type: Number, default: 0 }, // what the quota finally kept
     quotaSettled: { type: Boolean, default: true }, // false: the quota store failed at settlement; the reservation stays counted
 
-    // Live-data tool use of this request (Phase 8): counts and time only, never what was looked up.
+    // Live-data tool use of this request: counts and time only, never what was looked up.
     toolCalls: { type: Number, default: 0 },
     toolMs: { type: Number, default: 0 },
     toolFailures: { type: Number, default: 0 },

@@ -103,4 +103,4 @@ Verified with the real provider (`openai/gpt-oss-120b`, hand-run, throttled): pl
 - HTTP errors never contain a stack trace, in any environment; diagnostics go to the server log (method, path, code, stack for 5xx).
 
 ## 7. Test map
-Python (`cd ai && .venv/bin/python -m pytest -q`): `test_tools_*`, `test_hybrid_answer`, `test_rag_*`, `test_groq_provider`. Node (`cd backend && npm test`, in-band; use `--forceExit` for the e2e suites): `ai-*`, `conversations-*`, `rag-*`, `http-error-sanitization`; end-to-end with real Python and a scripted Groq: `ai-e2e-{lifecycle,security,reliability}`. Real-Groq and real-browser runs are hand-run scripts under `backend/tests/e2e/` (`e2eServer.js`, `driveLive.mjs`, `driveBrowser.mjs`) against an isolated database and Redis prefix.
+Python: `cd ai && .venv/bin/python -m pytest -q` (API surface, security and replay protection, shared wire contract, chunker). Node: `cd backend && npm test`. Both run without a real Groq key.

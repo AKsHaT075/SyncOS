@@ -2,7 +2,7 @@ const { OPEN_TASK_STATUSES } = require('../../../constants/analytics.constants')
 const { resolveToolLimits } = require('./toolLimits');
 
 /**
- * AI PROJECTIONS (Phase 8): the ONLY way organizational records become tool output. Each function builds a brand-new plain object
+ * AI PROJECTIONS: the ONLY way organizational records become tool output. Each function builds a brand-new plain object
  * from an EXPLICIT list of fields; nothing is copied wholesale, nothing is spread from the source, and nothing here calls a
  * product serializer (`toSafeObject`, `serializePerson`, ...). A field that is not written below cannot appear, whatever the
  * record contains.
@@ -15,7 +15,7 @@ const { resolveToolLimits } = require('./toolLimits');
  *
  * Shapes: plain JSON only. Ids are 24-hex strings; dates are date-only 'YYYY-MM-DD' (floating deadlines, never shifted) or ISO-8601
  * UTC instants; strings are cleaned and length-bounded; arrays are bounded; enums keep the product's own stable values. Each shape
- * has a strict zod allowlist in projectionSchemas.js, and the Step 1 result validator (toolResult.js) is applied on top of it.
+ * has a strict zod allowlist in projectionSchemas.js, and the tool-result validator (toolResult.js) is applied on top of it.
  *
  * Free text that came from users (titles, names, topics) is untrusted DATA: control and zero-width characters are removed,
  * whitespace is collapsed, and any URL (a scheme, or www.) is replaced by "[link removed]" so a record can never smuggle an
@@ -95,7 +95,7 @@ function nameList(values, names, { max = 8, budget = 160 } = {}) {
 
 // ---- projections ----------------------------------------------------------------------------------------------------------
 //
-// DEPTH: the Step 1 validator allows depth 4 and a tool wraps rows as { data: [row], summary: {...} } (root 1, array 2, row 3, row
+// DEPTH: the tool-result validator allows depth 4 and a tool wraps rows as { data: [row], summary: {...} } (root 1, array 2, row 3, row
 // fields 4). So a ROW is FLAT: primitives only. A person is a name string, a list of people is one bounded string plus a count,
 // and a project reference is two fields (projectId, projectName). The validator is not relaxed to fit richer rows.
 

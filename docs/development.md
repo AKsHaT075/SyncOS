@@ -48,13 +48,13 @@ Copy `backend/.env.example` to `backend/.env`, `frontend/.env.example` to `front
 - **Frontend:** a module is `features/<name>/{components,hooks,services,schemas}`; add a page under `app/dashboard/<name>`; invalidate the module's query key after mutations; use semantic Tailwind tokens; show loading, empty and error states. Do not link to routes that do not exist.
 - **API conventions:** `/api/v1/...`, JSON, `{ success: true, ... }` on success, `{ success: false, message, code }` on error; pagination uses `page` and `limit`; list endpoints validate their query with Zod.
 - **Errors:** throw `AppError(message, status, CODE)` from services. Do not leak stack traces or internal details in responses.
-- **Comments and docs:** explain *why*. Keep module notes in `docs/`; keep `CLAUDE.md` compact.
+- **Comments and docs:** explain *why*. Keep module notes in `docs/`.
 
 ## 4. Testing approach
 
 - Backend: Jest + Supertest, `cd backend && npm test` (always `--runInBand`). `tests/setup-env.js` gives every test file its own database (`syncos_test_*`) which is dropped afterwards, so your development database is never touched. Uploads in tests go to the OS temp directory. Mock `middlewares/rate-limit.middleware` in large suites because the global limit is 300 requests per 15 minutes.
 - Prefer a targeted run while developing, for example `npx jest tests/integration/assets-core.test.js --runInBand`, and one full run before a release. Leftover `syncos_test_*` databases from killed runs slow MongoDB down; drop only those.
-- AI service: `cd ai && .venv/bin/python -m pytest -q`. Cross-process tests spawn real Python processes and are skipped when `ai/.venv` is missing. Tests never use a real Groq key.
+- AI service: `cd ai && .venv/bin/python -m pytest -q`. Tests never use a real Groq key.
 - Frontend: `cd frontend && npm test` (pure utilities, `node --test`) and `npm run lint`. Do not run `next build` while `next dev` runs from the same folder, it corrupts `.next`; build a copy.
 - Coverage today: strong for documents, calendar, notifications, assets, analytics, AI and RBAC predicates; thinner for projects, meetings and the people/teams flows (see [project-status.md](project-status.md)).
 

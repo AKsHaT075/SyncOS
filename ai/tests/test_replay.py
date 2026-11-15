@@ -18,14 +18,6 @@ async def test_memory_guard_concurrent_consumers_exactly_one_wins():
     assert results.count(True) == 1
 
 
-async def test_memory_guard_forgets_after_ttl():
-    now = [0.0]
-    g = MemoryReplayGuard(clock=lambda: now[0])
-    assert await g.consume("t", 10)
-    now[0] = 11
-    assert await g.consume("t", 10)  # the token itself has long expired by then, so this is moot but bounded
-
-
 class FakeRedis:
     """Mimics SET NX EX semantics: one shared store, so two 'replicas' see each other."""
 

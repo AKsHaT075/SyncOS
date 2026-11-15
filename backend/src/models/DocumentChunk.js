@@ -20,7 +20,7 @@ const locationSchema = new mongoose.Schema(
  * A retrievable slice of one document version. Carries NO access-control data on purpose: who may read a
  * chunk is decided by Node from the live Document at retrieval time, never from anything stored here.
  * A chunk is only trustworthy while the matching DocumentIngestionJob is `indexed` and its version is still
- * the document's current version (see chunkStore.service). No embedding fields yet (Phase 4).
+ * the document's current version (see chunkStore.service). No embedding fields yet.
  */
 const chunkSchema = new mongoose.Schema(
   {

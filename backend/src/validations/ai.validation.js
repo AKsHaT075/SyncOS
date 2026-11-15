@@ -8,7 +8,7 @@ const updateSettingsSchema = z
     enabled: z.boolean().optional(),
     // Required (and must equal the current disclosure version) when switching AI on.
     acceptDisclosureVersion: z.string().trim().min(1).max(60).optional(),
-    // Live organizational data (Phase 8). Switching it on needs AI on and its own disclosure accepted.
+    // Live organizational data. Switching it on needs AI on and its own disclosure accepted.
     liveDataEnabled: z.boolean().optional(),
     acceptLiveDataDisclosureVersion: z.string().trim().min(1).max(60).optional(),
     // null resets to the platform default.

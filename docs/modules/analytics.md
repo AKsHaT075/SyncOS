@@ -35,7 +35,7 @@ Timezone: request → user → organization (`settings.timezone`) → IST (the c
 - Scope is resolved once per request (`scope.js`) and applied inside every aggregation's `$match`. The task visibility rule mirrors `listTasks`; employees only ever match `assignees: me`.
 - Every aggregation has `maxTimeMS`; ranges, people (2000), teams (200), projects (5000), top-N lists and report rows (5000) are capped. CSV cells neutralise spreadsheet formulas.
 - **Cache**: in-process, 60 s, max 300 entries, off in tests. Key = organization + user + role + permissions + hash of the resolved scope (teams led, visible projects, people) + endpoint + filters + range + timezone. Any role/team/project-membership change changes the key.
-- Indexes added (verified index-backed by `analytics-indexes.test.js`): Task `{org,status,dueDate}`, `{org,completedAt}`, `{org,createdAt}`, `{org,assignees,status}`; Meeting `{org,startTime}`; AuditLog `{org,action,createdAt}`, `{action,createdAt}`; User `{org,createdAt}`; Organization `{createdAt}`.
+- Indexes added : Task `{org,status,dueDate}`, `{org,completedAt}`, `{org,createdAt}`, `{org,assignees,status}`; Meeting `{org,startTime}`; AuditLog `{org,action,createdAt}`, `{action,createdAt}`; User `{org,createdAt}`; Organization `{createdAt}`.
 
 ## Related fixes made alongside
 - `GET /tasks` ("my tasks") returned every Public task in the organization to non-admins; it now includes Public tasks only from projects the user belongs to. Regression test: `task-security.test.js`.
@@ -45,7 +45,7 @@ Timezone: request → user → organization (`settings.timezone`) → IST (the c
 `/dashboard/analytics` (tabs by role, filters in the URL, print stylesheet), `/dashboard/reports` (table, pagination, CSV, print), project Analytics tab, and the six role dashboards now use real data. Cards that still have no real source keep a visible "Preview" badge (the badge previously did not render; `DashboardCardHeader` now shows it).
 
 ## Tests
-`tests/unit/analytics-core.test.js`, `tests/integration/analytics-api.test.js` (access matrix, per-role scope, HR privacy, manager limits, isolation, meetings, assets, reports/CSV, platform, cache), `analytics-indexes.test.js`, `task-security.test.js`.
+`tests/unit/analytics-core.test.js`, `tests/integration/analytics-api.test.js` (access matrix, per-role scope, HR privacy, manager limits, isolation, meetings, assets, reports/CSV, platform, cache), `tests/integration/task-security.test.js`.
 
 ## Known limitations
 Cache is per process. Month granularity for ranges over 92 days. Manager scope truncates at 5000 visible projects (flagged in `scope.truncated`). Overdue *history* cannot be reconstructed (no status snapshots), so the overdue chart shows currently-open overdue tasks by due date. Historical gaps (tasks completed before `completedAt` was reliable, projects completed before audit events) are labelled in the UI notes.

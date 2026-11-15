@@ -48,6 +48,6 @@ class EmbeddingProvider(Protocol):
         """float32 [n, dimensions], L2-normalized. Applies the passage prefix. Raises InputTooLong, never truncates."""
 
     def embed_query(self, text: str) -> np.ndarray:
-        """float32 [dimensions], L2-normalized. Applies the query prefix. (Used by retrieval in Phase 5.)"""
+        """float32 [dimensions], L2-normalized. Applies the query prefix."""
 
     def close(self) -> None: ...

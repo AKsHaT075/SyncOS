@@ -21,7 +21,7 @@ const aiOrgSettingsSchema = new mongoose.Schema(
     enabledAt: { type: Date, default: null },
     disabledAt: { type: Date, default: null },
 
-    // Live organizational data (Phase 8): the assistant may look up tasks, schedule, projects, teams. SEPARATE from `enabled`, default OFF,
+    // Live organizational data: the assistant may look up tasks, schedule, projects, teams. SEPARATE from `enabled`, default OFF,
     // and only effective while `enabled` is true. A row without these fields (every pre-Phase-8 row) means "off": no migration needed.
     liveDataEnabled: { type: Boolean, default: false },
     liveDataEnabledAt: { type: Date, default: null },

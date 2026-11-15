@@ -52,7 +52,7 @@ and TLS enabled (`QDRANT__SERVICE__ENABLE_TLS=true` + cert/key), persistent stor
 rebuilt - so Qdrant snapshots are a convenience, not the only copy. Pre-populate the model cache (or bake it into the image) and run
 with `AI_EMBEDDING_OFFLINE=true`. Budget **≥2 GB RAM per embedding worker**.
 
-**Changing the model** is a migration, not an edit: see `../docs/ai/ai-overview.md` (Phase 4). `python scripts/benchmark_embeddings.py` measures
+**Changing the model** is a migration, not an edit: see `../docs/ai/ai-overview.md`. `python scripts/benchmark_embeddings.py` measures
 load time, memory, latency and the multilingual smoke test on your hardware.
 
 ## Test

@@ -6,7 +6,7 @@ const { TASK_VISIBILITY } = require('../constants/task.constants');
 const { canViewTeam, TEAM_ADMIN_ROLES } = require('./teamAccess');
 
 /**
- * AI-SPECIFIC visibility (Phase 8). Deliberately SEPARATE from the product's own access files (projectAccess, taskAccess,
+ * AI-SPECIFIC visibility. Deliberately SEPARATE from the product's own access files (projectAccess, taskAccess,
  * meetingAccess, teamAccess, peopleAccess), which are untouched: what administrators can see in the application does not change.
  *
  * The one policy difference, approved as decision D1: an organization admin / admin gets NO bypass of a PRIVATE resource through

@@ -10,9 +10,9 @@ const { createListProjectsTool } = require('./listProjects.tool');
 
 /**
  * The live-data tool catalog. Exactly EIGHT tools exist so far; more stay unbuilt until approved.
- *   Step 3: list_my_tasks, list_my_schedule
- *   Step 4: list_projects, get_project_overview, list_project_members, list_project_tasks, get_team
- *   Step 5: get_workload_summary
+ *   list_my_tasks, list_my_schedule
+ *   list_projects, get_project_overview, list_project_members, list_project_tasks, get_team
+ *   get_workload_summary
  * Registration is explicit (called once at server start, and by tests): merely requiring the registry still yields an empty one.
  * A registered tool does nothing by itself: it runs only through the callback gate, only for a request that has an open tool
  * budget, and only while the organization has live data switched on.

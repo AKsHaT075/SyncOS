@@ -62,7 +62,7 @@ function toolPromptTokens() {
 }
 
 /**
- * Cumulative usage snapshots (Step 8A). In live-tools mode Python reports, after every completed model round, EVERYTHING Groq has reported so far in
+ * Cumulative usage snapshots. In live-tools mode Python reports, after every completed model round, EVERYTHING Groq has reported so far in
  * this request. Node keeps the LATEST valid snapshot and never adds them: 1,000 -> 2,400 -> 4,180 settles at 4,180. A snapshot is accepted only if it is
  * well formed (non-negative integers within sane bounds, total at least as large as input and output) and does not go BACKWARDS in input, output or total; anything else is ignored
  * and the previous valid snapshot stands. Repeats are harmless (idempotent). Tokens are Groq's reported prompt (which already includes the tool
@@ -137,7 +137,7 @@ async function* streamAiRequest(options) {
   const { actor, feature, conversationId = null, purpose = AI_PURPOSES.CHAT, messages, tools, toolChoice, temperature, signal } = options;
   validate({ feature, conversationId, messages, purpose });
 
-  // 1. The Phase 1 gate. Everything below only runs for a permitted, enabled, configured request.
+  // 1. the availability gate. Everything below only runs for a permitted, enabled, configured request.
   const { quotas } = await assertAiAvailable({ actor });
   // A tool budget is opened ONLY for a user and organization that may use live data RIGHT NOW (fresh identity, USE_AI, AI + live-data switches, and the
   // platform emergency switches, all re-read). This runs before any rate-limit slot, reservation or budget exists, so a refusal leaves nothing open.

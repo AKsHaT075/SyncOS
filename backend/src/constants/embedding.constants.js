@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { INGESTION_PIPELINE_VERSION } = require('./ingestion.constants');
 
 /**
- * Embeddings (Phase 4). Python embeds and writes vectors; Node owns every durable fact about them (jobs, which
+ * Embeddings. Python embeds and writes vectors; Node owns every durable fact about them (jobs, which
  * embedding SPACE is active, coverage) and never talks to the vector database. Mirrored in ai/contracts/embedding.json,
  * which BOTH test suites read - including golden space ids, so Node and Python cannot disagree about what a space is.
  */

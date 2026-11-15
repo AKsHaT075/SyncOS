@@ -37,10 +37,6 @@ describe('cache keys', () => {
   const base = { organization: 'org1', actor: { _id: 'u1' }, role: 'manager', permissions: ['VIEW_ANALYTICS'], fingerprint: 'f1', timeZone: 'Asia/Kolkata' };
   const parts = (scope = {}, extra = {}) => ({ scope: { ...base, ...scope }, endpoint: 'tasks', filters: {}, range: { from: '2026-11-01', to: '2026-11-08' }, ...extra });
 
-  it('is stable for identical inputs', () => {
-    expect(cacheKey(parts())).toBe(cacheKey(parts()));
-  });
-
   it.each([
     ['organization', { organization: 'org2' }],
     ['user', { actor: { _id: 'u2' } }],

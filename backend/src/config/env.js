@@ -62,7 +62,7 @@ module.exports = {
   AI_SERVICE_STATUS_TTL_MS: asPositiveInt(process.env.AI_SERVICE_STATUS_TTL_MS, 15000), // how long a readiness answer is trusted
   AI_INTERNAL_HOST: process.env.AI_INTERNAL_HOST || '127.0.0.1', // internal callback listener (never the public port)
   AI_INTERNAL_PORT: Number(process.env.AI_INTERNAL_PORT) || 5002,
-  // --- Document ingestion (Phase 3) ---
+  // --- Document ingestion ---
   AI_WORKER_PUBLIC_KEY: process.env.AI_WORKER_PUBLIC_KEY || '', // ES256 PUBLIC key of the Python worker (PEM or base64 PEM)
   AI_WORKER_PUBLIC_KEY_FILE: process.env.AI_WORKER_PUBLIC_KEY_FILE || '',
   AI_WORKER_KEY_ID: process.env.AI_WORKER_KEY_ID || 'w1',
@@ -73,11 +73,11 @@ module.exports = {
   AI_INGEST_BACKOFF_BASE_SECONDS: asPositiveInt(process.env.AI_INGEST_BACKOFF_BASE_SECONDS, 30),
   AI_INGEST_BACKOFF_MAX_SECONDS: asPositiveInt(process.env.AI_INGEST_BACKOFF_MAX_SECONDS, 1800),
   AI_INGEST_SWEEP_BATCH: asPositiveInt(process.env.AI_INGEST_SWEEP_BATCH, 200), // documents examined per org per sweep
-  // --- Retrieval (Phase 5). Search limits live in the Python service; Node sizes the quota reservation and the question. ---
+  // --- Retrieval. Search limits live in the Python service; Node sizes the quota reservation and the question. ---
   AI_RAG_CONTEXT_TOKENS: asPositiveInt(process.env.AI_RAG_CONTEXT_TOKENS, 3000), // must match the Python context budget: reserved up front, settled to real usage
   AI_RAG_MAX_QUESTION_CHARS: asPositiveInt(process.env.AI_RAG_MAX_QUESTION_CHARS, 2000),
   AI_RAG_AUTHORIZE_MAX_CANDIDATES: asPositiveInt(process.env.AI_RAG_AUTHORIZE_MAX_CANDIDATES, 50), // per authorization call
-  // --- Live data tools (Phase 8): tighter limits INSIDE the request ceiling (AI_REQUEST_CEILING_MS). Enforced by Node, per request. ---
+  // --- Live data tools: tighter limits INSIDE the request ceiling (AI_REQUEST_CEILING_MS). Enforced by Node, per request. ---
   AI_TOOL_MAX_ROUNDS: asPositiveInt(process.env.AI_TOOL_MAX_ROUNDS, 3), // model rounds that may request tools (a final answer round follows)
   AI_TOOL_MAX_CALLS: asPositiveInt(process.env.AI_TOOL_MAX_CALLS, 5), // tool executions per request
   AI_TOOL_MAX_CONCURRENT: asPositiveInt(process.env.AI_TOOL_MAX_CONCURRENT, 2),
@@ -87,7 +87,7 @@ module.exports = {
   AI_TOOL_MAX_RECORDS: asPositiveInt(process.env.AI_TOOL_MAX_RECORDS, 50), // longest array anywhere in a result
   AI_TOOL_MAX_STRING_CHARS: asPositiveInt(process.env.AI_TOOL_MAX_STRING_CHARS, 200),
   AI_TOOL_MAX_DEPTH: asPositiveInt(process.env.AI_TOOL_MAX_DEPTH, 4),
-  // --- Conversations (Phase 6) ---
+  // --- Conversations ---
   AI_CONVERSATION_RETENTION_DAYS: asNonNegativeInt(process.env.AI_CONVERSATION_RETENTION_DAYS, 365), // days of inactivity before an active conversation is purged; 0 = keep forever
   AI_CONVERSATION_ARCHIVED_RETENTION_DAYS: asNonNegativeInt(process.env.AI_CONVERSATION_ARCHIVED_RETENTION_DAYS, 90), // days after archiving; 0 = keep forever
   AI_CONVERSATION_MAX_MESSAGES: asPositiveInt(process.env.AI_CONVERSATION_MAX_MESSAGES, 200), // per conversation (user + assistant)
@@ -95,7 +95,7 @@ module.exports = {
   AI_CONVERSATION_LEASE_SECONDS: asPositiveInt(process.env.AI_CONVERSATION_LEASE_SECONDS, 300), // one reply at a time; a lease past this is treated as a crashed request
   AI_CONVERSATION_HISTORY_TURNS: asPositiveInt(process.env.AI_CONVERSATION_HISTORY_TURNS, 3), // earlier exchanges used to understand a follow-up
   AI_RAG_AUTHORIZED_TTL_SECONDS: asPositiveInt(process.env.AI_RAG_AUTHORIZED_TTL_SECONDS, 300), // how long a request's authorized chunk ids are remembered for citation checks
-  // --- Embeddings / vector index (Phase 4). Node never holds Qdrant settings: only the Python embedding worker does. ---
+  // --- Embeddings / vector index. Node never holds Qdrant settings: only the Python embedding worker does. ---
   AI_EMBEDDING_SPACE: process.env.AI_EMBEDDING_SPACE || 'multilingual-e5-small', // which embedding space workers are producing
   AI_EMBEDDING_LEASE_SECONDS: asPositiveInt(process.env.AI_EMBEDDING_LEASE_SECONDS, 120),
   AI_EMBEDDING_MAX_PROCESSING_SECONDS: asPositiveInt(process.env.AI_EMBEDDING_MAX_PROCESSING_SECONDS, 900),

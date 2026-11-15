@@ -28,10 +28,10 @@ const AI_ERROR_CODES = Object.freeze({
   SERVICE_TIMEOUT: 'AI_SERVICE_TIMEOUT',
   SERVICE_AUTH: 'AI_SERVICE_AUTH', // Python rejected our token (key mismatch / clock skew): an operator problem
   SERVICE_PROTOCOL: 'AI_SERVICE_PROTOCOL', // reply that violates the contract
-  // Retrieval (Phase 5)
+  // Retrieval
   RETRIEVAL_UNAVAILABLE: 'AI_RETRIEVAL_UNAVAILABLE', // embedding / vector search / authorization failed: no answer is given
   KNOWLEDGE_NOT_READY: 'AI_KNOWLEDGE_NOT_READY', // no embedding space is active yet: nothing has been indexed for retrieval
-  // Live organizational data / tools (Phase 8)
+  // Live organizational data / tools
   LIVE_DATA_DISABLED: 'AI_LIVE_DATA_DISABLED', // the organization has not switched live data on (or switched it off)
   LIVE_DATA_REQUIRES_AI: 'AI_LIVE_DATA_REQUIRES_AI',
   PLATFORM_LIVE_TOOLS_DISABLED: 'AI_LIVE_TOOLS_PLATFORM_DISABLED', // the PLATFORM emergency switch for live tools (distinct from an organization's own setting)
@@ -101,7 +101,7 @@ const AI_DISCLOSURE = Object.freeze({
   ],
 });
 
-// The SECOND disclosure: needed only to turn on live organizational data (Phase 8), separate from the base AI disclosure so
+// The SECOND disclosure: needed only to turn on live organizational data, separate from the base AI disclosure so
 // organizations that already accepted the base one are not forced to re-accept it.
 const AI_LIVE_DATA_DISCLOSURE = Object.freeze({
   version: 'v1-2026-11-live',

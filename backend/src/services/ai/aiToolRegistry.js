@@ -4,7 +4,7 @@ const AppError = require('../../utils/app-error');
  * NODE'S registry of AI tools: the single source of truth for what a tool is, who may use it, and what
  * its arguments look like. Python never defines or authorizes tools; it can only ask Node to run one.
  *
- * Deliberately EMPTY in production for now (Phase 8 registers read tools; Phase 9 write proposals).
+ * Deliberately EMPTY in production for now (read tools register here once enabled).
  * Only the authorization gate that will front every tool exists today (aiCallbacks.service.js).
  *
  * definition: { name, kind: 'read', permission, schema (zod object: the ARGUMENTS, strict),

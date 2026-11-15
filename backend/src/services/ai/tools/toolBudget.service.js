@@ -5,7 +5,7 @@ const { AI_TOOL_ERRORS: T } = require('../../../constants/ai.constants');
 const { withRedis } = require('../aiLimits.service');
 
 /**
- * The per-request TOOL BUDGET (Phase 8). Node opens one when - and only when - it admits a request that may use tools; a tool
+ * The per-request TOOL BUDGET. Node opens one when - and only when - it admits a request that may use tools; a tool
  * callback with no open budget is refused, so no model round and no tool run can ever happen unmetered or unbounded.
  *
  * Everything here is decided in Redis, atomically, by one script, so two simultaneous callbacks cannot both slip past a limit:

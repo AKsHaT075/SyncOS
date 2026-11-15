@@ -38,7 +38,7 @@ Node owns authentication, RBAC, organization isolation, quotas and tool authoriz
 - **Frontend:** Next.js 15 (App Router), JavaScript, Tailwind CSS, shadcn/ui, TanStack Query, Zustand, React Hook Form + Zod, Axios, LiveKit components
 - **Backend:** Node.js, Express, Mongoose 9 (MongoDB), Redis, Zod, Multer, Nodemailer, livekit-server-sdk, Helmet, express-rate-limit
 - **AI service:** Python, FastAPI, Groq (only LLM provider), self-hosted `intfloat/multilingual-e5-small` embeddings, Qdrant
-- **Tests:** Jest + Supertest (backend), pytest (AI service), `node --test` (frontend pure utilities)
+- **Tests:** Jest + Supertest (backend), pytest (AI service), `node --test` (frontend utilities)
 
 ## Repository layout
 
@@ -47,7 +47,6 @@ backend/    Express API (routes -> controllers -> services -> models), tests, sc
 frontend/   Next.js app: src/app (routes), src/features/<module>, src/components, src/lib, src/store
 ai/         Python AI service, ingestion and embedding workers, shared test fixtures (ai/contracts/*.json)
 docs/       All project documentation (start at docs/README.md)
-CLAUDE.md   Working notes for AI coding assistants; also a compact record of design decisions
 ```
 
 ## Prerequisites
@@ -89,6 +88,31 @@ set -a; . ./.env; set +a
 
 The ingestion and embedding workers are separate processes, see [ai/README.md](ai/README.md). Full AI setup, the emergency kill switch and the rollout checklist: [docs/ai/ai-operations.md](docs/ai/ai-operations.md).
 
+## Roles
+
+| Role | Scope |
+|---|---|
+| `super-admin` | Platform operator: organizations, limits, platform health. No access to tenant content |
+| `org-admin` | Organization owner: everything inside the organization, settings, invitations, limits |
+| `admin` | Organization administration (cannot invite other admins) |
+| `hr` | People management; analytics are aggregate counts only |
+| `manager` | Leads teams: team events, team analytics, reviews |
+| `employee` | Own work, own teams and projects |
+| `guest` | Read-only access to what was explicitly shared with them |
+
+Permissions are checked on the server on every request; cross-organization and no-access both return 404. See [docs/rbac-multi-tenancy.md](docs/rbac-multi-tenancy.md).
+
+## Configuration
+
+Copy `backend/.env.example` to `backend/.env` and `frontend/.env.example` to `frontend/.env.local`. Required to start the API: `MONGO_URI`, `JWT_SECRET`, `JWT_REFRESH_SECRET`. Email (SMTP), LiveKit, file storage and AI settings are optional and documented in the example files and in [docs/development.md](docs/development.md). `NEXT_PUBLIC_CSRF_COOKIE_NAME` must match the backend's CSRF cookie name or every POST fails with 403. Never commit `.env` files.
+
+| Service | Default address |
+|---|---|
+| Next.js frontend | `http://localhost:3000` |
+| Express API | `http://localhost:5001` (`GET /health`) |
+| AI service (optional) | `http://127.0.0.1:8001` |
+| Node internal listener for the AI workers (optional) | `127.0.0.1:5002` |
+
 ## Testing
 
 ```bash
@@ -98,7 +122,7 @@ cd ai && .venv/bin/python -m pytest -q    # AI service
 cd frontend && npm test && npm run lint
 ```
 
-MongoDB and Redis must be running for backend tests. They never touch your development database. Approach and conventions: [docs/development.md](docs/development.md).
+The suite has 400 Jest tests (backend) and 90 pytest tests (AI service). MongoDB and Redis must be running for backend tests. They never touch your development database. Approach and conventions: [docs/development.md](docs/development.md).
 
 ## Documentation
 
@@ -108,3 +132,7 @@ Everything lives in [`docs/`](docs/README.md):
 - [Development guide](docs/development.md), [Deployment preparation](docs/deployment.md), [Project status](docs/project-status.md)
 - Module deep dives: [assets](docs/modules/assets.md), [analytics](docs/modules/analytics.md), [calendar](docs/modules/calendar.md), [notifications](docs/modules/notifications.md)
 - AI: [overview](docs/ai/ai-overview.md), [operations](docs/ai/ai-operations.md), [service contract](docs/ai/ai-service-contract.md)
+
+## Project status
+
+All modules above are implemented and tested; the application has not been deployed. Known gaps (Goals module, single-instance rate limits and jobs, sample cards on some dashboards) are listed in [docs/project-status.md](docs/project-status.md), and deployment preparation in [docs/deployment.md](docs/deployment.md).

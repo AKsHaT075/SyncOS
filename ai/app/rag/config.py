@@ -16,7 +16,7 @@ class RagSettings:
     top_k: int = 6  # sources given to the model
     candidates: int = 24  # first search size
     max_candidates: int = 200  # widest search (used when many hits turn out to be unauthorized)
-    min_score: float = 0.81  # cosine floor (calibrated on ai/tests/eval/rag_corpus.json for multilingual-e5-small; recalibrate per model): below it a hit is never even sent to Node, let alone to the model
+    min_score: float = 0.81  # cosine floor (calibrated for multilingual-e5-small; recalibrate per model): below it a hit is never even sent to Node, let alone to the model
     score_window: float = 0.05  # keep hits within this distance of the best AUTHORIZED hit
     context_tokens: int = 3000  # budget for all sources together
     max_per_document: int = 3

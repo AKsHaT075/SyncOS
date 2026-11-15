@@ -27,7 +27,7 @@ router.use(authenticate, requireOrgAccess);
 // Ask a question of the organization's documents (retrieval-augmented, permission-aware). JSON, or SSE with `Accept: text/event-stream`.
 router.post('/ask', checkPermission(P.USE_AI), validateBody(v.askSchema), c.ask);
 
-// Conversations (Phase 6). Private to their owner: there is deliberately NO organization-wide or admin route to read one.
+// Conversations. Private to their owner: there is deliberately NO organization-wide or admin route to read one.
 router.post('/conversations', checkPermission(P.USE_AI), validateBody(v.createConversationSchema), c.createConversation);
 router.get('/conversations', checkPermission(P.USE_AI), validateQuery(v.listConversationsQuerySchema), c.listConversations);
 router.get('/conversations/:id', checkPermission(P.USE_AI), c.getConversation);
@@ -48,13 +48,13 @@ router.get('/disclosure', checkPermission(P.MANAGE_AI), c.disclosure);
 router.get('/settings', checkPermission(P.MANAGE_AI), c.getSettings);
 router.put('/settings', checkPermission(P.MANAGE_AI), validateBody(v.updateSettingsSchema), c.updateSettings);
 
-// Document ingestion administration (Phase 3). Ids and statuses only - never document names or text.
+// Document ingestion administration. Ids and statuses only - never document names or text.
 router.get('/knowledge/ingestion', checkPermission(P.MANAGE_AI_KNOWLEDGE), c.ingestionOverview);
 router.get('/knowledge/ingestion/jobs', checkPermission(P.MANAGE_AI_KNOWLEDGE), validateQuery(v.ingestionJobsQuerySchema), c.ingestionJobs);
 router.post('/knowledge/ingestion/jobs/:id/retry', checkPermission(P.MANAGE_AI_KNOWLEDGE), c.ingestionRetry);
 router.post('/knowledge/ingestion/reconcile', checkPermission(P.MANAGE_AI_KNOWLEDGE), c.ingestionReconcile);
 
-// Embeddings and the vector index (Phase 4), tenant-scoped. Ids, counts and statuses only.
+// Embeddings and the vector index, tenant-scoped. Ids, counts and statuses only.
 const K = checkPermission(P.MANAGE_AI_KNOWLEDGE);
 router.get('/knowledge/embedding', K, c.embeddingOverview);
 router.get('/knowledge/embedding/jobs', K, validateQuery(v.embeddingJobsQuerySchema), c.embeddingJobs);

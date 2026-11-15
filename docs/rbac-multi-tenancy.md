@@ -160,7 +160,7 @@ any service.
 
 ## 7. Organization isolation & query scoping
 
-This is the hard rule from `CLAUDE.md`:
+This is the hard rule:
 
 ```js
 // ✅ always

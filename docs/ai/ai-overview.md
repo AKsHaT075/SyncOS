@@ -1,7 +1,6 @@
-# AI infrastructure (in progress)
+# AI service
 
-Status: **Phases 1-4 built, on a Python AI service architecture.** Phases 5-10 do not exist (no retrieval, no RAG, no chat integration). The embedding
-embedding model is `intfloat/multilingual-e5-small` (Phase 4); `ai/app/rag|tools` are empty reserved packages.
+Status: document question answering with citations, private conversations and the AI Studio UI are built. Live workspace lookups (read-only tools) are implemented but switched off by default (`AI_LIVE_TOOLS_ENABLED`). Write proposals are not built. The embedding model is `intfloat/multilingual-e5-small`.
 
 ```
 Browser ─► Next.js ─► Node backend (authority) ─► Python AI service (FastAPI) ─► Groq
@@ -77,7 +76,6 @@ One Node request = one `requestKey` (also the token `jti`) = one reservation = o
 | `VIEW_AI_USAGE` (org-wide usage) | yes | no | no | no | no | no |
 | `MANAGE_AI_KNOWLEDGE` (index admin) | yes | no | no | no | no | no |
 
-`tests/unit/ai-permissions.test.js` pins this table.
 
 ## Configuration
 
@@ -235,9 +233,7 @@ server with an API key and TLS**. Mongo is the source of truth: a lost Qdrant is
 - Metering: reserve = estimate + `AI_RAG_CONTEXT_TOKENS` + 600 overhead + output cap, settled to Groq's real usage; no-answer charges 0.
 - Env (Node): `AI_RAG_CONTEXT_TOKENS`, `AI_RAG_MAX_QUESTION_CHARS`, `AI_RAG_AUTHORIZE_MAX_CANDIDATES`, `AI_RAG_AUTHORIZED_TTL_SECONDS`. Env (Python): `AI_RAG_ENABLED` (default false), `AI_NODE_INTERNAL_URL`, `AI_RAG_TOP_K|CANDIDATES|MAX_CANDIDATES|MIN_SCORE|SCORE_WINDOW|CONTEXT_TOKENS|MAX_PER_DOCUMENT|NEAR_DUPLICATE|AUTHORIZE_TIMEOUT_SECONDS|MAX_QUESTION_CHARS`.
 - Ops: the API process now loads the E5 model (~1 GB RSS) and needs a Qdrant SERVER in dev (embedded Qdrant is single-process and conflicts with the embedding worker).
-- Evaluation (`ai/scripts/evaluate_retrieval.py`, real model + real Qdrant, simulated authorizer; 30 docs / 47 questions): MRR 0.985, hit@1 0.971, hit@3 1.0, recall@5 0.975, cross-language hit@3 1.0, no-answer refused 9/9, context precision 0.831, forbidden/stale chunks in context 0, unauthorized probes 3/3 without answer.
 - Limitations: Hindi is the weakest language (one false no-answer at score 0.78); threshold is model-specific; prompt-injection defense is layered mitigation (delimiters, rules, no tools, citation filtering), not a guarantee; real Groq behaviour unverified; budget token counts are approximate.
-- Tests: Python `tests/test_rag_*.py`; Node `integration/rag-{knowledge,ask,cross-process}.test.js`.
 
 ## Language policy (v1: English only)
 
@@ -257,7 +253,6 @@ server with an API key and TLS**. Mongo is the source of truth: a lost Qdrant is
 - Titles: deterministic (first question, <=60 chars), never from documents or model output; a user rename is final.
 - Retention (hourly in `aiJobs`): `AI_CONVERSATION_RETENTION_DAYS` (365, inactivity) and `AI_CONVERSATION_ARCHIVED_RETENTION_DAYS` (90 since archiving); 0 = keep. Delete is permanent and cascades. Stale `streaming` replies are closed as `incomplete`.
 - Limitations: assistant text already shown to a user stays in their own conversation after access is revoked (only citations are re-checked); no message-level delete/edit/regenerate; reply text is saved at the end (a process crash loses the partial text, the reply is marked incomplete); deleting mid-answer does not abort the model call, it just discards the result; titles are not LLM-written; `colleague`-style concurrent SSE + other calls from ONE browser tab are fine, the limit is only per-conversation.
-- Tests: `integration/conversations-{api,chat}.test.js`, Python `test_rag_followup.py`.
 
 ## Phase 8 (in progress): live organizational data - Steps 0 and 1 only
 
@@ -271,7 +266,6 @@ Built so far: the organization switch and the hardened Node tool-callback gate. 
 - **Quota**: a tool-capable request reserves `(R+1)*base + R*T + (R+1)*output` up front (`toolReservationTokens`), settled to the usage Python reports. A plain request is unchanged.
 - **Audit** (`tools/toolAudit.js`): one `ai.tool_invoked` row per identified call, including refusals: tool, status, error code, duration, record count, bytes, requestKey, callId, argument KEY names, and argument values only for fields the tool declared safe (`auditFields`) AND that look like enums. Never questions, results or free text. Best-effort (a failed audit write is logged by name only). `AiUsageEvent` gains `toolCalls`, `toolMs`, `toolFailures`.
 - **Browser events**: `forUser()` in the controller is now a whitelist; raw tool events and any unknown event are dropped.
-- Tests: `unit/ai-tool-limits`, `integration/ai-live-data-settings`, `integration/ai-tool-gate`, updated `integration/ai-callbacks`.
 
 ### Phase 8 Step 2: AI-specific visibility and projections (no tool registered yet)
 
@@ -322,7 +316,6 @@ Node side (minimal): `signGenerateToken({liveTools})` adds `lt: true`; `client.c
 
 ### Phase 8 Step 6A: live verification and reliability audit
 
-- **Live Groq** (`openai/gpt-oss-120b`, via `ai/scripts/live_groq_probe.py`; real Groq, FAKE Node, key from the gitignored `ai/.env`, never printed): plain answer, one tool call + answer, sequential rounds and a request that used two tools all worked (whether Groq returned the two calls in ONE response was not distinguished by the probe); the assistant tool-call + tool-result history format (ids, names, multiple results, refused calls with `{}` arguments) is accepted. Groq intermittently fails to generate a tool call (`tool_use_failed`): the loop retries that model call once.
 - **Usage trace:** tokens are summed by Python (one `usage` frame, also before an `error` frame); Node reserves up front (now including the tool definitions Python adds), settles once (the Redis script deletes the reservation, so a second settle is a no-op) and records one event. FIXED: a tool-enabled request cancelled / failed without a usage frame after a tool ran used to settle at 0; it is now charged an estimate. Remaining limits: a cancel before the first tool callback charges 0; multi-round estimates count one round.
 - **Config:** Node's tool limits ride in the signed token (claim `tl`); Python can only tighten them; inconsistent limits fail closed on both sides.
 - **Real Python <-> real Node** (isolated DB/Redis, fake Groq): `integration/ai-live-tools-cross-process`. Accounting: `integration/ai-tool-usage-accounting`. Still dormant: only tests set `toolBudget`.
@@ -340,19 +333,17 @@ Contract and timer rules: `docs/ai/ai-service-contract.md` §8a. Python emits `{
 - **9C emergency switch:** `AiPlatformControl` (one row), super-admin `GET/PUT /api/v1/ai/platform/control` (`aiDisabled`, `liveToolsDisabled`, fixed reason code), audited as `ai.platform_control_changed`; read fresh on every gate and every tool callback and after a tool finishes; an unreadable row means OFF (fail closed). Distinct from the organization settings, which stay in force. Python treats the platform refusal as fatal.
 - **9D:** a user cancel before the first frame keeps the message and saves an incomplete reply; only a refusal (nothing accepted) rolls back.
 - **9E:** HTTP errors never include a stack; diagnostics go to the server log (method + path + code + stack, 5xx only).
-- Tests: `integration/ai-usage-snapshots`, `ai-platform-control`, `conversations-first-frame-cancel`, `http-error-sanitization`; Python `test_tools_usage`, `test_hybrid_answer`.
 
 ## Tests
 
-- Python (`cd ai && .venv/bin/python -m pytest -q`; includes **embeddings**: provider contract + the REAL model, the vector-store contract against in-memory / Qdrant-memory / Qdrant-embedded / a REAL Qdrant server, the embedding worker): security/config, replay, Groq adapter, API surface, shared contract fixtures; **ingestion**: extractors (all formats, structure, empty/corrupt/encrypted/scanned/oversized/bombs), chunker, process isolation, worker, contract. No network, no key.
-- Node: `unit/ai-permissions`, `unit/ai-pricing`, `unit/ai-service-tokens`; `integration/ai-settings`, `ai-usage`, `ai-pipeline` (fake engine), `ai-service-client` (real client ⇄ HTTP stub), `ai-service-flow` (pipeline + client + stub), `ai-callbacks`, `ai-cross-process` (**real uvicorn** ⇄ fake Groq HTTP server; skipped if `ai/.venv` is missing); **ingestion**: `unit/ingestion-contract`, `integration/ingestion-jobs` (state machine, reconcile, document hooks), `ingestion-worker-api` (auth, content binding, results, admin API, no-content-in-logs), `ingestion-cross-process` (**real Python worker**, skipped if `ai/.venv` is missing).
-- Shared fixtures `ai/contracts/{frames,truncated,error_mapping}.json` are read by both suites to catch contract drift.
-- `tests/setup-env.js` points `AI_SERVICE_URL` at a dead port and blanks the signing key, so no test can reach a real service or provider.
+- Python: `cd ai && .venv/bin/python -m pytest -q` (API surface, security and replay protection, wire contract, chunker). No network, no key.
+- Shared fixtures `ai/contracts/*.json` pin the wire format between Node and Python.
+- `backend/tests/setup-env.js` points `AI_SERVICE_URL` at a dead port and blanks the signing key, so no test can reach a real service or provider.
 
 ## Not verified
 
 Real Groq behaviour (streamed usage location, tool-call chunk shape, error bodies); the Dockerfile (Docker not installed where it was written); Node 20 compatibility (developed on 24.9); behaviour behind a TLS-terminating proxy between Node and Python.
 
-## Planned (not built)
+## Not built
 
-5 secure RAG · 6 conversations + streaming chat · 7 AI Studio UI + Copilot panel · 8 read-only tools (registers into `aiToolRegistry`) · 9 write proposals · 10 security/performance/retrieval evaluation.
+Write proposals (the assistant never changes data) and a broader evaluation suite.

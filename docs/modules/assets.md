@@ -56,7 +56,7 @@ Blocking or removing someone **keeps** their assignments and history; admins and
 `GET /` list (search, status, category, kind, team, holder, location, warranty, purchase dates, sort, pagination) · `POST /` · `GET /mine` · `GET /summary` · `GET /export` · `GET /options` · `GET /offboarding` · `GET /assignments` · `GET /maintenance` · `GET|POST /categories` (+`PATCH /categories/:id`, `POST /categories/:id/archive {moveTo}`) · `GET|POST /vendors` (+`PATCH|DELETE /vendors/:id`) · `GET|PATCH|DELETE /:id` · `POST /:id/restore|assign|transfer|return|request-return|reserve|release|retire|dispose|lost|found|report-issue` · `GET /:id/assignments|activity` · `GET|POST /:id/maintenance` (+`PATCH /:id/maintenance/:mid`, `POST …/approve|decline|start|complete|cancel`) · `GET|POST /:id/documents`, `DELETE /:id/documents/:linkId`.
 
 ## Tests
-`tests/unit/asset-rules.test.js`, `tests/integration/assets-core.test.js` (CRUD, validation, scope, categories, vendors, licenses, documents, reports, isolation), `tests/integration/assets-lifecycle.test.js` (assign / transfer / return, concurrency, repair, maintenance, alerts, people integration).
+`tests/unit/asset-rules.test.js`, `tests/integration/assets-core.test.js` (CRUD, validation, scope, categories, vendors, licenses, documents, reports, isolation).
 
 ## Known limitations
 No Calendar integration (maintenance / warranty dates are not shown on the calendar). No barcode / QR scanning, depreciation, purchase-order workflow or bulk import. License seats are per person only. Concurrency safety relies on atomic single-document updates plus reconciliation, because the deployment uses standalone MongoDB; moving to a replica set would allow real transactions.

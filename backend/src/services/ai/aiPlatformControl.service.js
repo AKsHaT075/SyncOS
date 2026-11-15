@@ -5,7 +5,7 @@ const AiPlatformControl = require('../../models/AiPlatformControl');
 const { logAudit } = require('../audit.service');
 
 /**
- * The platform emergency switches (Step 9C). One authority, server side, read FRESH on every check (no cache: a switch must take effect on the very
+ * The platform emergency switches. One authority, server side, read FRESH on every check (no cache: a switch must take effect on the very
  * next request and the very next tool callback).
  *
  *   aiDisabled         all AI is refused (new requests AND tool callbacks)

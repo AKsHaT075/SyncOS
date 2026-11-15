@@ -1,10 +1,10 @@
 /**
- * Document ingestion (Phase 3). The Python worker extracts and chunks; Node owns every durable fact.
+ * Document ingestion. The Python worker extracts and chunks; Node owns every durable fact.
  * Reason codes and the pipeline version are mirrored in ai/contracts/ingestion.json, which BOTH test suites read.
  */
 
 // Must equal PIPELINE_VERSION in ai/app/ingestion/__init__.py. Bump both to re-ingest everything.
-// p2 (Phase 4): chunks are sized with the embedding model's real tokenizer (~350 target / 450 max tokens) so they fit its
+// p2: chunks are sized with the embedding model's real tokenizer (~350 target / 450 max tokens) so they fit its
 // 512-token window. p1 chunks stay until a document's p2 job is indexed (dropObsoleteChunks), so the old index is kept
 // until migration of that document succeeds.
 const INGESTION_PIPELINE_VERSION = 'p2';

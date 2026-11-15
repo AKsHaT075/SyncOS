@@ -101,7 +101,7 @@ class VectorStore(Protocol):
     def count(self, *, organization: str, document: str, space_id: str, version: int | None = None) -> int: ...
 
     def search(self, *, organization: str, space_id: str, vector: np.ndarray, limit: int, document_ids: Sequence[str] | None = None) -> list[Hit]:
-        """INTERNAL (Phase 5 will call it after Node has authorized document_ids). Not exposed by any route in Phase 4."""
+        """INTERNAL: called only after Node has authorized document_ids. Not exposed by any route."""
 
     def health(self) -> bool: ...
 

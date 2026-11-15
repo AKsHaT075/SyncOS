@@ -1,4 +1,4 @@
-"""Phase 3: document extraction and chunking, run by the separate worker process (`python -m app.ingestion.worker`).
+"""Document extraction and chunking, run by the separate worker process (`python -m app.ingestion.worker`).
 
 Python never reads MongoDB or the storage directory: it claims jobs from, downloads bytes from, and submits
 results to Node's internal listener. See docs/ai/ai-service-contract.md §11.

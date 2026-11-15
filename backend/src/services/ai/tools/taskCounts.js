@@ -6,7 +6,7 @@ const { guarded } = require('./toolSupport');
 /**
  * Task counts for project tools. They are computed from EXACTLY the filter the row lists use (buildAiTaskFilter), so a count can
  * never include a task the user could not also see in a list: no hidden-task counts, no unrestricted analytics aggregation.
- * "Overdue" is Step 3's definition: an OPEN task whose due date is strictly before today (floating date, UTC-midnight compare).
+ * "Overdue" is the task-list definition: an OPEN task whose due date is strictly before today (floating date, UTC-midnight compare).
  */
 
 const OPEN = OPEN_TASK_STATUSES;

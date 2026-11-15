@@ -7,7 +7,7 @@ const { ROLES } = require('../../../constants/roles');
 
 /**
  * The strict allowlists (zod `.strict()`) for every AI projection: this is what a future tool passes as its `resultSchema`.
- * A field not listed here is a FAILURE in the Step 1 gate, not something that is dropped. The Step 1 validator (toolResult.js)
+ * A field not listed here is a FAILURE in the tool-result gate, not something that is dropped. The tool-result validator (toolResult.js)
  * still applies its own limits (depth, string length, records, bytes, plain data) on top of these.
  */
 
@@ -22,7 +22,7 @@ const strict = (shape) => z.object(shape).strict();
 
 const listText = z.string().max(190); // whole names joined with "; " (see projections.nameList)
 
-// DEPTH: rows are FLAT (primitives only) so { data: [row], summary } stays inside the Step 1 depth limit without relaxing it.
+// DEPTH: rows are FLAT (primitives only) so { data: [row], summary } stays inside the tool-result depth limit without relaxing it.
 const task = strict({
   id, title,
   status: z.enum(Object.values(TASK_STATUS)),

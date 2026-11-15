@@ -142,7 +142,7 @@ function createInternalApp() {
     }),
   );
 
-  // Python asks which retrieved chunks this request's user may use (Phase 5). Callback token, never a worker token.
+  // Python asks which retrieved chunks this request's user may use. Callback token, never a worker token.
   app.post(
     '/internal/ai/knowledge/authorize',
     express.json({ limit: '64kb' }),

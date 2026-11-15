@@ -85,7 +85,7 @@ const ask = asyncHandler((req, res) =>
   }),
 );
 
-// ---- Conversations (Phase 6): private to their owner; every call is scoped by the session's organization and user ----
+// ---- Conversations: private to their owner; every call is scoped by the session's organization and user ----
 const createConversation = asyncHandler(async (req, res) => res.status(201).json({ success: true, conversation: await conversations.createConversation({ actor: req.user, title: req.body.title }) }));
 const listConversations = asyncHandler(async (req, res) => ok(res, await conversations.listConversations({ actor: req.user, query: req.query })));
 const getConversation = asyncHandler(async (req, res) => ok(res, { conversation: await conversations.getConversation({ actor: req.user, id: req.params.id }) }));

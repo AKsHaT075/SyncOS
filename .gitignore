@@ -53,3 +53,6 @@ ai/.qdrant-data/
 ai/.cache/
 ai/.qdrant-initialized
 .qdrant-initialized
+
+# Local assistant notes
+CLAUDE.md

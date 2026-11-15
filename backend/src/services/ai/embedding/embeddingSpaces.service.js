@@ -11,7 +11,7 @@ const { INGESTION_PIPELINE_VERSION: INGEST_PIPELINE, INGESTION_STATUS } = requir
 const { EMBEDDING_KIND: KIND, EMBEDDING_STATUS: S, describeSpace } = require('../../../constants/embedding.constants');
 
 /**
- * Which embedding space is SERVED (active) and which is being BUILT (target). Retrieval (Phase 5) may only use the
+ * Which embedding space is SERVED (active) and which is being BUILT (target). Retrieval may only use the
  * active space. A model/pipeline change never touches the active space: workers fill the target in the background and
  * `promote()` flips the pointer in ONE compare-and-swap, only when the target is complete and verified. A migration
  * that fails, stalls or is abandoned therefore leaves the previous space exactly as usable as it was.

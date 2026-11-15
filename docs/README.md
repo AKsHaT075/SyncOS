@@ -1,6 +1,6 @@
 # Sync OS documentation
 
-Start here. Everything is under `docs/`; the only other documents are short READMEs next to the code (`README.md`, `backend/README.md`, `frontend/README.md`, `ai/README.md`) and `CLAUDE.md` (working notes for AI coding assistants).
+Start here. Everything is under `docs/`; the only other documents are short READMEs next to the code (`README.md`, `backend/README.md`, `frontend/README.md`, `ai/README.md`).
 
 | Document | What it covers |
 |---|---|

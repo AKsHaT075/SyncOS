@@ -1,6 +1,6 @@
 """Groq adapter (OpenAI-compatible Chat Completions), LLM inference only.
 
-Port of the Phase 1 Node adapter with identical behaviour:
+Port of the original Node adapter with identical behaviour:
 
   chat(model, messages, tools?, tool_choice?, temperature?, max_output_tokens?)
     -> async iterator of normalized events (dicts, camelCase keys = the wire contract)
