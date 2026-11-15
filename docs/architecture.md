@@ -1,6 +1,6 @@
 # Architecture
 
-How Sync OS is put together. For module-level detail see [modules.md](modules.md); for the access model see [rbac-multi-tenancy.md](rbac-multi-tenancy.md) and [authentication.md](authentication.md).
+How Sync OS is put together. For module-level detail see [modules.md](modules/README.md); for the access model see [rbac-multi-tenancy.md](security/rbac-multi-tenancy.md) and [authentication.md](security/authentication.md).
 
 ## 1. System overview
 
@@ -79,7 +79,7 @@ Membership sources of truth: `Team.members/lead` and `Project.owner/members` (re
 
 ## 5. Authentication and RBAC
 
-Short version (full detail in [authentication.md](authentication.md) and [rbac-multi-tenancy.md](rbac-multi-tenancy.md)):
+Short version (full detail in [authentication.md](security/authentication.md) and [rbac-multi-tenancy.md](security/rbac-multi-tenancy.md)):
 
 - Access JWT (15 min) and rotating refresh token (7 days) in HTTP-only cookies, CSRF double-submit token, device sessions with revocation, account lockout, Redis-hashed email OTP.
 - Roles: `super-admin` (platform only, no tenant content), `org-admin`, `admin` (same powers as org-admin except granting the admin role), `hr`, `manager`, `employee`, `guest` (read-only, only what is explicitly shared).
@@ -87,7 +87,7 @@ Short version (full detail in [authentication.md](authentication.md) and [rbac-m
 
 ## 6. Multi-tenancy
 
-One database, one `organization` ObjectId on every tenant document, enforced in the service layer on every query and in unique/partial indexes. Super-admins manage organizations (plan, suspend, flags) through `/api/v1/platform/organizations` but never read tenant content. Plan limits (`limits.seats`, `storageGB`, `aiCredits`) are enforced centrally in `services/planLimits.service.js` (see [modules.md](modules.md), Organizations). `featureFlags` are stored but not enforced.
+One database, one `organization` ObjectId on every tenant document, enforced in the service layer on every query and in unique/partial indexes. Super-admins manage organizations (plan, suspend, flags) through `/api/v1/platform/organizations` but never read tenant content. Plan limits (`limits.seats`, `storageGB`, `aiCredits`) are enforced centrally in `services/planLimits.service.js` (see [modules.md](modules/README.md), Organizations). `featureFlags` are stored but not enforced.
 
 ## 7. Documents and file processing
 

@@ -177,16 +177,16 @@ call.
 
 ## Calendar
 
-See [calendar.md](calendar.md) for the full endpoint list, scopes, access rules, timezone, recurrence and reminder behaviour (`/api/v1/calendar`).
+See [calendar.md](../modules/calendar.md) for the full endpoint list, scopes, access rules, timezone, recurrence and reminder behaviour (`/api/v1/calendar`).
 
 ## Assets
 
-See [assets.md](assets.md) for the endpoint list, role matrix, lifecycle, integrity model, license handling and alerts (`/api/v1/assets`).
+See [assets.md](../modules/assets.md) for the endpoint list, role matrix, lifecycle, integrity model, license handling and alerts (`/api/v1/assets`).
 
 ## Analytics & Reporting
 
-See [analytics.md](analytics.md) for roles, endpoints, metric definitions, date/timezone rules, caching and limits (`/api/v1/analytics`).
+See [analytics.md](../modules/analytics.md) for roles, endpoints, metric definitions, date/timezone rules, caching and limits (`/api/v1/analytics`).
 
 ## Notifications
 
-See [notifications.md](notifications.md) (`/api/v1/notifications`).
+See [notifications.md](../modules/notifications.md) (`/api/v1/notifications`).

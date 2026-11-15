@@ -12,4 +12,4 @@ npm test                       # node --test on the pure AI utilities (tests/ai)
 
 Layout: `src/app` (routes), `src/features/<module>` (components, hooks, services, schemas), `src/components` (shared UI, layout, dashboards), `src/lib` (Axios client), `src/store` (Zustand), `src/constants` (roles and permissions, mirrored from the backend).
 
-Architecture, module list and conventions: [../docs/architecture.md](../docs/architecture.md), [../docs/modules.md](../docs/modules.md), [../docs/development.md](../docs/development.md).
+Architecture, module list and conventions: [../docs/architecture.md](../docs/architecture.md), [../docs/modules.md](../docs/modules/README.md), [../docs/development.md](../docs/development.md).

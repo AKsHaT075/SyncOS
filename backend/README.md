@@ -3,9 +3,9 @@
 Node.js / Express / MongoDB / Redis API for Sync OS — a multi-tenant SaaS workspace. This
 README is the quick-start; for how the system actually works, read:
 
-- [`docs/authentication.md`](../docs/authentication.md) — authentication, tokens, sessions, CSRF, rate limiting
-- [`docs/rbac-multi-tenancy.md`](../docs/rbac-multi-tenancy.md) — organizations, roles, permissions, isolation
-- [`docs/api-reference.md`](../docs/api-reference.md) — every route, request/response shape, error codes
+- [`docs/security/authentication.md`](../docs/security/authentication.md) — authentication, tokens, sessions, CSRF, rate limiting
+- [`docs/security/rbac-multi-tenancy.md`](../docs/security/rbac-multi-tenancy.md) — organizations, roles, permissions, isolation
+- [`docs/api/api-reference.md`](../docs/api/api-reference.md) — every route, request/response shape, error codes
 
 ## Prerequisites
 

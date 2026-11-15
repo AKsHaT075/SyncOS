@@ -100,7 +100,7 @@ The ingestion and embedding workers are separate processes, see [ai/README.md](a
 | `employee` | Own work, own teams and projects |
 | `guest` | Read-only access to what was explicitly shared with them |
 
-Permissions are checked on the server on every request; cross-organization and no-access both return 404. See [docs/rbac-multi-tenancy.md](docs/rbac-multi-tenancy.md).
+Permissions are checked on the server on every request; cross-organization and no-access both return 404. See [docs/rbac-multi-tenancy.md](docs/security/rbac-multi-tenancy.md).
 
 ## Configuration
 
@@ -128,9 +128,10 @@ The suite has 400 Jest tests (backend) and 90 pytest tests (AI service). MongoDB
 
 Everything lives in [`docs/`](docs/README.md):
 
-- [Architecture](docs/architecture.md), [Modules](docs/modules.md), [Authentication](docs/authentication.md), [RBAC and multi-tenancy](docs/rbac-multi-tenancy.md), [API reference](docs/api-reference.md)
-- [Development guide](docs/development.md), [Deployment preparation](docs/deployment.md), [Project status](docs/project-status.md)
-- Module deep dives: [assets](docs/modules/assets.md), [analytics](docs/modules/analytics.md), [calendar](docs/modules/calendar.md), [notifications](docs/modules/notifications.md)
+- Overview: [architecture](docs/architecture.md), [development guide](docs/development.md), [deployment preparation](docs/deployment.md), [project status](docs/project-status.md)
+- API: [API reference](docs/api/api-reference.md), [Postman testing](docs/api/postman-testing.md)
+- Security: [authentication](docs/security/authentication.md), [RBAC and multi-tenancy](docs/security/rbac-multi-tenancy.md)
+- Modules: [overview](docs/modules/README.md), [assets](docs/modules/assets.md), [analytics](docs/modules/analytics.md), [calendar](docs/modules/calendar.md), [notifications](docs/modules/notifications.md)
 - AI: [overview](docs/ai/ai-overview.md), [operations](docs/ai/ai-operations.md), [service contract](docs/ai/ai-service-contract.md)
 
 ## Project status

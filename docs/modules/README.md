@@ -1,6 +1,6 @@
 # Modules
 
-One section per core module: purpose, features, API, data, permissions, workflows and dependencies. Exact request/response shapes are in [api-reference.md](api-reference.md) (older modules) and the module deep dives linked below. Status per module is in [project-status.md](project-status.md).
+One section per core module: purpose, features, API, data, permissions, workflows and dependencies. Exact request/response shapes are in [api-reference.md](../api/api-reference.md) (older modules) and the module deep dives linked below. Status per module is in [project-status.md](../project-status.md).
 
 Conventions that apply to every module: routes need `authenticate` and, for tenant data, `requireOrgAccess`; every query is scoped by `organization`; no-access and cross-organization both return 404; success responses are `{ success: true, ... }`; errors are `{ success: false, message, code }`.
 
@@ -9,7 +9,7 @@ Roles: `super-admin`, `org-admin`, `admin`, `hr`, `manager`, `employee`, `guest`
 ---
 
 ## 1. Authentication and RBAC
-- **Purpose:** identity, sessions and authorization. **Detail:** [authentication.md](authentication.md), [rbac-multi-tenancy.md](rbac-multi-tenancy.md).
+- **Purpose:** identity, sessions and authorization. **Detail:** [authentication.md](../security/authentication.md), [rbac-multi-tenancy.md](../security/rbac-multi-tenancy.md).
 - **API (`/api/v1/auth`):** `csrf-token`, `register`, `verify-email`, `resend-otp`, `login`, `refresh`, `logout`, `logout-all`, `GET me`, `PATCH me` (own first name, last name, skills; unknown fields such as role or email are rejected), `POST change-password` (needs the current password, counts failures toward the lockout, then signs the account out on every device), `me/status` (presence), `sessions` (list, revoke), `forgot-password`, `reset-password`.
 - **Frontend:** `app/dashboard/settings` (profile and password forms in `features/account`).
 - **Data:** `User`, `Session`, `RefreshToken`, `AuditLog`.
@@ -28,7 +28,7 @@ Roles: `super-admin`, `org-admin`, `admin`, `hr`, `manager`, `employee`, `guest`
 
 ## 3. Dashboards
 - **Purpose:** role-specific landing pages (`components/dashboard/views`): org admin, HR, manager, employee, guest, super admin.
-- **Data:** KPI strips, trends, workload and project progress come from `/analytics/overview` and `/analytics/me`. Meetings and documents cards read the Meetings and Documents APIs. Cards that still carry a *Preview* badge use sample data: announcements, birthdays, onboarding status, recently joined, team snapshot, security snapshot, resource usage, AI insights and similar. They are listed in [project-status.md](project-status.md).
+- **Data:** KPI strips, trends, workload and project progress come from `/analytics/overview` and `/analytics/me`. Meetings and documents cards read the Meetings and Documents APIs. Cards that still carry a *Preview* badge use sample data: announcements, birthdays, onboarding status, recently joined, team snapshot, security snapshot, resource usage, AI insights and similar. They are listed in [project-status.md](../project-status.md).
 
 ## 4. Projects
 - **API (`/projects`):** list, create (`CREATE_PROJECT`), get, update, delete (`DELETE_PROJECT`), archive/restore, transfer ownership, favorite, activity, members (candidates, add, change role, remove), resources (upload, list, download, delete).
@@ -66,27 +66,27 @@ Roles: `super-admin`, `org-admin`, `admin`, `hr`, `manager`, `employee`, `guest`
 - **Frontend:** `features/documents`, `app/dashboard/documents` and `.../trash`. **Tests:** `documents-flow`, `document-access`, `file-validation`.
 
 ## 10. Calendar
-- **Detail:** [modules/calendar.md](modules/calendar.md). **API (`/calendar`):** unified list, preferences, event create/get/update/delete, RSVP.
+- **Detail:** [modules/calendar.md](calendar.md). **API (`/calendar`):** unified list, preferences, event create/get/update/delete, RSVP.
 - **Rules:** only standalone events are stored; meetings, tasks and project dates are read from their own collections. Default timezone is IST (user, then organization, then IST). Recurrence is expanded on demand. Reminders use the notification system.
 
 ## 11. Notifications
-- **Detail:** [modules/notifications.md](modules/notifications.md). **API (`/notifications`):** list, live `stream` (SSE), unread counts, preferences, mark read, read-all, dismiss.
+- **Detail:** [modules/notifications.md](notifications.md). **API (`/notifications`):** list, live `stream` (SSE), unread counts, preferences, mark read, read-all, dismiss.
 - **Rules:** only `notificationEvents.js` creates notifications; each event has a deterministic dedupe key. Blocked or removed people receive a durable email only. Event coverage: projects, tasks, meetings and requests, teams, role/access changes, calendar, documents, assets, AI.
 
 ## 12. Assets
-- **Detail:** [modules/assets.md](modules/assets.md). **API (`/assets`):** inventory, summary, export, assignments, maintenance, catalog (categories, vendors), per-asset lifecycle actions (assign, transfer, return, reserve, retire, dispose, lost, found), documents, report issue.
+- **Detail:** [modules/assets.md](assets.md). **API (`/assets`):** inventory, summary, export, assignments, maintenance, catalog (categories, vendors), per-asset lifecycle actions (assign, transfer, return, reserve, retire, dispose, lost, found), documents, report issue.
 - **Rules:** `AssetAssignment` rows are the source of truth; status changes only through named actions; license keys are pointers, never secrets.
 
 ## 13. Goals
 - **Status: planned, not built.** There is no model, no API and no real UI. `app/dashboard/goals` and the project Goals tab show a "coming soon" page, and the dashboards' assigned-goals card is sample data. It is a separate future module; nothing else depends on it.
 
 ## 14. Reports and analytics
-- **Detail:** [modules/analytics.md](modules/analytics.md). **API (`/analytics`):** `overview`, `me`, `tasks`, `projects`, `people`, `teams`, `meetings`, `assets`, `reports/:type` and `reports/:type/export` (CSV), `platform` (`super-admin`).
+- **Detail:** [modules/analytics.md](analytics.md). **API (`/analytics`):** `overview`, `me`, `tasks`, `projects`, `people`, `teams`, `meetings`, `assets`, `reports/:type` and `reports/:type/export` (CSV), `platform` (`super-admin`).
 - **Scope:** org-admin/admin organization-wide, HR aggregate counts only, manager led teams, employee self, guest none, super-admin platform only. Reports and CSV share the same compute functions as the dashboards.
 - **Frontend:** `app/dashboard/analytics`, `app/dashboard/reports`, `app/dashboard/projects/[projectId]/analytics`.
 
 ## 15. AI Studio and AI integration
-- **Detail:** [ai/ai-overview.md](ai/ai-overview.md), [ai/ai-operations.md](ai/ai-operations.md), [ai/ai-service-contract.md](ai/ai-service-contract.md).
+- **Detail:** [ai/ai-overview.md](../ai/ai-overview.md), [ai/ai-operations.md](../ai/ai-operations.md), [ai/ai-service-contract.md](../ai/ai-service-contract.md).
 - **API (`/ai`):** `ask`, conversations (CRUD, messages), `status`, usage (me, organization), organization settings and disclosure (`MANAGE_AI`), knowledge ingestion and embedding administration (`MANAGE_AI_KNOWLEDGE`), super-admin platform status, usage, embedding migration and the live-tools kill switch.
 - **Rules:** off per organization until an admin accepts the disclosure; guests and super-admin never get tenant AI; private documents are owner-only for AI; live workspace tools are a second, separate switch and are off by default.
 - **Admin UI:** `app/dashboard/settings/ai` (`MANAGE_AI`): turn AI on after reading and accepting the disclosure, turn it off, view the accepted version, set the per-user daily and organization monthly token limits. The live-organization-data switch is deliberately **not** offered there and stays off. Knowledge ingestion status is still API-only.

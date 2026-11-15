@@ -43,7 +43,7 @@ The core workspace works end to end for projects, tasks, people, teams, meetings
 | F6 | Medium | No `.env.example` for backend or frontend, so a new developer could not tell which variables are required. | Added `backend/.env.example` and `frontend/.env.example` (names and safe placeholders only). |
 | F7 | Low | Stale comment in `rolePermissions.js` claimed an admin may invite admins (the code and test say only `org-admin`). | Comment corrected. |
 | F8 | Low | Documentation scattered across `backend/docs`, `ai/contracts`, `backend/postman`, root README; outdated references. | All documentation moved under `docs/`, references updated, new architecture, modules, development, deployment and status documents. |
-| F9 | Medium | No way to edit one's own profile or change a password. | `PATCH /auth/me`, `POST /auth/change-password`, Settings forms (section 3 of [modules.md](modules.md)). |
+| F9 | Medium | No way to edit one's own profile or change a password. | `PATCH /auth/me`, `POST /auth/change-password`, Settings forms (section 3 of [modules.md](modules/README.md)). |
 | F10 | Medium | No way to edit organization details. | Owner-only `PATCH /organizations/me` (name, logo, default time zone) with a Settings form. |
 | F11 | Medium | Plan limits were stored but never enforced. | `services/planLimits.service.js`: seats at invitation and acceptance, storage at upload, new version, restore and project resources, AI credits via `AI_TOKENS_PER_CREDIT`; super-admin endpoint to set limits; usage endpoint and cards. |
 | F12 | Medium | An org admin could not turn AI on from the product. | AI settings screen. |
@@ -61,7 +61,7 @@ The core workspace works end to end for projects, tasks, people, teams, meetings
 | D4 | Low | No admin screen for knowledge ingestion status; the live-data switch is not offered in the AI screen. | Intentional: live tools stay dormant. |
 | D5 | Low | No integration tests for the projects and meetings endpoints (access rules are unit-tested). | Recorded risk. |
 | D6 | Low | Default limits (5 seats, 1 GB, 0 AI credits) apply to every organization that has no explicit value. | Set real limits per organization before onboarding tenants; existing organizations over a limit keep working but cannot grow. There is no plan-to-limits table (not invented). |
-| D7 | Low | Task attachments are not counted toward storage; the AI credit unit needs `AI_TOKENS_PER_CREDIT`. | Documented in [modules.md](modules.md). |
+| D7 | Low | Task attachments are not counted toward storage; the AI credit unit needs `AI_TOKENS_PER_CREDIT`. | Documented in [modules.md](modules/README.md). |
 
 ### Uncertain
 
